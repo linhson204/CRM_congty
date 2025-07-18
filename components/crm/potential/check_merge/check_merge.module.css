@@ -1,0 +1,145 @@
+.main__body_item:first-child {
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.main__body_item {
+  padding: 5px 0px;
+}
+
+.row_one {
+  row-gap: 10px;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  align-items: center;
+}
+
+.flex_align_center {
+  display: flex;
+  align-items: center;
+}
+
+.d_flex {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.label_radio {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  font-size: 16px;
+  line-height: 16px;
+  color: #474747;
+  margin-bottom: 0;
+}
+
+.label_radio input[type='radio'] {
+  width: 16px;
+  height: 16px;
+}
+
+.col-lg-4 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+}
+
+.row_content {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  row-gap: 10px;
+}
+
+.row_item_left {
+  width: 20%;
+}
+
+label.form_label {
+  display: flex;
+  align-items: center;
+  column-gap: 15px;
+}
+
+.span_or {
+  width: 35px;
+}
+
+.row_item_center {
+  width: 35%;
+  overflow: unset;
+}
+
+.row_item_right {
+  width: 40%;
+}
+
+.form_control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.content_table_search {
+  column-gap: 15px;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.title_table {
+  font-size: 16px;
+  line-height: 19px;
+  color: #4c5bd4;
+  font-family: 'Roboto-Bold';
+  font-weight: bold;
+}
+
+.div__thaotac span {
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.div__thaotac b {
+  font-size: 16px;
+  line-height: 16px;
+}
+
+@media (min-width: 992px) {
+  .col-lg-4 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+@media (max-width: 682px) {
+  .row_item_left {
+    width: 30%;
+  }
+
+  .row_item_center {
+    width: 60%;
+    overflow: unset;
+  }
+
+  .row_item_right {
+    width: 100%;
+  }
+}

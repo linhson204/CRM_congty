@@ -1,0 +1,59 @@
+.custom_btn {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+.button_cancel {
+  width: 200px;
+  height: 40px;
+  font-size: 18px;
+}
+.button_save {
+  width: 200px;
+  height: 40px;
+  font-size: 18px;
+}
+
+@media (max-width: 414px) {
+  .button_cancel {
+    width: 150px;
+    height: 40px;
+    font-size: 18px;
+  }
+  .button_save {
+    width: 150px;
+  }
+}
+
+@media screen and (min-width: 821px) {
+  .fieldsetne {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .lefttm {
+    width: 49%;
+  }
+  .righttm {
+    width: 48%;
+  }
+  .imgview {
+    height: 50%;
+    border-radius: 10px;
+  }
+}
+
+@media screen and (max-width: 820px) {
+  .fieldsetne {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+  .righttm {
+    padding-bottom: 25px;
+  }
+  .imgview {
+    border-radius: 10px;
+    padding: 30px;
+  }
+}

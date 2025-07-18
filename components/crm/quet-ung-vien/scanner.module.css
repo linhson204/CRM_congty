@@ -1,0 +1,23 @@
+.main__control {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sub__control {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  gap: 20px;
+}
+
+.main__control button {
+  white-space: nowrap;
+  display: block;
+  background: #fff;
+  padding: 5px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+}

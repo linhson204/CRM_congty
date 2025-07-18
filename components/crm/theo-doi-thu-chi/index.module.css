@@ -1,0 +1,170 @@
+.fieldsetne {
+  display: block;
+}
+
+/* .btn {
+    width: 100px;
+} */
+.title {
+  color: white;
+  padding-top: 18px;
+  height: 56px;
+  background-color: #4C5BD4;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  font-family: "Roboto-Medium";
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  padding-left: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.fieldsetnecontainerleft {
+  width: 50%;
+}
+.fieldsetnecontainerright {
+  width: 50%;
+}
+
+.fieldsetneleft {
+  border-radius: 10px;
+  width: 98%;
+}
+
+.containerinfo {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  /* flex-wrap: wrap; */
+  /* justify-content: center; */
+  padding-top: 30px;
+  grid-template-columns: 1fr;
+  /* Sử dụng 1fr để tạo cột, có thể điều chỉnh độ rộng tùy ý */
+  grid-gap: 10px;
+  /* Khoảng cách giữa các cột */
+}
+@media screen and (max-width: 739px) {
+  .containerinfo {
+    width: 100%;
+    display: block;
+    flex-direction: row;
+    padding-top: 30px;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+  .containerne fieldset {
+    display: block;
+    width: 100%;
+    padding: 25px;
+  }
+}
+.containerne {
+  padding-bottom: 25px;
+  display: flex;
+  justify-content:space-around;
+  flex-wrap: wrap;
+  width: 100%t;
+}
+/* .leftsuaphieu {
+  width: 30%;
+}
+.rightsuaphieu {
+  width: 30%;
+} */
+
+@media screen and (max-width: 769px) {
+  .containerne {
+    display: block;
+    width: 100%;
+  }
+}
+/* @media screen and (min-width: 1024px) {
+  .leftsuaphieu {
+    width: 40%;
+  }
+  .rightsuaphieu {
+    width: 40%;
+  }
+} */
+@media screen and (min-width: 740px) and (max-width: 1023px) {
+  .containerinfo {
+    width: 100%;
+    display: block;
+    flex-direction: row;
+    padding-top: 30px;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+  .leftsuaphieu {
+    width: 80%;
+  }
+  .rightsuaphieu {
+    width: 80%;
+  }
+  .containerne fieldset {
+    display: block;
+    width: 100%;
+    padding: 25px;
+  }
+}
+
+.fieldsetneright {
+  border-radius: 10px;
+  width: 100%;
+}
+
+.fieldsetneright div {
+  padding: 5px;
+}
+
+.fieldsetneleft div {
+  padding: 5px;
+}
+
+.info {
+  display: flex;
+}
+.thanhtoan {
+  display: flex;
+  padding-top: 15px;
+  justify-content: space-between;
+}
+
+.infoleft {
+  width: 30%;
+}
+
+.btntt {
+  width: 100px;
+  background-color: #4C5BD4;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.full_width_div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.full_width_div span {
+  border-bottom: 1px dotted black;
+  flex-grow: 1;
+  margin: 0 10px;
+}
+.full_width_div_no {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.full_width_div_no span {
+  border-bottom: 2px solid black;
+  flex-grow: 1;
+  margin: 0 10px;
+}

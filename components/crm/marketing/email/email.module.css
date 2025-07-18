@@ -1,0 +1,39 @@
+.main_default {
+  width: 100%;
+  text-align: center;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text_title {
+  font-size: 40px;
+  line-height: 47px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.text_content {
+  font-size: 19px;
+  line-height: 22px;
+  color: #000000;
+  margin-bottom: 40px;
+}
+
+.img_default {
+  width: 45%;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 414px) {
+  .img_default img {
+    width: 100% !important;
+  }
+  .text_title {
+    font-size: 30px;
+    line-height: 40px;
+    color: #000000;
+    margin-bottom: 20px;
+  }
+}

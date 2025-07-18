@@ -1,0 +1,43 @@
+import axios from "axios"
+import FormData from "form-data"
+
+export default async function handler(req, res) {
+    try {
+        const {
+            idQLC,
+            page,
+            perPage,
+        } = req.body
+
+        const formData = new FormData()
+        formData.append('idQLC', Number(idQLC))
+        formData.append('page', Number(page))
+        formData.append('perPage', Number(perPage))
+
+        const response = await axios.post(
+            'https://job247.vn/api/socket/crm/listWarning',
+            formData,
+            {
+                headers: {
+                    ...formData.getHeaders(),
+                },
+                timeout: 30000,
+            }
+        )
+        // console.log("🚀 ~ handler ~ response:", response)
+        const data = response.data?.data
+        if (data?.result) {
+            return res.status(200).send({
+                list: data?.list || [],
+                totalUnread: data?.totalUnread || 0,
+                total: data?.total || 0,
+            })
+        } 
+
+    } catch (error) {
+        console.log("🚀 ~ handler ~ error:", error)
+        return res.status(error?.code || 500).send({
+            message: error?.error?.message,
+        });
+    }
+}

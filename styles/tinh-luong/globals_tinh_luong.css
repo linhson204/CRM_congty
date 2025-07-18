@@ -1,0 +1,2143 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+
+:root {
+  --text-color: #474747;
+  --theme-color: #4c5bd4;
+  --white-color: #fff;
+  --heavy-blue: #232f87;
+  --footer-bg-color: #043379;
+}
+
+@media (prefers-color-scheme: dark) {
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+html,
+body {
+}
+
+body {
+}
+
+a,
+p,
+span {
+  font-size: 16px;
+}
+
+span {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+a {
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--white-color);
+}
+
+ul,
+li {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+hr {
+  border-bottom: 1px dotted #000;
+}
+
+@media (prefers-color-scheme: dark) {
+}
+
+.ant-modal .ant-modal-content {
+  padding: 0px;
+  border-radius: 10px;
+}
+
+.ant-picker-calendar-date-content {
+  height: 180px !important;
+}
+
+.ant-card-bordered {
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.1);
+}
+
+.text-red {
+  color: "#FFFFFF";
+}
+
+.anticon-close-circle {
+  /*display: none;*/
+}
+
+.ant-select-arrow .anticon-down {
+  display: none;
+}
+
+.centered-calendar .ant-picker-calendar-date .ant-picker-calendar-date-value {
+  text-align: center;
+}
+
+.centered-calendar .ant-picker-content > thead > tr > th {
+  text-align: center;
+  background: #4c5bd4;
+  color: white;
+}
+
+.centered-calendar .ant-picker-content > thead {
+  height: 40px;
+}
+
+.ant-picker-calendar-header {
+  justify-content: flex-start !important;
+}
+
+table .ant-radio-group {
+  display: none;
+}
+
+li {
+  list-style: none;
+}
+
+a:hover {
+  /*background: unset !important;*/
+}
+
+.tablePage thead > tr > th {
+  background-color: #4c5bd4 !important;
+  color: #ffffff !important;
+  padding: 15px;
+  font-weight: 100 !important;
+  font-size: 15px;
+  line-height: 16px;
+  text-align: left;
+  border: none;
+}
+
+.tablePage .ant-table-tbody > tr > td {
+  border: none !important;
+}
+
+.tablePage
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  table
+  thead.ant-table-thead
+  .ant-table-cell {
+  border: none !important;
+}
+.ant-table-thead > tr > td {
+  background: #4c5bd4 !important;
+}
+
+.tablePage {
+  box-shadow: 0px 0px 20px rgb(55 63 255 / 10%);
+  border-radius: 20px;
+  padding: 15px;
+  background: #fff;
+  float: left;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tablePage.ant-table-sell::before {
+  display: none;
+}
+
+.div-page {
+  width: 90%;
+  float: left;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-bottom: 30px;
+  margin-top: 14px;
+  margin-bottom: 20px;
+  display: flex;
+  background-position: bottom left;
+}
+
+.h4-page {
+  float: left;
+  font-size: 50px;
+  padding-right: 16px;
+  line-height: 59px;
+  color: #0070f3;
+  /* margin-right: 10px; */
+}
+
+.span-1 {
+  width: 100%;
+  float: left;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  color: #2e3467;
+  margin-bottom: 5px;
+}
+
+.span-2 {
+  width: 100%;
+  float: left;
+  font-size: 15px;
+  line-height: 18px;
+  color: #68798b;
+}
+
+.h4-1 {
+  width: 100%;
+  float: left;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.a-page {
+  width: 90%;
+  float: left;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.icon-page {
+  content: "";
+  position: absolute;
+  float: right;
+  top: 49px;
+  right: -15px;
+  width: 32px;
+  height: 32px;
+}
+
+.div-1 {
+  box-shadow: 0px 0px 20px rgba(55, 63, 255, 0.1);
+  border-radius: 10px;
+  position: relative;
+}
+
+span.ant-select-arrow {
+  top: 23% !important;
+  margin: 0 !important;
+}
+
+.ant-tooltip-inner {
+  color: #4c5bd4 !important;
+}
+
+.ant-modal-close-icon {
+  margin-top: -10px !important;
+  color: white !important;
+}
+
+span.ant-select-arrow {
+  top: 23% !important;
+  margin: 0 !important;
+}
+
+.ant-tooltip-inner {
+  color: #4c5bd4 !important;
+}
+
+.ant-modal-close-icon {
+  margin-top: -10px !important;
+  color: white !important;
+}
+
+table {
+  display: table;
+  border-collapse: separate;
+  box-sizing: border-box;
+  text-indent: initial;
+  border-spacing: 2px;
+  border-color: gray;
+}
+thead {
+  display: table-header-group;
+  vertical-align: middle;
+  border-color: inherit;
+}
+tr {
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
+}
+
+th {
+  display: table-cell;
+  vertical-align: inherit;
+  font-weight: bold;
+  text-align: -internal-center;
+}
+
+.customTable
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  .ant-table-cell {
+  position: relative;
+  color: white;
+  font-weight: 500;
+  text-align: start;
+  background: #4c5bd4;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease;
+  text-align: center;
+}
+
+.customTable
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  .ant-table-cell:first-child {
+  text-align: start;
+}
+
+.customTable
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  ::before {
+  display: none;
+}
+
+.ant-modal-content {
+  padding-bottom: 5px !important;
+}
+
+.ant-btn-default {
+  /* display: none !important; */
+}
+
+.ant-btn-primary {
+  width: 100% !important;
+  text-align: center !important;
+  margin-inline-start: 0 !important;
+}
+
+.ant-card.css-dev-only-do-not-override-1wazalj {
+  width: 31% !important;
+  float: left;
+  background: #ffffff;
+  box-shadow: 0px 0px 20px rgba(55, 63, 255, 0.1);
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+.mybtn button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 21px;
+  color: #ffffff !important;
+  background-color: #4c5bd4;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 40px;
+  width: 135px !important;
+  float: right;
+  margin-top: 20px;
+}
+.modal_delete
+  button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary {
+  width: 135px !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary span {
+  color: white;
+}
+
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.thue_myBtn__CmUpe {
+  width: 100% !important;
+  margin-bottom: 20px;
+}
+.ant-card-head-title {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #4c5bd4 !important;
+}
+
+.modal_one .anticon svg {
+  display: none !important;
+}
+
+span.ant-select-arrow {
+  top: 23% !important;
+  margin: 0 !important;
+}
+
+.ant-tooltip-inner {
+  color: #4c5bd4 !important;
+}
+.ant-modal-close-icon {
+  margin-top: -10px !important;
+  color: white !important;
+}
+.anticon-right {
+  font-size: 13px !important;
+}
+
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.thue_btn_recipe__nkDiz {
+  width: 200px !important;
+}
+
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.thue_btn_time_cancer__hRUG7
+  span {
+  color: #4c5bd4 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.thue_btn_time_cancer__hRUG7:hover {
+  background: unset;
+}
+
+@media (max-width: 1200px) {
+  :where(.css-dev-only-do-not-override-1wazalj).ant-col-8 {
+    display: block;
+    max-width: 100% !important;
+  }
+  :where(.css-dev-only-do-not-override-1wazalj).ant-row {
+    display: block;
+  }
+}
+.Tien_Modal_NhomLamViec .ant-modal-content .ant-modal-header .ant-modal-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4c5bd4;
+  height: 47px;
+  color: white;
+}
+.card_distance .ant-card {
+  margin-right: 15px;
+  width: 32% !important;
+  margin-top: 10px;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_employee__bVBWi {
+  width: 850px !important;
+}
+.CustomTable2ndNhomLamViec
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: blue;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.CustomTable2ndNhomLamViec .ant-table-tbody > tr .ant-table-cell:nth-child(2) {
+  /* background: red; */
+  text-align: right;
+}
+.CustomTable2ndNhomLamViec:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+.CustomTable3rdNhomLamViec
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: blue;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.CustomTable3rdNhomLamViec .ant-table-tbody > tr .ant-table-cell:nth-child(3) {
+  /* background: red; */
+  text-align: right;
+}
+.CustomTable3rdNhomLamViec:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+
+.CustomTable3rdNhomLamViec
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: blue;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.DiMuonVeSomTable
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: white;
+    font-weight: 500;
+    text-align: start !important;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+}
+
+.DiMuonVeSomTable .ant-table-tbody > tr .ant-table-cell {
+  /* text-align: right; */
+  text-align: left;
+}
+.DiMuonVeSomTable .ant-table-tbody > tr .ant-table-cell:nth-child(1) {
+  /* text-align: right; */
+  text-align: left;
+  padding-left: 35px;
+}
+.DiMuonVeSomTable .ant-table-thead > tr ::before {
+  display: none;
+}
+
+.DiMuonVeSomTable .ant-table-thead > tr .ant-table-cell:nth-child(1) {
+  position: relative;
+  color: white;
+  font-weight: 500;
+  text-align: center !important;
+  background: #4c5bd4;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease;
+  text-align: center;
+  height: 45px;
+  padding-left: 35px;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thuong-phat_modal__38Urv {
+  width: 825px !important;
+}
+.ant-form-item {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.NghiPhep_2nd
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: white;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.NghiPhep_2nd .ant-table-tbody > tr .ant-table-cell:nth-child(1) {
+  text-align: left !important;
+}
+.NghiPhep_2nd .ant-table-tbody > tr .ant-table-cell {
+  text-align: center;
+}
+.NghiPhep_2nd .ant-table-thead > tr ::before {
+  display: none;
+}
+
+.NghiPhep4th
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: white;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.NghiPhep4th .ant-table-tbody > tr .ant-table-cell:nth-child(1) {
+  text-align: left !important;
+  padding-left: 10px;
+  min-width: 250px;
+}
+.NghiPhep4th .ant-table-tbody > tr .ant-table-cell {
+  text-align: center;
+}
+.NghiPhep4th:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_delete__7ayuy
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_delete__7ayuy
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_employee__bVBWi:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table
+  .ant-table-title,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table
+  .ant-table-header {
+  background: #4c5bd4 !important;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_employee__bVBWi
+  .ant-modal-header {
+  background-color: white;
+  height: 67px;
+  padding-bottom: 10px;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_add__mWnUG
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_add__mWnUG
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_my_modal__2Maao
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_my_modal__2Maao
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_recipe__BOgMz
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_time__jJSMz
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thue_modal_time__jJSMz
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.chuathietlap_table__ULqhg.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-container
+  table
+  > thead
+  > tr:first-child
+  > *:last-child {
+  background: #4c5bd4 !important;
+  height: 50px;
+}
+.ant-table-wrapper.chuathietlap_table__ULqhg.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-container
+  table
+  > thead
+  > tr:first-child
+  > *:first-child {
+  background: #4c5bd4 !important;
+}
+.ant-table-wrapper.chuathietlap_table__ULqhg.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+.ant-table-wrapper.chuathietlap_table__vpJ_A.css-dev-only-do-not-override-1wazalj
+  tr.ant-table-row.ant-table-row-level-0 {
+  display: flex;
+  justify-content: space-between;
+}
+.ant-table-wrapper.chuathietlap_table__ULqhg:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row:hover
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row:hover
+  > td,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th.ant-table-cell-row-hover,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td.ant-table-cell-row-hover {
+  background: unset !important  ;
+}
+.ant-table-wrapper.chuathietlap_table__ULqhg:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td {
+  border-bottom: unset;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.chuathietlap_modal_times__ukCIt
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+}
+.ant-select.chuathietlap_seclected__bpaII.css-dev-only-do-not-override-1wazalj.ant-select-single.ant-select-show-arrow {
+  width: 91%;
+}
+.ant-table-wrapper.dathietlap_tableSetting__dHf97.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4 !important;
+  height: 47px;
+  color: #fff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.dathietlap_modal_times__uA_Ds
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+}
+.ant-table-wrapper.dathietlap_tableSetting__dHf97.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+.ant-table-wrapper.thue_table_add__B8lC3.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background-color: #4c5bd4 !important;
+  color: #fff;
+}
+.ant-table-wrapper.thue_table_add__B8lC3.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_my_modal__Y_F6j
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_my_modal__Y_F6j
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_recipe__tSrjt
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_add__GHM2v
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_add__GHM2v
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_time__SC6tQ
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_time__SC6tQ
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.bao-hiem_btn_time_cancer__SxA3F
+  span {
+  color: #0070f3 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.bao-hiem_btn_time_cancer__SxA3F:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_employee__7Am5L {
+  width: 850px !important;
+}
+.ant-table-wrapper.bao-hiem_table_add__tfcDq.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background-color: #4c5bd4 !important;
+  color: #fff;
+}
+.ant-table-wrapper.bao-hiem_table_add__tfcDq.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_delete__RHSuL
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.bao-hiem_modal_delete__RHSuL
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.chuathietlap_table___Fquk.css-dev-only-do-not-override-1wazalj
+  tr.ant-table-row.ant-table-row-level-0 {
+  display: flex;
+  justify-content: space-between;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.chuathietlap_modal_times__qR2Ru
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-select.chuathietlap_seclected__RqJef.css-dev-only-do-not-override-1wazalj.ant-select-single.ant-select-show-arrow {
+  width: 91% !important;
+}
+.ant-table-wrapper.dathietlap_tableSetting__Ao7ui.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background-color: #4c5bd4 !important;
+  color: #fff;
+}
+.ant-table-wrapper.dathietlap_tableSetting__Ao7ui.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_my_modal__Vlfr4
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_my_modal__Vlfr4
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_recipe__p7jn4
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_recipe__p7jn4
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_add__ThqUW
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_add__ThqUW
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_time___UfYU
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_time___UfYU
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.cac-khoan-tien-khac_btn_time_cancer__9Rg6z
+  span {
+  color: #4c5bd4 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.cac-khoan-tien-khac_btn_time_cancer__9Rg6z:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_employee__M8Umc {
+  width: 850px !important;
+}
+.ant-table-wrapper.cac-khoan-tien-khac_table_add__89PIT.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4 !important;
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  color: #fff;
+}
+.ant-table-wrapper.cac-khoan-tien-khac_table_add__89PIT.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_delete__qyPhL
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.cac-khoan-tien-khac_modal_delete__qyPhL
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.dathietlap_tableSetting__wj5P8.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4 !important;
+  height: 47px;
+  color: #fff;
+}
+.ant-table-wrapper.dathietlap_tableSetting__wj5P8.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset;
+}
+.ant-picker.css-dev-only-do-not-override-1wazalj.phuc-loi_times_month__NqKpv {
+  width: 100%;
+  padding: 8px 15px;
+  font-size: 16px;
+  line-height: 19px;
+  margin-top: 10px;
+}
+.ant-upload-wrapper.ho-so-nhan-vien_times_month__EQSEA.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-upload-wrapper
+  .ant-upload-select {
+  width: 100%;
+}
+
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-default.ho-so-nhan-vien_times_month__EQSEA:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn {
+  text-align: left !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_cancer__Qp8aY
+  span {
+  color: #4c5bd4 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_cancer__Qp8aY:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_times__ajjIR
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_times__ajjIR
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.phuc-loi_table__jUN_i.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+
+.ant-table-wrapper.phuc-loi_table__jUN_i.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-table-wrapper.phuc-loi_table__jUN_i.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_add__hTmOe
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_add__hTmOe
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_add_cancer__uEACS
+  span {
+  color: #4c5bd4 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_add_cancer__uEACS:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset !important;
+}
+
+.ant-table-wrapper.phuc-loi_table_add__HWx3o.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  color: #fff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_employee__Sg_aU {
+  width: 900px !important ;
+}
+.ant-table-wrapper.phuc-loi_table_employee__VOHvV.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.phuc-loi_table_employee__VOHvV.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.phuc-loi_table_employee__VOHvV.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_edit_time_cancer__RGvBT
+  span {
+  color: #4c5bd4 !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.phuc-loi_btn_edit_time_cancer__RGvBT:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_edit_time__XsT3g
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_edit_time__XsT3g
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_delete__CtUjv
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.phuc-loi_modal_delete__CtUjv
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+span.ant-upload-wrapper.hoa-hong_dragger__x_FCR.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-upload-wrapper
+  .ant-upload-drag
+  .ant-upload-drag-container {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+span.ant-upload-wrapper.hoa-hong_dragger__x_FCR.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-upload-wrapper
+  .ant-upload-drag {
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_employee__F7rMG {
+  width: 850px !important;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_recipe__x1HKA
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_recipe__x1HKA
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_delete__eIHju
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_delete__eIHju
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+
+.Table_Modal_NghiPhep_XemMucPhat
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table {
+  .ant-table-thead > tr .ant-table-cell {
+    position: relative;
+    color: white;
+    font-weight: 500;
+    text-align: start;
+    background: #4c5bd4;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: center;
+    height: 45px;
+  }
+  .ant-table-tbody > tr .ant-table-cell {
+  }
+}
+
+.Table_Modal_NghiPhep_XemMucPhat
+  .ant-table-tbody
+  > tr
+  .ant-table-cell:nth-child(1) {
+  text-align: left !important;
+}
+.Table_Modal_NghiPhep_XemMucPhat .ant-table-tbody > tr .ant-table-cell {
+  text-align: center;
+}
+.Table_Modal_NghiPhep_XemMucPhat:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+.nghi_phep_cai_dat_muc_phat {
+  width: 100%;
+}
+
+.nghi_phep_cai_dat_muc_phat .ant-checkbox + span {
+  width: 100%;
+}
+:where(.css-dev-only-do-not-override-1wazalj).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item-active {
+  background-color: white;
+}
+:where(.css-dev-only-do-not-override-1wazalj).ant-dropdown
+  .ant-dropdown-menu
+  .ant-dropdown-menu-item:hover {
+  background: #f3f8fb;
+  border-radius: 6px;
+}
+.modal_delete_tien .ant-modal-content .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal_delete_tien .ant-modal-content .ant-modal-header .ant-modal-title {
+  margin: 0;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+.modal_add_tien .ant-modal-content .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal_add_tien .ant-modal-content .ant-modal-header .ant-modal-title {
+  margin: 0;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+.Tien_Danh_sach_nhan_vien
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-header
+  > table
+  > thead
+  > tr
+  > th {
+  background-color: #4c5bd4 !important;
+  color: white;
+}
+.Tien_modal_employee {
+  width: 850px !important;
+}
+.Tien_modal_employee
+  :where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  display: none;
+}
+.ant-table-wrapper.hoahongcanhan_table_add__UskVh.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-table-wrapper.hoahongcanhan_table_add__UskVh.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.hoahongcanhan_table_add__UskVh.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoahongcanhan_modal_edit__wpw0U
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoahongcanhan_modal_edit__wpw0U
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.hoahongcanhan_table_group__54lUu.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table
+  .ant-table-title,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table
+  .ant-table-header {
+  display: none;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoahongcanhan_modal_delete__RLqiy
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoahongcanhan_modal_delete__RLqiy
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.hoahongcanhan_btn_delete__YPXpw:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: #f46a6a;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.hoahongcanhan_btn_cancer__UZ_OF:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background-color: unset;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.hoahongcanhan_btn_cancer__UZ_OF
+  span {
+  color: #444444 !important;
+}
+
+span.ant-upload-wrapper.hoa-hong_dragger__x_FCR.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-upload-wrapper
+  .ant-upload-drag
+  .ant-upload-drag-container {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+span.ant-upload-wrapper.hoa-hong_dragger__x_FCR.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-upload-wrapper
+  .ant-upload-drag {
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.Hoahongnhanduoc_table_add__mq8Hc.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_employee__F7rMG {
+  width: 850px !important;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.hoa-hong_table_add__KStn_.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_delete__eIHju
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.hoa-hong_modal_delete__eIHju
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-table-wrapper.bang-luong_table__75WL6.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  border-radius: unset;
+}
+.ant-table-wrapper.bang-luong_table__75WL6.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-table-wrapper.bang-luong_table__75WL6.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.tinh-luong_table__jt1jS.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  /* border-radius: unset; */
+}
+.ant-table-wrapper.tinh-luong_table__jt1jS.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-table-wrapper.tinh-luong_table__jt1jS.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+.ant-table-wrapper.ho-so-nhan-vien_table__PxQqv.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  height: 47px;
+  /* border-radius: unset; */
+}
+.ant-table-wrapper.ho-so-nhan-vien_table__PxQqv.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td
+  span {
+  color: #fff;
+}
+.ant-table-wrapper.ho-so-nhan-vien_table__PxQqv.css-dev-only-do-not-override-1wazalj:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before,
+:where(.css-dev-only-do-not-override-1wazalj).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td:not(:last-child):not(.ant-table-selection-column):not(
+    .ant-table-row-expand-icon-cell
+  ):not([colspan])::before {
+  background-color: unset !important;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.ho-so-nhan-vien_btn__BoCjh
+  span {
+  color: #4c5bd4;
+}
+button.ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-primary.ho-so-nhan-vien_btn__BoCjh:where(
+    .css-dev-only-do-not-override-1wazalj
+  ).ant-btn-primary:not(:disabled):hover {
+  background: unset !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.ho-so-nhan-vien_modal_times__GW_T_
+  .ant-modal-header {
+  background: #4c5bd4;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 8px 8px 0px 0px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.ho-so-nhan-vien_modal_times__GW_T_
+  .ant-modal-title {
+  color: #ffffff !important;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.nhap-luong-co-ban-va-che-do_modal__JO8rU
+  .ant-btn-default {
+  display: none !important;
+}
+.ant-popconfirm-buttons
+  .ant-btn.css-dev-only-do-not-override-1wazalj.ant-btn-default.ant-btn-sm {
+  display: none !important;
+}
+.editable-row:hover {
+  background-color: #c6e2ff;
+}
+.ant-modal.css-dev-only-do-not-override-1wazalj.thuong-phat_modal__38Urv {
+  width: 1250px !important;
+}
+.customTable1
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  .ant-table-cell {
+  position: relative;
+  color: white;
+  font-weight: 500;
+  text-align: start;
+  background: #4c5bd4;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease;
+  text-align: center;
+}
+
+.customTable1
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  .ant-table-cell {
+  text-align: start;
+}
+
+.customTable1
+  .ant-spin-nested-loading
+  .ant-spin-container
+  .ant-table
+  .ant-table-container
+  .ant-table-content
+  > table
+  .ant-table-thead
+  > tr
+  ::before {
+  display: none;
+}
+.customButton {
+  display: flex;
+  justify-content: right;
+}
+.customButton > span {
+  color: #4c5bd4;
+}
+.customButton:hover {
+  background-color: white !important;
+}
+.customModal_HoSoNhanVien {
+}
+.customButton_HandleOk > span {
+  color: white;
+}
+
+.ant-popover-content
+  .ant-popover-inner
+  .ant-popover-inner-content
+  .ant-popconfirm-inner-content
+  .ant-popconfirm-buttons
+  > button {
+  width: 50% !important;
+}
+.ant-popover-content
+  .ant-popover-inner
+  .ant-popover-inner-content
+  .ant-popconfirm-inner-content
+  .ant-popconfirm-buttons
+  .ant-btn-primary {
+  background-color: white;
+  border-color: #d9d9d9;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+  margin-left: 3px;
+}
+.ant-popover-content
+  .ant-popover-inner
+  .ant-popover-inner-content
+  .ant-popconfirm-inner-content
+  .ant-popconfirm-buttons
+  .ant-btn-primary:hover {
+  color: #4096ff;
+  border-color: red;
+}
+.ToolTipCustom {
+}

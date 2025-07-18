@@ -1,0 +1,321 @@
+.main__content {
+  row-gap: 20px;
+}
+
+.inputSP {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 40px;
+}
+
+.loc2 {
+  padding: 5px;
+  background-color: blue !important;
+  color: white;
+  border-radius: 10px;
+}
+
+.input_loc {
+  display: flex;
+  gap: 15px;
+}
+
+.day {
+  font-size: 16px;
+  padding-right: 10px;
+}
+
+.inputSP2 {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.list_gr_sp {
+  text-decoration: none;
+  text-align: center;
+  width: 220px;
+  height: 41px;
+  line-height: 41px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: normal;
+  background: #fff;
+  color: #a3a3a3;
+  margin-right: 19.26px;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+}
+.list_sp {
+  text-decoration: none;
+  text-align: center;
+  width: 220px;
+  height: 41px;
+  line-height: 41px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: normal;
+  background: #f7f8fc;
+  color: #a3a3a3;
+  margin-right: 19.26px;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+}
+
+.list_sp:hover {
+  background: #fff;
+  color: #666666 !important;
+}
+
+.group_button_sp {
+  display: flex;
+}
+
+.flex_column {
+  display: flex;
+  flex-direction: column;
+}
+
+.main__control_search_delete {
+  width: 35%;
+  height: 36px;
+  display: flex;
+  border: 1px solid #666;
+  border-radius: 10px;
+  margin-right: 21px;
+  position: relative;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.g_input {
+  display: flex;
+}
+.ipSearch {
+  width: 40%;
+}
+
+.main__control_search_thuchi {
+  width: 30%;
+  height: 36px;
+  display: flex;
+  border: 1px solid #666;
+  border-radius: 10px;
+  margin-right: 21px;
+  position: relative;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.main__control_search {
+  height: 40px;
+  display: flex;
+  border: 1px solid #666;
+  border-radius: 10px;
+  margin-right: 21px;
+  position: relative;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.inputne {
+  height: 40px;
+  color: #666;
+  font-weight: normal;
+  font-size: 29px;
+  width: 70%;
+
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-right: 1px solid #666666;
+}
+
+.search {
+  height: 39px;
+  width: 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid black;
+}
+
+.select {
+  height: 39px;
+  font-size: 16px;
+  border: 0px;
+  border-radius: 0px;
+  border-bottom: 1px solid black;
+  width: 10%;
+  width: 175px;
+  border-right: 1px solid #474747;
+}
+
+.select p {
+  font-size: 35px;
+  display: flex;
+  border: 1px solid #666666;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+}
+
+.main__table {
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  background: #fff;
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+  scrollbar-width: thin;
+  border-radius: 10px;
+  position: relative;
+  overflow-x: scroll;
+}
+
+.table {
+}
+
+.selected {
+}
+
+.btnAction {
+  display: flex;
+  float: right;
+  justify-content: space-around;
+}
+
+.btnDelete {
+  background: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 110px;
+  font-size: 16px;
+  line-height: 19px;
+  color: #f01313;
+}
+
+.btnRe {
+  background: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 110px;
+  font-size: 16px;
+  line-height: 19px;
+  color: #4c5bd4;
+}
+
+.table_antd {
+  display: flex;
+  overflow: scroll;
+  width: 100%;
+}
+
+.table_antd.ant-table-cell:hover {
+  transform: scale(1.1);
+  /* Phóng to nội dung của cột khi hover */
+}
+
+.scrollTable ::-webkit-scrollbar {
+  height: 10px;
+  width: 5px;
+  /* Định nghĩa chiều rộng của thanh cuộn */
+}
+
+/* Thay đổi màu nền của phần cuộn */
+.scrollTable ::-webkit-scrollbar-thumb {
+  width: 5px;
+  background-color: #1890ff;
+  /* Màu xanh của thanh cuộn */
+  border-radius: 5px;
+  /* Bo tròn viền của thanh cuộn */
+}
+
+/* Đổi màu nền khi hover lên thanh cuộn */
+.scrollTable ::-webkit-scrollbar-thumb:hover {
+  background-color: #1890ff;
+  /* Màu xanh nhạt khi hover */
+}
+
+.name {
+  max-width: 350px;
+  height: 30px;
+}
+
+.name:hover {
+  border-radius: 10px;
+  transform: translateY(-10px);
+  background-color: #eeeeee;
+  padding-bottom: -50px;
+  height: auto;
+}
+@media (max-width: 414px) {
+  .inputSP2 {
+    padding-top: 0px !important;
+  }
+}
+@media (max-width: 480px) {
+  .list_gr_sp {
+    width: 165px;
+    font-size: 13px;
+  }
+  .list_sp {
+    width: 165px;
+    font-size: 13px;
+  }
+  .ipSearch {
+    width: 100% !important;
+  }
+  .g_input {
+    display: block;
+  }
+  .ipleft {
+    padding-top: 15px;
+  }
+  .inputSP2 {
+    padding-top: 30px;
+  }
+}
+
+@media screen and (max-width: 739px) {
+  .day {
+    display: none;
+  }
+  .ipSearch {
+    width: 50%;
+  }
+  .main__control_search_delete {
+    width: 55%;
+    height: 36px;
+    display: flex;
+    border: 1px solid #666;
+    border-radius: 10px;
+    margin-right: 21px;
+    position: relative;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  .inputSP2 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 30px;
+  }
+  .ip1 {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 739px) and (max-width: 1024px) {
+  .ipSearch {
+    width: 50%;
+  }
+  .main__control_search_delete {
+    width: 35%;
+    height: 36px;
+    display: flex;
+    border: 1px solid #666;
+    border-radius: 10px;
+    margin-right: 21px;
+    position: relative;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  .inputSP2 {
+    padding-top: 30px;
+  }
+}

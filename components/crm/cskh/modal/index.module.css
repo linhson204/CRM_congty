@@ -1,0 +1,26 @@
+.container{
+    padding: 25px 0px;
+}
+.container b{
+    color: red;
+}
+.formdate{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.dateinput{
+    width: 48%;
+}
+.title{
+    font-size: 17px;
+    padding-top: 5px;
+}
+.dateModal{
+    height: 25px;
+}
+.inpdate{
+    height: 100%;
+}

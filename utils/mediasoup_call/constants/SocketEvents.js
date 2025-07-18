@@ -1,0 +1,58 @@
+const SocketEvents = {
+  SOCKET_DISCONNECTED: "disconnect",
+  SOCKET_RECONNECTED: "connect",
+
+  SERVICE_STATUS: "callserver:service_status",
+
+  USER_LOGIN: "callserver:user_login",
+  USER_LOGGEDIN: "callserver:user_loggedin",
+  USER_LOGOUT: "callserver:user_logout",
+  USER_CONNECTED: "callserver:user_connected",
+  USER_DISCONNETED: "callserver:user_disconnected",
+
+  CALL_START: "callserver:call_start",
+  CALL_TIMEDOUT: "callserver:call_timedout",
+  CALL_INCOMING: "callserver:call_incoming",
+  CALL_ACCEPT: "callserver:call_accept",
+  CALL_ACCEPTED: "callserver:call_accepted",
+  CALL_REJECT: "callserver:call_reject",
+  CALL_REJECTED: "callserver:call_rejected",
+  CALL_RECONNECTED: "callserver:call_reconnected",
+
+  CALL_SEND_OFFER: "callserver:call_send_offer",
+  CALL_RECEIVE_OFFER: "callserver:call_receive_offer",
+  CALL_SEND_ANSWER: "callserver:call_send_answer",
+  CALL_RECEIVE_ANSWER: "callserver:call_receive_answer",
+  CALL_SEND_CANDIDATE: "callserver:call_send_candidate",
+  CALL_RECEIVE_CANDIDATE: "callserver:call_receive_candidate",
+
+  SFU_GET_RTP_CAPABILITIES: "callserver:sfu_get_rtp_capabilities",
+  SFU_PTRANSPORT_CREATE: "callserver:sfu_ptransport_create",
+  SFU_CTRANSPORT_CREATE: "callserver:sfu_ctransport_create",
+  SFU_PTRANSPORT_CONNECT: "callserver:sfu_ptransport_connect",
+  SFU_CTRANSPORT_CONNECT: "callserver:sfu_ctransport_connect",
+  SFU_PRODUCE: "callserver:sfu_produce",
+  SFU_NEW_PRODUCER: "callserver:sfu_new_producer",
+  SFU_CONSUME: "callserver:sfu_consume",
+  SFU_RESUME: "callserver:sfu_resume",
+
+  CALL_CLIENT_READY: "callserver:call_client_ready",
+  CALL_WEBRTC_READY: "callserver:call_ready",
+  CALL_CHANGE_MEDIA_DEVICES: "callserver:call_change_media_devices",
+  CALL_UPDATE_MEDIA_DEVICES_STATUS: "callserver:call_update_media_devices_status",
+  CALL_SWITCH_TO_VIDEO: "callserver:call_switch_to_video",
+  CALL_SWITCH_TO_VIDEO_REQUESTED: "callserver:call_switch_to_video_requested",
+  CALL_SWITCH_TO_VIDEO_ACCEPT: "callserver:call_switch_to_video_accept",
+  CALL_SWITCH_TO_VIDEO_ACCEPTED: "callserver:call_switch_to_video_accepted",
+  CALL_SWITCH_TO_VIDEO_REJECT: "callserver:call_switch_to_video_reject",
+  CALL_SWITCH_TO_VIDEO_REJECTED: "callserver:call_switch_to_video_rejected",
+  CALL_BUSY: "callserver:call_busy",
+  CALL_CHECK_CALLEE_STATUS: "callserver:call_check_callee_status",
+  CALL_CALLEE_STATUS: "callserver:call_callee_status",
+  CALL_ONGOING: "callserver:call_ongoing",
+  CALL_END: "callserver:call_end",
+  CALL_ENDED: "callserver:call_ended",
+  CALL_KEEPALIVE: "callserver:call_keepalive",
+}
+
+try { if (module) module.exports = SocketEvents; } catch (err) { }

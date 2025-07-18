@@ -1,0 +1,91 @@
+.delete_button {
+  font-family: Roboto-Medium;
+  font-weight: 500;
+  font-size: 16px;
+  width: 153px;
+  height: 40px;
+  background-color: #ff3333;
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+}
+.export_button {
+  font-family: Roboto-Medium;
+  font-weight: 500;
+  font-size: 16px;
+  width: 153px;
+  height: 40px;
+  background-color: #ffffff;
+  color: #666666;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+}
+.back_button {
+  font-family: "Roboto-Bold";
+  font-weight: bold;
+  font-size: 16px;
+  border: 1px solid #4c5bd4;
+  width: 222px;
+  height: 40px;
+  background: #fff;
+  color: #4c5bd4;
+  border-radius: 5px;
+}
+.button_primary {
+  font-family: "Roboto-Bold";
+  font-weight: bold;
+  font-size: 16px;
+  border: 1px solid #4c5bd4;
+  width: 222px;
+  height: 40px;
+  background: #4c5bd4;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.btn_excel {
+  background: #34b632;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  border-radius: 10px;
+  padding: 9px 21px;
+  color: #ffffff;
+  font-family: "Roboto-Medium";
+  font-size: 16px;
+  line-height: 19px;
+  column-gap: 5px;
+  display: flex;
+  align-items: center;
+}
+.btn_yellow {
+  background: #effc00;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  border-radius: 10px;
+  padding: 9px 21px;
+  color: #3c00ff;
+  font-family: "Roboto-Medium";
+  font-size: 16px;
+  line-height: 19px;
+  column-gap: 5px;
+  display: flex;
+  align-items: center;
+}
+.btn_add {
+  background: #1818f8;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  border-radius: 10px;
+  padding: 9px 21px;
+  height: 37px;
+  color: #ffffff;
+  font-family: "Roboto-Medium";
+  font-size: 16px;
+  line-height: 19px;
+  column-gap: 5px;
+  display: flex;
+  align-items: center;
+}

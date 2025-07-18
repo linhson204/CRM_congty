@@ -1,0 +1,14 @@
+.main {
+  display: flex;
+  justify-content: space-between;
+}
+.content {
+  width: calc(100% - 320px);
+  background: #ebeef5;
+}
+
+@media (max-width: 1024px) {
+  .content {
+    width: 100%;
+  }
+}

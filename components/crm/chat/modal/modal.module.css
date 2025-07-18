@@ -1,0 +1,158 @@
+.header {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    padding: 15px 20px 15px 20px;
+    background-color: #4c5bd4;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.textHead {
+    font-size: 20px;
+    color: #fff;
+}
+
+.body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 20px;
+    text-align: left !important;
+    margin-bottom: -50px;
+    border-radius: 0px !important;
+
+}
+
+.bodyItem {
+    margin-bottom: 20px;
+}
+
+.date {
+    margin-bottom: 20px;
+    display: flex;
+    flex: 1;
+    width: 100%;
+}
+
+.date1 {
+    margin-right: 10px;
+    flex: 1;
+}
+
+.date2 {
+    margin-left: 10px;
+    flex: 1;
+}
+
+.inputname {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    /* border-radius: 6px; */
+    border: 1px solid #9f9f9f;
+    height: 40px;
+}
+
+.inputname>div:first-child {
+    /* border-radius: 6px !important; */
+}
+
+.loai {
+    display: flex;
+    padding: 10px;
+    align-items: flex-start;
+    align-self: stretch;
+    /* border-radius: 5px; */
+    border: 1px solid #9f9f9f;
+}
+
+.huyb {
+    display: flex;
+    padding: 5px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+    /* border-radius: 10px; */
+    border: 1px solid #4c5bd4;
+    background: #fff;
+}
+
+.texthuyb {
+    color: #4c5bd4;
+    font-family: Roboto;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.luu {
+    display: flex;
+    padding: 5px 15px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* border-radius: 10px; */
+    background: #4c5bd4;
+    border: none;
+}
+
+.textluu {
+    color: #fff;
+    font-family: Roboto;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+@media screen and (max-width: 768px) {
+    .body {
+        padding: 20px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .body {
+        padding: 16px;
+    }
+
+    .textHead {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 510px) {
+    .date {
+        display: block;
+    }
+
+    .date1 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .date2 {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+.test {
+    display: block;
+}
+
+.phone_item {
+    text-align: center;
+    margin: 8px;
+    padding: 8px 0;
+    color: #4c5bd4;
+    cursor: pointer;
+    border-bottom: 1px rgba(0, 0, 0, 0.1) solid;
+}
+
+.phone_item:hover {
+    opacity: 0.7;
+}

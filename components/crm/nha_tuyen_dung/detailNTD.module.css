@@ -1,0 +1,76 @@
+.header_detail_NTD {
+  /* width: 80%; */
+  display: flex;
+  justify-content: center;
+}
+
+.header_detail_container {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 30px;
+  border-radius: 20px;
+}
+
+.header_detail_infor_container {
+  display: flex;
+}
+
+.header_detail_infor {
+  margin-left: 15px;
+}
+
+.company_name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4c5bd4;
+  font-family: "Roboto-Regular";
+}
+
+.header_infor {
+  font-size: 18px;
+  font-weight: 500;
+  padding-top: 3px;
+}
+
+.header_infor>span {
+  font-size: 16px;
+}
+
+.list_post_tilte {
+  margin-top: 10px;
+  color: #4c5bd4;
+  padding: 10px 10px 10px 30px;
+  /* border-radius: 8px 8px 0px 0px; */
+  background: #f7f9ff;
+  margin-bottom: 0;
+  border-left: 5px solid #ffbc3b;
+}
+
+.list_post_body {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.list_post_container {
+  width: 80%;
+  background-color: white;
+}
+
+.post_container {
+  margin: 20px 10px 10px 0px;
+}
+
+.post_item {
+  background-color: rgba(0, 0, 0, 0.01);
+  margin: 16px 0;
+}
+
+.post_name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #4c5bd4;
+  padding: 0 0 10px 10px;
+}

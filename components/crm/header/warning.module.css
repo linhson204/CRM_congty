@@ -1,0 +1,84 @@
+.content_help {
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rfBtnContainer {
+    float: right;
+    padding-right: 20px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.groupBtn {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn {
+    border: solid 1px black;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.no_border {
+    border: none;
+}
+
+.btn > img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.btn > p {
+    font-size: unset;
+    font-weight: unset;
+    line-height: unset;
+}
+
+.btn_red {
+    background-color: white;
+    color: red;
+    border-color: red;
+}
+
+.btn_call {
+    background-color: #29dd2d;
+    color: white;
+    border-color: white;
+}
+
+.btn_link {
+    color: black;
+}
+
+.btn_zalo {
+    background-color: #0068FF;
+    color: white;
+    border-color: white;
+}
+
+.accept_all {
+    justify-content: space-evenly;
+}
+
+.accept_all_confirm_all {
+    color: #0068FF !important;
+}
+
+.accept_all_delete_all_read {
+    color: red !important;
+}

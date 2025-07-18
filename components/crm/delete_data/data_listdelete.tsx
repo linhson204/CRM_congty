@@ -1,0 +1,117 @@
+const listDataDelete = [
+  {
+    name: "Tiềm năng",
+    image: "/crm/icon_tiemnang.svg",
+    quantity: "70",
+    link: "detail/potential",
+  },
+  {
+    name: "Liên hệ",
+    image: "/crm/icon_kh.svg",
+    quantity: "70",
+    link: "detail/contact",
+  },
+  {
+    name: "Khách hàng",
+    image: "/crm/icon_kh.svg",
+    quantity: "70",
+    link: "detail/customer",
+  },
+  {
+    name: "Nhóm khách hàng",
+    image: "/crm/icon_tiemnang.svg",
+    quantity: "70",
+    link: "detail/group_customer",
+  },
+  {
+    name: "Cơ hội",
+    image: "/crm/icon_change.svg",
+    quantity: "70",
+    link: "detail/change",
+  },
+  {
+    name: "Báo giá",
+    image: "/crm/icon_qoute.svg",
+    quantity: "70",
+    link: "detail/qoute",
+  },
+  {
+    name: "Đơn hàng",
+    image: "/crm/icon_order.svg",
+    quantity: "70",
+    link: "detail/order",
+  },
+  {
+    name: "Hóa đơn",
+    image: "/crm/icon_bill.svg",
+    quantity: "70",
+    link: "detail/bill",
+  },
+  {
+    name: "Hợp đồng",
+    image: "/crm/icon_contract.svg",
+    quantity: "70",
+    link: "detail/contract",
+  },
+  {
+    name: "Chiến dịch",
+    image: "/crm/icon_campaign.svg",
+    quantity: "70",
+    link: "detail/campaign",
+  },
+  {
+    name: "Lịch hẹn",
+    image: "/crm/icon_schedule.svg",
+    quantity: "70",
+    link: "detail/schedule",
+  },
+  {
+    name: "Lịch chăm sóc",
+    image: "/crm/icon_schedule.svg",
+    quantity: "70",
+    link: "detail/care_schedule",
+  },
+  {
+    name: "Mẫu email",
+    image: "/crm/icon_form_email.svg",
+    quantity: "70",
+    link: "detail/form_email",
+  },
+  {
+    name: "Mẫu SMS",
+    image: "/crm/icon_form_email.svg",
+    quantity: "70",
+    link: "detail/form_sms",
+  },
+  {
+    name: "Chính sách giá",
+    image: "/crm/icon_price.svg",
+    quantity: "70",
+    link: "detail/price_policy",
+  },
+  {
+    name: "Trả lại hàng bán",
+    image: "/crm/icon_pro.svg",
+    quantity: "70",
+    link: "detail/product_return",
+  },
+  {
+    name: "Phiếu thu",
+    image: "/crm/icon_money.svg",
+    quantity: "70",
+    link: "detail/receipts",
+  },
+  {
+    name: "Phiếu chi",
+    image: "/crm/icon_money.svg",
+    quantity: "70",
+    link: "detail/payment",
+  },
+  {
+    name: "Sổ quỹ",
+    image: "/crm/icon_money.svg",
+    quantity: "70",
+    link: "detail/funds",
+  },
+];
+export default listDataDelete;

@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+
+    "paths": {
+      "@/*": ["./*"],
+      "react": ["./node_modules/@types/react"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/_app.js",
+    "pages/_document.js",
+    "pages/san-pham.html.js",
+    "pages/layout.js",
+    "components/header/Header.js",
+    "components/Layout.js",
+    "components/test.js",
+    "components/footer/Footer.js",
+    "components/crm/logout/index.js",
+    "components/crm/sidebar/sidebar.js",
+    "NOTE.jsx"
+, "components/crm/header/modal_header/modal_notify.tsx", "components/crm/header/notify_icon.tsx", "components/crm/customer/customer_modal/modal_data_KD.tsx"  ],
+  "exclude": ["node_modules"]
+}

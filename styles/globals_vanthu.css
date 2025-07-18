@@ -1,0 +1,389 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Salsa&display=swap");
+
+html,
+body,
+:root {
+    /* height: 100%; */
+}
+
+body {
+    background-color: #ebeef5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url('/font/Roboto-Bold.ttf');
+    /*Thêm các thuộc tính khác của font như font-weight và font-style nếu cần*/
+}
+
+@font-face {
+    font-family: 'Roboto-Medium';
+    src: url('/font/Roboto-Medium.ttf');
+    /*Thêm các thuộc tính khác của font như font-weight và font-style nếu cần*/
+}
+
+button,
+a,
+img {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+.position_r {
+    position: relative;
+}
+
+.show_sidebar {
+    display: block;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #4c5bd4;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #747ece;
+
+}
+
+.ck-editor__editable {
+    height: 310px;
+}
+.ant-modal .ant-modal-content {
+    padding: 0px;
+    border-radius: 10px;
+  }
+  
+  .ant-card-bordered {
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+  }
+  
+  .green-table
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    thead.ant-table-thead
+    .ant-table-cell {
+    background-color: #4c5bd4;
+    border: 1px solid lightgrey;
+    color: #fff;
+    font-size: 16px;
+  }
+  .green-table
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    tbody.ant-table-tbody
+    .ant-table-cell {
+    color: #474747;
+    font-size: 16px;
+  }
+  .green-table-bodyBorder
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    thead.ant-table-thead
+    .ant-table-cell {
+    background-color: #4c5bd4;
+    border: 1px solid lightgrey;
+    color: #fff;
+    font-size: 16px;
+  }
+  .green-table-bodyBorder
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    tbody.ant-table-tbody
+    .ant-table-cell {
+    color: #474747;
+    font-size: 16px;
+    border: 1px solid lightgrey;
+  }
+  
+  .green-table-bodyBorder .ant-table {
+      border-end-start-radius: 8px;
+      border-end-end-radius: 8px;
+    }
+    .green-table-bodyBorder .ant-table
+      .ant-table-container
+      .ant-table-content
+      table
+      tbody.ant-table-tbody
+      .ant-table-cell:first-child {
+      border-end-start-radius: 8px;
+    }
+    .green-table-bodyBorder .ant-table
+      .ant-table-container
+      .ant-table-content
+      table
+      tbody.ant-table-tbody
+      .ant-table-cell:last-child {
+      border-end-end-radius: 8px;
+    }
+  
+  .green-table {
+    border-radius: 10px !important;
+  }
+  .blue-table
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    thead.ant-table-thead
+    .ant-table-cell {
+    border: 1px solid #c4c4c4;
+    background: #d9eaff !important;
+    border-radius: 0px !important;
+  }
+  .green-table
+    .ant-table
+    .ant-table-container
+    .ant-table-content
+    table
+    thead.ant-table-thead
+    .ant-table-cell::before {
+    width: 0px !important;
+  }
+  .ck-editor__editable {
+    min-height: 200px;
+  }
+  
+  .tableHeader {
+    color: #fff;
+    text-align: center;
+  }
+  
+  .ant-modal,
+  .ant-modal-content {
+    margin-top: 10px;
+    top: 0;
+  }
+  
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #4c5bd4 !important;
+  }
+  
+  .ant-tabs-ink-bar {
+    border-bottom: 4px solid #4c5bd4;
+  }
+  
+  .ant-picker-ranges {
+    display: none !important;
+  }
+  
+  label.ant-form-item-required {
+    position: relative;
+  }
+  
+  .ant-form .ant-form-item .ant-row .ant-col > label::before {
+    position: absolute !important;
+    right: -15px !important;
+  }
+  .ant-form-item .ant-row .ant-col > label {
+    font-size: 16px;
+    color: #474747;
+  }
+  .ant-form-item .ant-row .ant-col > label::before {
+    position: absolute !important;
+    right: -15px !important;
+  }
+  .table_duyet .ant-table-thead > tr > th {
+    background: #d9eaff !important;
+    color: #4c5bd4 !important;
+  }
+  .table_cong_ty_con .ant-table-thead > tr > th {
+    background: #d9eaff !important; 
+  }
+  .table_cong_ty_con .ant-table-thead > tr > th> p {
+    color: #4c5bd4 !important;
+  }
+  .table_cong_ty_con .ant-table-body > tr > th {
+    border-radius: 0px 0px 10px 10px;
+  }
+  
+  .table_taoDeXuat .ant-table-thead > tr > th {
+    background: #d9eaff !important;
+  }
+  .table_taoDeXuat .ant-table-thead > tr > th> p {
+    color: #4c5bd4 !important;
+  }
+  
+  .ant-table-cell::before {
+    background-color: transparent !important;
+  }
+  .ant-btn {
+    border-radius: 15px !important;
+  }
+  .table_lich_lam_viec .ant-table-thead > tr > th {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color) !important;
+  }
+  .table_lich_lam_viec
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-header
+    table
+    thead.ant-table-thead
+    > tr > th {
+      background-color: var(--theme-color) !important;
+      color: var(--white-color) !important;
+    }
+
+  .table_lich_lam_viec
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-header
+    table
+    thead.ant-table-thead
+    > tr > td {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color) !important;
+  }
+  /* > th {
+      background-color: var(--theme-color) !important;
+      color: var(--white-color) !important;
+      font-weight: bold;
+    } */
+  
+  .ochart::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .ochart {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .ant-list-header {
+    padding-block: 0 !important;
+    border-block-end: none !important;
+  }
+  /* .ant-list-header .modal-them-ca_header__OBBHG {
+    padding: 10px 0;
+    background-color: #4c5bd4 !important;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: auto;
+  } */
+  .ant-select-item-option-selected {
+    background-color: #cfcfcf !important;
+  }
+  .ant-select-item-option-active {
+    background-color: #4c5bd4 !important;
+    color: #fff !important;
+  }
+  .ant-select-item-option-content {
+    font-size: 16px;
+  }
+  
+  .table_nhap_lai_khuon_mat
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-header
+    table
+    thead.ant-table-thead
+    > tr
+    > th {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color) !important;
+  }
+  
+  .ant-pagination-item-active {
+    background-color: #4c5bd4 !important;
+  }
+  .ant-pagination-item-active > a {
+    color: #fff !important;
+  }
+  .table_nhap_lai_khuon_mat
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-body
+    table
+    .ant-table-tbody
+    .ant-table-row-selected
+    > td {
+    background: none !important;
+  }
+  .table_duyet
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-body
+    table
+    .ant-table-tbody
+    .ant-table-row-selected
+    > td {
+    background: none !important;
+  }
+  .table_xuat_cong
+    .ant-spin-nested-loading
+    .ant-spin-container
+    .ant-table
+    .ant-table-container
+    .ant-table-header
+    table
+    thead.ant-table-thead
+    > tr
+    > th {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color) !important;
+  }
+  .ant-form-item {
+    margin-bottom: 10px;
+  }
+  
+  .ant-card .ant-card-body {
+    padding: 20px;
+  }
+  .theIcon.ant-card .ant-card-body {
+    padding: 0;
+    display: flex;
+    border-radius: 15px !important;
+  }
+  .ant-select-selector{
+    border-radius: 6px;
+  }
+  .ant-list-item{
+    margin-block-end: 0;
+  }

@@ -1,0 +1,62 @@
+.input{
+    display:inline-block;
+    margin:5px;
+    height:30px;
+    padding:10px;
+    border-radius:5px;
+    position:relative
+}
+.input_small{
+    display:inline-block;
+    margin:5px;
+    height:30px;
+    padding:10px;
+    border-radius:5px;
+    position:relative;
+    width:75px
+}
+.select{
+    display:inline-block;
+    margin:5px;
+    height:50px;
+    padding:10px;
+    border-radius:5px;
+    position:relative
+}
+.element{
+    display:inline-block;
+    position:relative;
+    padding:15px
+}
+.input_long{
+    display:inline-block;
+    margin:5px;
+    height:30px;
+    padding:10px;
+    width:200px;
+    border-radius:5px;
+    position:relative
+}
+.button_container{
+   width:100%;
+   display:block;
+   position:relative
+}
+.button{
+    display:inline-block;
+    margin:25px;
+    height:30px;
+    
+    border-radius:5px;
+    position:relative
+}
+.text{
+    font-size: 13px;
+    padding:5px;
+}
+
+.img{
+    width:30px;
+    height:30px;
+    margin:5px
+}

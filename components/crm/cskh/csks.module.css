@@ -1,0 +1,167 @@
+.date {
+  border: 1px solid #fff;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  width: 120px;
+  font-size: 18px;
+}
+.formdate {
+  display: flex;
+  padding-bottom: 20px;
+  padding-left: 15px;
+  padding-top: 15px;
+  gap: 10px;
+}
+.connect_tongdai {
+  float: left;
+  width: 100%;
+}
+.input {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+.form_options {
+  border: 1px solid rgb(215, 200, 200);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dropbtn_add {
+  background: #76b51b;
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: "Roboto-Medium";
+  font-size: 16px;
+  float: right;
+}
+.icon_options {
+  cursor: pointer;
+  padding: 10px;
+}
+.home_themkhaosat {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.left_home_themkhaosat {
+  width: 93%;
+  padding: 20px 40px;
+  height: 179px;
+  border: 1px solid #bbb8b8;
+  border-top: 18px solid #4c5bd4;
+  border-radius: 10px;
+}
+.left_option_themkhaosat {
+  width: 93%;
+  padding: 20px 40px;
+  height: 179px;
+  border: 1px solid #bbb8b8;
+  border-radius: 10px;
+}
+.left_option_themkhaosat_video {
+  width: 93%;
+  padding: 20px 40px;
+  height: f;
+  border: 1px solid #bbb8b8;
+  border-radius: 10px;
+}
+.left_option1 {
+  width: 93%;
+  padding: 20px 40px;
+  height: fit-content;
+  border: 1px solid #bbb8b8;
+  border-radius: 10px;
+}
+.right_home_themkhaosat {
+  width: 5%;
+}
+.btn_footer_themmoi {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+.btn_footer_themmoi button {
+  width: 20%;
+}
+.inputtitle {
+  border: none;
+  width: 100%;
+  resize: none;
+  font-size: 20px;
+  font-weight: 400;
+  font-family: "math";
+  height: 45px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+.inputtitle2 {
+  border: none;
+  width: 100%;
+  resize: none;
+  height: 45px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+.inputtitle2_option {
+  border: none;
+  width: 95%;
+  resize: none;
+  height: 45px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+.inputtitle2_option1 {
+  border: none;
+  width: 80%;
+  resize: none;
+  height: 45px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+.footer_op1 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+}
+.right_OP1 {
+  padding-left: 40px;
+}
+.right_OP1 select {
+  width: 100px;
+}
+@media screen and (max-width: 739px) {
+  .connect_tongdai {
+    padding-bottom: 10px;
+  }
+  .input {
+    display: block;
+  }
+  .btn_footer_themmoi button {
+    width: 40%;
+  }
+  .themmoiks {
+    padding-top: 20px;
+  }
+  .left_option_themkhaosat {
+    width: 90%;
+  }
+  .left_home_themkhaosat {
+    width: 90%;
+  }
+  .left_option_themkhaosat_video {
+    width: 90%;
+  }
+  .right_home_themkhaosat {
+    width: 8%;
+  }
+  .left_option1 {
+    width: 90%;
+  }
+}
+@media screen and (min-width: 740px) and (max-width: 1023px) {
+  .btn_footer_themmoi button {
+    width: 30%;
+  }
+}

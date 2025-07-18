@@ -1,0 +1,164 @@
+.footer_main {
+   background-color: #043379;
+   width: 100%;
+   height: fit-content;
+   float: left;
+   position: relative;
+   z-index: 9999;
+ 
+   a {
+     text-decoration: none;
+   }
+ }
+ 
+ .footer_content {
+   width: 100%;
+   margin: auto;
+ }
+ 
+ .ft_bottom {
+   padding: 62px 100px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+ 
+   .left {
+     padding-right: 200px;
+ 
+     .left_top {
+       display: flex;
+       flex-direction: column;
+       gap: 14px;
+ 
+       span {
+         color: #fff;
+         font-family: Roboto;
+         font-style: normal;
+         font-weight: 400;
+         line-height: normal;
+         font-size: 16px;
+       }
+     }
+ 
+     .left_bottom {
+       display: flex;
+       justify-content: space-between;
+       margin-top: 30px;
+ 
+       span {
+         color: #fff;
+       }
+ 
+       .left_bottom_left {
+         display: flex;
+         flex-direction: column;
+         gap: 18px;
+ 
+         .left_bottom_left_item {
+           display: flex;
+           align-items: center;
+           gap: 5px;
+         }
+       }
+ 
+       .left_bottom_right {
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+ 
+         .left_bottom_right_item {
+           display: flex;
+           align-items: center;
+           gap: 5px;
+         }
+       }
+     }
+   }
+ 
+   .right {
+     display: flex;
+     flex-direction: column;
+ 
+     span {
+       color: #fff;
+     }
+ 
+     img {
+       width: 195px;
+     }
+   }
+ }
+ 
+ .app_mb {
+   display: none;
+ }
+ 
+ /* responsive */
+ @media screen and (min-width: 1366px) {
+   .footer_content {
+     width: 1170px;
+   }
+ }
+ 
+ @media screen and (max-width: 1024px) {
+   .footer_main {
+     padding: 30px 20px;
+   }
+ 
+   .ft_bottom {
+     padding: 0;
+ 
+     .left {
+       padding-right: 90px;
+ 
+       .left_bottom {
+ 
+         .left_bottom_left {
+           gap: 10px;
+           margin-bottom: 10px;
+         }
+ 
+         .left_bottom_right {
+           gap: 10px;
+         }
+       }
+     }
+ 
+   }
+ }
+ 
+ @media screen and (max-width: 480px) {
+   .ft_bottom {
+     padding-bottom: 35px;
+ 
+     .left {
+       padding-right: 0px;
+       .left_bottom {
+         display: block;
+       }
+     }
+ 
+     .right {
+       display: none;
+     }
+   }
+ 
+   .app_mb {
+     display: block;
+     text-align: center;
+ 
+     span {
+       color: #fff;
+       font-size: 18px;
+     }
+ 
+     .icon_app {
+       display: flex;
+       align-items: center;
+       margin-top: 20px;
+       justify-content: center;
+       gap: 20px;
+     }
+   }
+ 
+ }
