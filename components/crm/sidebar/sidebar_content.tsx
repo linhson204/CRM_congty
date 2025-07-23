@@ -36,8 +36,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
 
   const { accessAcountRole, setAccessAcountRole }: any =
     useContext(AccessContext);
-    
-  console.log("accessAcountRole:", accessAcountRole); // Debug log
+
   useEffect(() => {
     const fetchDataType = async () => {
       const currentCookie = getToken("token_base365");
@@ -1059,12 +1058,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       content: "Phê duyệt bài viết",
     },
 
-    // {
-    //   img_link: "/crm/i_cds365.svg",
-    //   link: "https://hungha365.com/",
-    //   children: [],
-    //   content: "",
-    // },
+    
     {
       img_link: "/crm/re-expen.svg",
       link: "#",
@@ -1121,10 +1115,15 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
         ],
         content: "Tool facebook",
       },
+
+    {
+      img_link: "/crm/i_cds365.svg",
+      link: "https://hungha365.com/",
+      children: [],
+      content: "",
+    },
   ];
   
-  console.log("checkReceiver:", checkReceiver, "userType:", userType); // Debug log
-  console.log("sidebar_button_group_company length before:", sidebar_button_group_company.length); // Debug log
   
   checkReceiver &&
     userType <= 2 &&
@@ -1177,8 +1176,6 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       }
     );
 
-  console.log("sidebar_button_group_company length after:", sidebar_button_group_company.length); // Debug log
-  console.log("Last item:", sidebar_button_group_company[sidebar_button_group_company.length - 1]?.content); // Debug log
 
   const [infoRole, setInfoRole] = useState([]);
 
@@ -1214,7 +1211,6 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
           ? sidebar_button_group_company
           : sidebar_button_group
         )?.map((items: any, i) => {
-          console.log("Menu item:", items.content); // Debug log
           return (
           <>
             {/* {items?.role === "seen" ? ( */}
