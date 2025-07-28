@@ -207,6 +207,7 @@ function DangBaiPost() {
           postId: showCommentModal.toString(),
           URL: postUrl,
           authorName: userName,
+          commentId: Date.now().toString(), // id tạm thời theo thời gian gửi sau xóa đi
           authorId: userID,
           attachments: [],
           metadata: {
