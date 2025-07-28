@@ -44,119 +44,121 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
           
           return updatedPosts;
         });
-      } else if (data.type === 'comment') {
-        // Xử lý comment mới từ B
-        console.log('📨 Received new comment from B:', data);
-        console.log('Comment details:', {
-          postId: data.postId,
-          content: data.content,
-          commentFbId: data.commentFbId,
-          authorName: data.authorName,
-          timestamp: data.timestamp
-        });
+      } 
+    //   else if (data.type === 'comment_byB') {
+    //     // Xử lý comment mới từ B
+    //     console.log('📨 Received new comment from B:', data);
+    //     console.log('Comment details:', {
+    //       postId: data.postId,
+    //       content: data.content,
+    //       commentFbId: data.commentFbId,
+    //       authorName: data.authorName,
+    //       timestamp: data.timestamp
+    //     });
         
-        if (!data.postId || !data.content || !data.commentFbId) {
-          console.error('❌ Missing required fields in comment from B');
-          return;
-        }
+    //     if (!data.postId || !data.content || !data.commentFbId) {
+    //       console.error('❌ Missing required fields in comment from B');
+    //       return;
+    //     }
 
-        // Tạo comment mới từ dữ liệu nhận được từ B
-        const newCommentFromB: Comment = {
-          id: Date.now(), // Tạo ID tạm thời cho UI
-          content: data.content,
-          author: data.authorName || 'Facebook User',
-          authorId: data.authorId || 'facebook_user',
-          timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
-          replies: [],
-          id_facebookComment: data.commentFbId,
-          facebookCommentUrl: data.URL || ''
-        };
+    //     // Tạo comment mới từ dữ liệu nhận được từ B
+    //     const newCommentFromB: Comment = {
+    //       id: Date.now(), // Tạo ID tạm thời cho UI
+    //       content: data.content,
+    //       author: data.authorName || 'Facebook User',
+    //       authorId: data.authorId || 'facebook_user',
+    //       timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
+    //       replies: [],
+    //       id_facebookComment: data.commentFbId,
+    //       facebookCommentUrl: data.URL || ''
+    //     };
 
-        console.log('💭 Created comment object:', newCommentFromB);
+    //     console.log('💭 Created comment object:', newCommentFromB);
 
-        setPosts(prev => {
-          const targetPost = prev.find(post => post.id.toString() === data.postId.toString());
-          console.log(targetPost);
-          if (!targetPost) {
-            console.error('❌ No post found with ID:', data.postId);
-            console.log('Available post IDs:', prev.map(p => p.id.toString()));
-            return prev;
-          }
+    //     setPosts(prev => {
+    //       const targetPost = prev.find(post => post.id.toString() === data.postId.toString());
+    //       console.log(targetPost);
+    //       if (!targetPost) {
+    //         console.error('❌ No post found with ID:', data.postId);
+    //         console.log('Available post IDs:', prev.map(p => p.id.toString()));
+    //         return prev;
+    //       }
 
-          return prev.map(post => {
-            if (post.id.toString() === data.postId.toString()) {
-              console.log('✅ Adding new comment from B to post:', post.id);
-              const updatedPost = {
-                ...post,
-                comments: [...(post.comments || []), newCommentFromB]
-              };
-              console.log('Updated post comments count:', updatedPost.comments.length);
-              return updatedPost;
-            }
-            return post;
-          });
-        });
-      } else if (data.type === 'reply_comment') {
-        // Xử lý reply comment mới từ B
-        console.log('📨 Received new reply comment from B:', data);
-        console.log('Reply details:', {
-          postId: data.postId,
-          commentId: data.commentId,
-          content: data.content,
-          replyId: data.replyId,
-          authorName: data.authorName,
-          timestamp: data.timestamp
-        });
+    //       return prev.map(post => {
+    //         if (post.id.toString() === data.postId.toString()) {
+    //           console.log('✅ Adding new comment from B to post:', post.id);
+    //           const updatedPost = {
+    //             ...post,
+    //             comments: [...(post.comments || []), newCommentFromB]
+    //           };
+    //           console.log('Updated post comments count:', updatedPost.comments.length);
+    //           return updatedPost;
+    //         }
+    //         return post;
+    //       });
+    //     });
+    //   } else if (data.type === 'reply_comment_byB') {
+    //     // Xử lý reply comment mới từ B
+    //     console.log('📨 Received new reply comment from B:', data);
+    //     console.log('Reply details:', { 
+    //       postId: data.postId,
+    //       commentId: data.commentId,
+    //       content: data.content,
+    //       replyId: data.replyId,
+    //       authorName: data.authorName,
+    //       timestamp: data.timestamp
+    //     });
         
-        if (!data.postId || !data.commentId || !data.content) {
-          console.error('❌ Missing required fields in reply comment from B');
-          return;
-        }
+    //     if (!data.postId || !data.commentId || !data.content) {
+    //       console.error('❌ Missing required fields in reply comment from B');
+    //       return;
+    //     }
 
-        // Tạo reply mới từ dữ liệu nhận được từ B
-        const newReplyFromB: Reply = {
-          id: Date.now(), // Tạo ID tạm thời cho UI
-          content: data.content,
-          author: data.authorName || 'Facebook User',
-          authorId: data.authorId || 'facebook_user',
-          timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
-          id_facebookReply: data.replyId?.toString(),
-          facebookReplyUrl: ''
-        };
+    //     // Tạo reply mới từ dữ liệu nhận được từ B
+    //     const newReplyFromB: Reply = {
+    //       id: Date.now(), // Tạo ID tạm thời cho UI
+    //       content: data.content,
+    //       author: data.authorName || 'Facebook User',
+    //       authorId: data.authorId || 'facebook_user',
+    //       timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
+    //       id_facebookReply: data.replyId?.toString(),
+    //       facebookReplyUrl: ''
+    //     };
 
-        console.log('💭 Created reply object:', newReplyFromB);
+    //     console.log('💭 Created reply object:', newReplyFromB);
 
-        setPosts(prev => {
-          const targetPost = prev.find(post => post.id.toString() === data.postId?.toString());
-          if (!targetPost) {
-            console.error('❌ No post found with ID:', data.postId);
-            console.log('Available post IDs:', prev.map(p => p.id.toString()));
-            return prev;
-          }
+    //     setPosts(prev => {
+    //       const targetPost = prev.find(post => post.id.toString() === data.postId?.toString());
+    //       if (!targetPost) {
+    //         console.error('❌ No post found with ID:', data.postId);
+    //         console.log('Available post IDs:', prev.map(p => p.id.toString()));
+    //         return prev;
+    //       }
 
-          return prev.map(post => {
-            if (post.id.toString() === data.postId?.toString()) {
-              return {
-                ...post,
-                comments: post.comments?.map(comment => {
-                  // Tìm comment dựa trên Facebook comment ID
-                  if (comment.id_facebookComment === data.commentId?.toString()) {
-                    console.log('✅ Adding new reply from B to comment:', comment.id);
-                    const updatedComment = {
-                      ...comment,
-                      replies: [...(comment.replies || []), newReplyFromB]
-                    };
-                    console.log('Updated comment replies count:', updatedComment.replies.length);
-                    return updatedComment;
-                  }
-                  return comment;
-                }) || []
-              };
-            }
-            return post;
-          });
-        });
-      } else if (data.type === 'comment_result') {
+    //       return prev.map(post => {
+    //         if (post.id.toString() === data.postId?.toString()) {
+    //           return {
+    //             ...post,
+    //             comments: post.comments?.map(comment => {
+    //               // Tìm comment dựa trên Facebook comment ID
+    //               if (comment.id_facebookComment === data.commentId?.toString()) {
+    //                 console.log('✅ Adding new reply from B to comment:', comment.id);
+    //                 const updatedComment = {
+    //                   ...comment,
+    //                   replies: [...(comment.replies || []), newReplyFromB]
+    //                 };
+    //                 console.log('Updated comment replies count:', updatedComment.replies.length);
+    //                 return updatedComment;
+    //               }
+    //               return comment;
+    //             }) || []
+    //           };
+    //         }
+    //         return post;
+    //       });
+    //     });
+    //   } 
+      else if (data.type === 'comment_result') {
         console.log('💬 Updating comment with Facebook ID:', data.comment_id, 'and URL:', data.URL);
         
         if (!data.comment_id || !data.postId) {
@@ -165,15 +167,21 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
         }
         
         setPosts(prev => {
+          console.log("1")
           const updatedPosts = prev.map(post => {
-            if (post.id.toString() === data.postId) {
+            console.log("2")
+            if (post.id.toString() === data.postId.toString()) {
+              console.log("3")
               const updatedComments = post.comments?.map(comment => {
+                console.log("4")
                 if (comment.content === data.content && !comment.id_facebookComment) {
+                  console.log("5")
                   console.log('✅ Found and updating comment:', comment.id, '→', data.comment_id);
                   return {
                     ...comment,
                     id_facebookComment: data.comment_id,
-                    facebookCommentUrl: data.URL ? (data.URL + '?comment_id=' + data.comment_id) : ''
+                    // facebookCommentUrl: data.URL ? (data.URL + '?comment_id=' + data.comment_id) : ''
+                    facebookCommentUrl: data.URL,
                   };
                 }
                 return comment;
@@ -199,7 +207,7 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
         
         setPosts(prev => {
           return prev.map(post => {
-            if (post.id.toString() === data.postId) {
+            if (post.id.toString() === data.postId.toString()) {
               return {
                 ...post,
                 comments: post.comments?.map(comment => {
@@ -236,7 +244,7 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
         
         setPosts(prev => {
           return prev.map(post => {
-            if (post.id.toString() === data.postId) {
+            if (post.id.toString() === data.postId.toString()) {
               return {
                 ...post,
                 comments: post.comments?.map(comment => {

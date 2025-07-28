@@ -178,7 +178,6 @@ function DangBaiPost() {
       const userID = Cookies.get('userId') || 'anonymous';
       const newComment: Comment = {
         id: Date.now(),
-        id_facebookComment: Date.now().toString(),
         content: commentContent,
         author: userName,
         authorId: userID,
@@ -198,16 +197,15 @@ function DangBaiPost() {
       if (websocket && websocket.readyState === WebSocket.OPEN) {
         // Tìm bài đăng tương ứng để lấy URL
         // Lấy URL comment Facebook nếu có
-        let commentUrl = '';
+        let postUrl = '';
         const currentPost = posts.find(post => post.id === showCommentModal);
-        commentUrl = currentPost.facebookUrl;
+        postUrl = currentPost.facebookUrl ;
        
         const commentData = {
           type: 'comment',
           content: commentContent,
           postId: showCommentModal.toString(),
-          id_facebookComment: Date.now().toString(),
-          URL: commentUrl,
+          URL: postUrl,
           authorName: userName,
           authorId: userID,
           attachments: [],
