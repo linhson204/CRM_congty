@@ -421,7 +421,15 @@ function DangBaiPost() {
           //   size: 123456,
           //   url: image
           // })),
-          attachments: [],
+          // attachments: [
+          //   {
+          //     name: 'image_1.jpg',
+          //     type: 'image/jpeg',
+          //     size: 123456, // dung lượng file (byte)
+          //     url: 'https://cdn-media.sforum.vn/storage/app/media/anh-dep-16.jpg' // hoặc link ảnh thực tế
+          //   },
+          // ],
+          attachments:[],
           metadata: {
             category: 'job_posting',
             source: 'crm_tool',

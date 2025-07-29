@@ -31,7 +31,9 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
               return {
                 ...post,
                 facebookUrl: data.URL,
-                isPosted: true
+                isPosted: true,
+                // Cập nhật tên tác giả nếu có thông tin từ B
+                ...(data.authorName && { author: data.authorName })
               };
             }
             return post;
@@ -180,6 +182,8 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
                     id_facebookComment: data.comment_id,
                     // facebookCommentUrl: data.URL ? (data.URL + '?comment_id=' + data.comment_id) : ''
                     facebookCommentUrl: data.URL,
+                    // Cập nhật tên tác giả nếu có thông tin từ B
+                    ...(data.authorName && { author: data.authorName })
                   };
                 }
                 return comment;
@@ -218,7 +222,9 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
                           return {
                             ...reply,
                             id_facebookReply: data.replyId?.toString(),
-                            facebookReplyUrl: data.URL || ''
+                            facebookReplyUrl: data.URL || '',
+                            // Cập nhật tên tác giả nếu có thông tin từ B
+                            ...(data.authorName && { author: data.authorName })
                           };
                         }
                         return reply;
@@ -255,7 +261,9 @@ export const useWebSocket = (posts: Post[], setPosts: React.Dispatch<React.SetSt
                           return {
                             ...reply,
                             id_facebookReply: data.replyId?.toString(),
-                            facebookReplyUrl: data.URL || ''
+                            facebookReplyUrl: data.URL || '',
+                            // Cập nhật tên tác giả nếu có thông tin từ B
+                            ...(data.authorName && { author: data.authorName })
                           };
                         }
                         return reply;

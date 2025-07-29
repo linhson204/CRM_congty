@@ -43,7 +43,7 @@ export interface ShowReplyModal {
 }
 
 export interface WebSocketData {
-  type: 'post_sent' | 'URL_post' | 'comment' | 'reply_comment' | 'comment_result' | 'reply_comment_result' | 'reply_reply_comment_result';
+  type: 'post_sent' | 'URL_post' | 'comment' | 'reply_comment' | 'comment_byB' | 'reply_comment_byB' | 'comment_result' | 'reply_comment_result' | 'reply_reply_comment_result';
   postId?: string;
   URL?: string;
   authorName?: string;
