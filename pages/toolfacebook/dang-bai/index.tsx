@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import Cookies from "js-cookie";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import jwt_decode from "jwt-decode";
 import styleHome from "@/components/crm/home/home.module.css";
 import styles from "@/components/crm/potential/potential.module.css";
 import stylesContract from "@/components/crm/contract/contract_action.module.css";
 import { SidebarContext } from "@/components/crm/context/resizeContext";
 import { useHeader } from "@/components/crm/hooks/useHeader";
+import { getPostbyUserId } from "../../api/toolFacebook/dang-bai/dang-bai";
+import { getCommentByPostId } from "../../api/toolFacebook/dang-bai/comment";
 
 // Import types and components
 import {
@@ -22,87 +26,279 @@ import { PostItem } from "@/components/toolFacebook/dangbai/components/PostItem"
 import customStyles from "@/components/toolFacebook/dangbai/styles/styles.module.css";
 
 function DangBaiPost() {
+  const router = useRouter();
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
   const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =
     useHeader();
 
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: 1,
-      content: "Đây là bài đăng mẫu đầu tiên về việc làm tại công ty.",
-      author: "Nguyễn Văn A",
-      authorId: "user123",
-      timestamp: "2024-01-20 10:30:00",
-      images: [],
-      comments: [
-        {
-          id: 1,
-          id_facebookComment: "1",
-          content: "Bài viết rất hay!",
-          author: "Trần Văn B",
-          authorId: "user789",
-          timestamp: "2024-01-20 11:00:00",
-          replies: [
-            {
-              id: 1,
-              content: "Cảm ơn bạn!",
-              author: "Nguyễn Văn A",
-              authorId: "user123",
-              timestamp: "2024-01-20 11:15:00",
-            },
-          ],
-        },
-      ],
-      likes: 5,
-      facebookUrl: "https://www.facebook.com/sample/posts/123456789",
-      isPosted: true,
-    },
-    {
-      id: 2,
-      content:
-        "Chúng tôi đang tuyển dụng các vị trí lập trình viên với mức lương hấp dẫn.",
-      author: "Trần Thị B",
-      authorId: "user456",
-      timestamp: "2024-01-19 15:45:00",
-      images: [],
-      comments: [
-        {
-          id: 2,
-          id_facebookComment: "2",
-          content: "Công ty có cần thực tập sinh không ạ?",
-          author: "Lê Thị C",
-          authorId: "user999",
-          timestamp: "2024-01-19 16:00:00",
-          replies: [
-            {
-              id: 2,
-              content:
-                "Có bạn ơi, bạn có thể nộp hồ sơ qua email HR@company.com",
-              author: "Trần Thị B",
-              authorId: "user456",
-              timestamp: "2024-01-19 16:30:00",
-            },
-            {
-              id: 3,
-              content: "Cảm ơn chị ạ!",
-              author: "Lê Thị C",
-              authorId: "user999",
-              timestamp: "2024-01-19 16:45:00",
-            },
-          ],
-        },
-      ],
-      likes: 12,
-      facebookUrl: "https://www.facebook.com/sample/posts/987654321",
-      isPosted: true,
-    },
-  ]);
+  // States cho kiểm tra quyền
+  const [hasPermission, setHasPermission] = useState(false);
+  const [isCheckingPermission, setIsCheckingPermission] = useState(true);
+
+  // Danh sách ID được phép truy cập trang Tool Facebook
+  const ALLOWED_USER_IDS = [
+    "user123",
+    "user456",
+    "user789",
+    "admin001",
+    "manager002",
+    "22858640",
+    // Thêm các ID được phép vào đây
+  ];
+
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+
+  // Function để convert dữ liệu từ API sang format của component
+  const convertApiPostToComponentPost = (apiPost: any): Post => {
+    return {
+      idMongodb: apiPost._id,
+      id: parseInt(apiPost.facebookPostId) || Date.now(), // Sử dụng facebookPostId làm id
+      to: apiPost.facebookId || "B22858640",
+      content: apiPost.content,
+      author: apiPost.userNameFacebook || "Người dùng",
+      authorId: apiPost.userId,
+      timestamp: apiPost.createdAt
+        ? new Date(apiPost.createdAt * 1000).toLocaleString("vi-VN")
+        : new Date().toLocaleString("vi-VN"),
+      images:
+        apiPost.media?.map((media: any) => media.url) ||
+        apiPost.attachments?.map((att: any) => att.url) ||
+        [],
+      comments: [], // Sẽ được load sau nếu cần
+      facebookUrl: apiPost.facebookPostUrl,
+      isPosted: !!apiPost.facebookPostUrl, // Nếu có URL thì đã post thành công
+    };
+  };
+
+  // Function để convert comment từ API sang format của component
+  const convertApiCommentToComponentComment = (apiComment: any): Comment => {
+    return {
+      idMongodb: apiComment._id,
+      id: parseInt(apiComment.facebookCommentId) || Date.now(),
+      to: apiComment.facebookId || "B22858640",
+      postId: parseInt(apiComment.postId),
+      content: apiComment.content,
+      userLinkFb: apiComment.userLinkFb || "",
+      author: apiComment.userNameFacebook || "Facebook User",
+      authorId: apiComment.userId || "facebook_user",
+      timestamp: apiComment.createdAt
+        ? new Date(apiComment.createdAt * 1000).toLocaleString("vi-VN")
+        : new Date().toLocaleString("vi-VN"),
+      replies: [], // TODO: Load replies nếu có API
+      id_facebookComment: apiComment.facebookCommentId,
+      facebookCommentUrl: apiComment.facebookCommentUrl || "",
+    };
+  };
+
+  // Function để load comments cho từng post
+  const loadCommentsForPost = async (post: Post) => {
+    try {
+      const userID = Cookies.get("userID") || "anonymous";
+      const facebookId = "B22858640"; // Fixed facebookId
+
+      console.log(
+        `Loading comments for post ${post.id}, facebookId: ${facebookId}, userId: ${userID}`
+      );
+
+      const response = await getCommentByPostId(
+        post.id.toString(),
+        userID,
+        facebookId
+      );
+
+      console.log("🔍 Raw API response for post", post.id, ":", response);
+
+      if (response.results) {
+        console.log("✅ API returned data:", response.results);
+        const comments = response.results.map(
+          convertApiCommentToComponentComment
+        );
+        console.log("✅ Converted comments:", comments);
+        console.log(`Loaded ${comments.length} comments for post ${post.id}`);
+
+        // Update post với comments
+        setPosts((prevPosts) => {
+          console.log(
+            "🔄 Before updating posts with comments:",
+            prevPosts.map((p) => ({
+              id: p.id,
+              commentsCount: p.comments?.length || 0,
+            }))
+          );
+
+          const updatedPosts = prevPosts.map((p) => {
+            if (p.id === post.id) {
+              console.log(
+                `✅ Updating post ${p.id} with ${comments.length} comments`
+              );
+              return { ...p, comments };
+            }
+            return p;
+          });
+
+          console.log(
+            "🔄 After updating posts with comments:",
+            updatedPosts.map((p) => ({
+              id: p.id,
+              commentsCount: p.comments?.length || 0,
+            }))
+          );
+
+          return updatedPosts;
+        });
+      } else {
+        console.log(
+          `❌ No comments found for post ${post.id}. Response:`,
+          response
+        );
+      }
+    } catch (error) {
+      console.error(`Error loading comments for post ${post.id}:`, error);
+    }
+  };
+
+  // Function để load comments cho tất cả posts
+  const loadCommentsForAllPosts = async (postsToLoad: Post[]) => {
+    try {
+      console.log(`Loading comments for ${postsToLoad.length} posts`);
+
+      // Load comments cho từng post tuần tự để tránh quá tải
+      for (const post of postsToLoad) {
+        if (post.isPosted) {
+          // Chỉ load comments cho posts đã được post thành công
+          await loadCommentsForPost(post);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading comments for posts:", error);
+    }
+  };
+
+  // Function để refresh comments cho một post cụ thể (dùng từ WebSocket)
+  const refreshCommentsForPost = async (postId: string | number) => {
+    try {
+      const post = posts.find((p) => p.id.toString() === postId.toString());
+      if (post && post.isPosted) {
+        console.log(`🔄 Refreshing comments for post ${postId}`);
+        await loadCommentsForPost(post);
+      }
+    } catch (error) {
+      console.error(`Error refreshing comments for post ${postId}:`, error);
+    }
+  };
+
+  // Function để fetch posts từ API
+  const fetchUserPosts = async (userId: string) => {
+    setIsLoadingPosts(true);
+    try {
+      console.log("🔄 Fetching posts for user:", userId);
+      const response = await getPostbyUserId(userId, "B22858640");
+
+      if (response && response.results) {
+        const convertedPosts = response.results.map(
+          convertApiPostToComponentPost
+        );
+        console.log("✅ Fetched posts:", convertedPosts);
+        setPosts(convertedPosts);
+
+        // Load comments cho tất cả posts sau khi load xong posts
+        setTimeout(async () => {
+          console.log("🔄 Loading comments for all posts...");
+          await loadCommentsForAllPosts(convertedPosts);
+        }, 500); // Delay nhỏ để UI render trước
+      } else {
+        console.warn("⚠️ No posts found or invalid response");
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching posts:", error);
+      // Giữ posts hiện tại nếu có lỗi
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  };
+  //   [
+  //   {
+  //     id: 1,
+  //     to: "1234596",
+  //     content: "Đây là bài đăng mẫu đầu tiên về việc làm tại công ty.",
+  //     author: "Nguyễn Văn A",
+  //     authorId: "user123",
+  //     timestamp: "2024-01-20 10:30:00",
+  //     images: [],
+  //     comments: [
+  //       {
+  //         id: 1,
+  //         id_facebookComment: "1",
+  //         content: "Bài viết rất hay!",
+  //         author: "Trần Văn B",
+  //         authorId: "user789",
+  //         timestamp: "2024-01-20 11:00:00",
+  //         replies: [
+  //           {
+  //             id: 1,
+  //             content: "Cảm ơn bạn!",
+  //             author: "Nguyễn Văn A",
+  //             authorId: "user123",
+  //             timestamp: "2024-01-20 11:15:00",
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //     likes: 5,
+  //     facebookUrl: "https://www.facebook.com/sample/posts/123456789",
+  //     isPosted: true,
+  //   },
+  //   {
+  //     id: 2,
+  //     content:
+  //       "Chúng tôi đang tuyển dụng các vị trí lập trình viên với mức lương hấp dẫn.",
+  //     author: "Trần Thị B",
+  //     to: "1234596",
+  //     authorId: "user456",
+  //     timestamp: "2024-01-19 15:45:00",
+  //     images: [],
+  //     comments: [
+  //       {
+  //         id: 2,
+  //         id_facebookComment: "2",
+  //         content: "Công ty có cần thực tập sinh không ạ?",
+  //         author: "Lê Thị C",
+  //         authorId: "user999",
+  //         timestamp: "2024-01-19 16:00:00",
+  //         replies: [
+  //           {
+  //             id: 2,
+  //             content:
+  //               "Có bạn ơi, bạn có thể nộp hồ sơ qua email HR@company.com",
+  //             author: "Trần Thị B",
+  //             authorId: "user456",
+  //             timestamp: "2024-01-19 16:30:00",
+  //           },
+  //           {
+  //             id: 3,
+  //             content: "Cảm ơn chị ạ!",
+  //             author: "Lê Thị C",
+  //             authorId: "user999",
+  //             timestamp: "2024-01-19 16:45:00",
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //     likes: 12,
+  //     facebookUrl: "https://www.facebook.com/sample/posts/987654321",
+  //     isPosted: true,
+  //   },
+  // ]
 
   const [showModal, setShowModal] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [showCommentModal, setShowCommentModal] = useState<number | null>(null);
+  const [currentPostForComment, setCurrentPostForComment] =
+    useState<Post | null>(null);
   const [commentContent, setCommentContent] = useState("");
   const [showReplyModal, setShowReplyModal] = useState<ShowReplyModal | null>(
     null
@@ -110,13 +306,59 @@ function DangBaiPost() {
   const [replyContent, setReplyContent] = useState("");
 
   // Use WebSocket hook
-  const websocket = useWebSocket(posts, setPosts);
+  const websocket = useWebSocket(posts, setPosts, refreshCommentsForPost);
+
+  // Kiểm tra quyền truy cập và fetch posts
+  useEffect(() => {
+    const checkPermission = async () => {
+      try {
+        const token_base365 = Cookies.get("token_base365");
+        const userID = Cookies.get("userID");
+
+        if (!token_base365 || !userID) {
+          window.alert("Bạn chưa đăng nhập!");
+          router.push("/");
+          return;
+        }
+
+        // Kiểm tra userID có trong danh sách được phép không
+        if (!ALLOWED_USER_IDS.includes(userID)) {
+          window.alert("Bạn không có quyền truy cập trang Tool Facebook!");
+          router.push("/");
+          return;
+        }
+
+        // Nếu muốn kiểm tra thêm thông tin từ token
+        const decodedToken: any = await jwt_decode(token_base365);
+        console.log("User có quyền truy cập Tool Facebook:", {
+          userID: userID,
+          tokenData: decodedToken?.data,
+          hasPermission: true,
+        });
+
+        setHasPermission(true);
+
+        // Fetch posts sau khi verify permission thành công
+        await fetchUserPosts(userID);
+      } catch (error) {
+        console.error("Lỗi kiểm tra quyền:", error);
+        window.alert("Có lỗi xảy ra khi kiểm tra quyền!");
+        router.push("/");
+      } finally {
+        setIsCheckingPermission(false);
+      }
+    };
+
+    checkPermission();
+  }, [router]);
 
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Đăng bài");
-    setShowBackButton(false);
-    setCurrentPath("/toolfacebook/dang-bai");
-  }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
+    if (hasPermission) {
+      setHeaderTitle("Tool Facebook - Đăng bài");
+      setShowBackButton(false);
+      setCurrentPath("/toolfacebook/dang-bai");
+    }
+  }, [setHeaderTitle, setShowBackButton, setCurrentPath, hasPermission]);
 
   useEffect(() => {
     if (isOpen) {
@@ -125,6 +367,40 @@ function DangBaiPost() {
       mainRef.current?.classList.remove("content_resize");
     }
   }, [isOpen]);
+
+  // Hiển thị loading khi đang kiểm tra quyền
+  if (isCheckingPermission) {
+    return (
+      <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="robots" content="noindex,nofollow" />
+          <title>Tool Facebook - Đăng bài</title>
+        </Head>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            fontSize: "16px",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <div>Đang kiểm tra quyền truy cập...</div>
+          <div style={{ fontSize: "12px", color: "#666" }}>
+            Tool Facebook - Đăng bài
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Không hiển thị gì nếu không có quyền (đã chuyển hướng)
+  if (!hasPermission) {
+    return null;
+  }
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -160,16 +436,16 @@ function DangBaiPost() {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleLike = (postId: number) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId ? { ...post, likes: (post.likes || 0) + 1 } : post
-      )
-    );
+  const handleComment = (post: Post) => {
+    setShowCommentModal(post.id);
+    setCurrentPostForComment(post); // Lưu thông tin post hiện tại
+    console.log("Opening comment modal for post:", post);
+    setCommentContent("");
   };
 
-  const handleComment = (postId: number) => {
-    setShowCommentModal(postId);
+  const handleCloseCommentModal = () => {
+    setShowCommentModal(null);
+    setCurrentPostForComment(null);
     setCommentContent("");
   };
 
@@ -196,42 +472,47 @@ function DangBaiPost() {
       setReplyContent("");
   };
 
-  const submitComment = () => {
-    if (commentContent.trim() && showCommentModal) {
+  const submitComment = (post: Post) => {
+    if (commentContent.trim() && showCommentModal && currentPostForComment) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
       const newComment: Comment = {
         id: Date.now(),
+        to: "B22858640",
+        userLinkFb: "sadnfjdsf",
+        postId: post.id,
         content: commentContent,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
         replies: [],
       };
+
+      console.log("Creating comment for post:", {
+        postId: post.id,
+        postAuthor: post.author,
+        commentContent: commentContent,
+        commentAuthor: userName,
+      });
+
       setPosts((prev) =>
-        prev.map((post) =>
-          post.id === showCommentModal
+        (prev || []).map((p) =>
+          p.id === post.id
             ? {
-                ...post,
-                comments: [...(post.comments || []), newComment],
+                ...p,
+                comments: [...(p.comments || []), newComment],
               }
-            : post
+            : p
         )
       );
 
       // Gửi comment qua websocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
-        // Tìm bài đăng tương ứng để lấy URL
-        // Lấy URL comment Facebook nếu có
-        let postUrl = "";
-        const currentPost = posts.find((post) => post.id === showCommentModal);
-        postUrl = currentPost.facebookUrl;
-
         const commentData = {
           type: "comment",
           content: commentContent,
-          postId: showCommentModal.toString(),
-          URL: postUrl,
+          postId: post.id.toString(),
+          URL: post.facebookUrl || "",
           to: "B22858640",
           authorName: userName,
           commentId: Date.now().toString(), // id tạm thời theo thời gian gửi sau xóa đi
@@ -250,6 +531,7 @@ function DangBaiPost() {
       }
 
       setShowCommentModal(null);
+      setCurrentPostForComment(null);
       setCommentContent("");
     }
   };
@@ -262,6 +544,7 @@ function DangBaiPost() {
       const newReply: Reply = {
         id: Date.now(),
         content: replyContent, // Chỉ lưu content thuần, không ghép @tên
+        to: "B22858640",
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
@@ -269,7 +552,7 @@ function DangBaiPost() {
       };
 
       setPosts((prev) =>
-        prev.map((post) =>
+        (prev || []).map((post) =>
           post.id === showReplyModal.postId
             ? {
                 ...post,
@@ -290,7 +573,7 @@ function DangBaiPost() {
       if (websocket && websocket.readyState === WebSocket.OPEN) {
         // Tìm comment cha để lấy facebookCommentUrl nếu có
         let commentUrl = "";
-        const currentPost = posts.find(
+        const currentPost = (posts || []).find(
           (post) => post.id === showReplyModal.postId
         );
         if (
@@ -356,6 +639,7 @@ function DangBaiPost() {
       const newReply: Reply = {
         id: Date.now(),
         content: replyContent,
+        to: "B22858640",
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
@@ -363,7 +647,7 @@ function DangBaiPost() {
       };
 
       setPosts((prev) =>
-        prev.map((post) =>
+        (prev || []).map((post) =>
           post.id === showReplyModal.postId
             ? {
                 ...post,
@@ -386,11 +670,11 @@ function DangBaiPost() {
         let facebookReplyId = "";
         let facebookCommentId = "";
         let facebookReplyURL = "";
-        const currentPost = posts.find(
+        const currentPost = (posts || []).find(
           (post) => post.id === showReplyModal.postId
         );
         if (currentPost && currentPost.comments) {
-          // Tìm comment cha theo id (có thể là number hoặc string)
+          // Tìm comment cha theo id (có thể là string hoặc string)
           const parentComment = currentPost.comments.find((comment) => {
             return (
               comment.id_facebookComment === showReplyModal.facebookCommentId
@@ -447,19 +731,19 @@ function DangBaiPost() {
       // Tạo bài đăng mới
       const newPost: Post = {
         id: Date.now(),
+        to: "B22858640",
         content: postContent,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
         images: selectedImages,
         comments: [],
-        likes: 0,
         facebookUrl: undefined,
         isPosted: false,
       };
 
-      // Thêm bài đăng vào danh sách
-      setPosts((prevPosts) => [newPost, ...prevPosts]);
+      // Thêm bài đăng vào đầu danh sách
+      setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
 
       // Gửi dữ liệu qua WebSocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -470,20 +754,6 @@ function DangBaiPost() {
           authorName: userName,
           authorId: userID,
           to: "B22858640",
-          // attachments: selectedImages.map((image, index) => ({
-          //   name: `image_${index + 1}.jpg`,
-          //   type: "image/jpeg",
-          //   size: B22858640,
-          //   url: image
-          // })),
-          // attachments: [
-          //   {
-          //     name: 'image_1.jpg',
-          //     type: 'image/jpeg',
-          //     size: B22858640, // dung lượng file (byte)
-          //     url: 'https://cdn-media.sforum.vn/storage/app/media/anh-dep-16.jpg' // hoặc link ảnh thực tế
-          //   },
-          // ],
           attachments: [],
           metadata: {
             category: "job_posting",
@@ -567,32 +837,95 @@ function DangBaiPost() {
                     >
                       Danh sách bài đăng
                     </h2>
-                    <span
+                    <div
                       style={{
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        padding: "4px 12px",
-                        borderRadius: "12px",
-                        fontSize: "12px",
-                        fontWeight: "500",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
                       }}
                     >
-                      {posts.length} bài
-                    </span>
+                      <button
+                        onClick={() => {
+                          const userID = Cookies.get("userID");
+                          if (userID) {
+                            fetchUserPosts(userID);
+                          }
+                        }}
+                        style={{
+                          background: "none",
+                          border: "1px solid #007bff",
+                          color: "#007bff",
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                        disabled={isLoadingPosts}
+                      >
+                        ↻ Làm mới
+                      </button>
+                      {isLoadingPosts && (
+                        <span style={{ fontSize: "12px", color: "#666" }}>
+                          Đang tải...
+                        </span>
+                      )}
+                      <span
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "4px 12px",
+                          borderRadius: "12px",
+                          fontSize: "12px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {posts?.length || 0} bài
+                      </span>
+                    </div>
                   </div>
 
                   {/* Render posts using PostItem component */}
                   <div>
-                    {posts.map((post) => (
-                      <PostItem
-                        key={post.id}
-                        post={post}
-                        formatTimestamp={formatTimestamp}
-                        handleLike={handleLike}
-                        handleComment={handleComment}
-                        handleReply={handleReply}
-                      />
-                    ))}
+                    {isLoadingPosts ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "40px",
+                          color: "#666",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Đang tải danh sách bài đăng...
+                      </div>
+                    ) : posts && posts.length > 0 ? (
+                      posts.map((post) => (
+                        <PostItem
+                          key={post.id}
+                          post={post}
+                          formatTimestamp={formatTimestamp}
+                          handleComment={handleComment}
+                          handleReply={handleReply}
+                        />
+                      ))
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "40px",
+                          color: "#666",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Chưa có bài đăng nào. Hãy tạo bài đăng đầu tiên!
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -619,8 +952,9 @@ function DangBaiPost() {
         showCommentModal={showCommentModal}
         commentContent={commentContent}
         setCommentContent={setCommentContent}
-        setShowCommentModal={setShowCommentModal}
+        setShowCommentModal={handleCloseCommentModal}
         submitComment={submitComment}
+        post={currentPostForComment}
       />
 
       {/* Reply Modal */}

@@ -1,58 +1,74 @@
-import React from 'react';
-import { Post } from '../types';
-import styles from '../styles/styles.module.css';
+import React from "react";
+import { Post } from "../types";
+import styles from "../styles/styles.module.css";
+import { PostfixUnaryExpression } from "typescript";
 
 interface PostItemProps {
   post: Post;
   formatTimestamp: (timestamp: string) => string;
-  handleLike: (postId: number) => void;
-  handleComment: (postId: number) => void;
-  handleReply: (postId: number, commentId: number, replyToAuthor?: string, replyId?: any, facebookCommentId?: string, facebookReplyId?: string) => void;
+  // handleComment: (postId: number) => void;
+  handleComment: (post: Post) => void;
+  handleReply: (
+    postId: number,
+    commentId: number,
+    replyToAuthor?: string,
+    replyId?: any,
+    facebookCommentId?: string,
+    facebookReplyId?: string
+  ) => void;
 }
 
 export const PostItem: React.FC<PostItemProps> = ({
   post,
   formatTimestamp,
-  handleLike,
   handleComment,
-  handleReply
+  handleReply,
 }) => {
+  // Debug: Log comments cho post này
+  console.log(`🎯 PostItem render for post ${post.id}:`, {
+    postId: post.id,
+    hasComments: !!post.comments,
+    commentsLength: post.comments?.length || 0,
+    comments: post.comments,
+  });
+
   return (
     <div className={styles.postContainer}>
-      
       <div className={styles.postHeader}>
         <div className={styles.authorInfo}>
-          <div className={styles.authorAvatar}>
-            {post.author.charAt(0)}
-          </div>
+          <div className={styles.authorAvatar}>{post.author.charAt(0)}</div>
           <div>
-            <div className={styles.authorName}>
-              {post.author}
-            </div>
-            <div className={styles.authorId}>
-              ID: {post.authorId}
-            </div>
+            <div className={styles.authorName}>{post.author}</div>
+            <div className={styles.authorId}>ID: {post.authorId}</div>
           </div>
         </div>
-        
+
         <div className={styles.timestamp}>
           {formatTimestamp(post.timestamp)}
         </div>
       </div>
-      
-      <div className={styles.postContent}>
-        {post.content}
-      </div>
+
+      <div className={styles.postContent}>{post.content}</div>
 
       {/* Hiển thị ảnh */}
       {post.images && post.images.length > 0 && (
-        <div className={`${styles.imageGrid} ${post.images.length === 1 ? styles.imageGridSingle : styles.imageGridMultiple}`}>
+        <div
+          className={`${styles.imageGrid} ${
+            post.images.length === 1
+              ? styles.imageGridSingle
+              : styles.imageGridMultiple
+          }`}
+        >
           {post.images.map((image, index) => (
             <img
               key={index}
               src={image}
               alt={`Ảnh ${index + 1}`}
-              className={`${styles.postImage} ${post.images!.length === 1 ? styles.postImageSingle : styles.postImageMultiple}`}
+              className={`${styles.postImage} ${
+                post.images!.length === 1
+                  ? styles.postImageSingle
+                  : styles.postImageMultiple
+              }`}
             />
           ))}
         </div>
@@ -62,15 +78,8 @@ export const PostItem: React.FC<PostItemProps> = ({
       <div className={styles.actionsContainer}>
         <div className={styles.actionButtons}>
           <button
-            onClick={() => handleLike(post.id)}
-            className={`${styles.actionButton} ${styles.likeButton}`}
-          >
-            <span>👍</span>
-            <span>{post.likes || 0}</span>
-          </button>
-          
-          <button
-            onClick={() => handleComment(post.id)}
+            // onClick={() => handleComment(post.id)}
+            onClick={() => handleComment(post)}
             className={`${styles.actionButton} ${styles.commentButton}`}
           >
             <span>💬</span>
@@ -88,17 +97,13 @@ export const PostItem: React.FC<PostItemProps> = ({
           {post.comments.map((comment) => (
             <div key={comment.id} className={styles.commentItem}>
               <div className={styles.commentHeader}>
-                <span className={styles.commentAuthor}>
-                  {comment.author}
-                </span>
+                <span className={styles.commentAuthor}>{comment.author}</span>
                 <span className={styles.commentTimestamp}>
                   {formatTimestamp(comment.timestamp)}
                 </span>
               </div>
-              <div className={styles.commentContent}>
-                {comment.content}
-              </div>
-              
+              <div className={styles.commentContent}>{comment.content}</div>
+
               {/* Nút phản hồi */}
               <button
                 onClick={() => handleReply(post.id, comment.id, comment.author)}
@@ -126,18 +131,25 @@ export const PostItem: React.FC<PostItemProps> = ({
                             <div className={styles.replyMention}>
                               @{reply.replyToAuthor}
                             </div>
-                            <div>
-                              {reply.content}
-                            </div>
+                            <div>{reply.content}</div>
                           </>
                         ) : (
                           <div>{reply.content}</div>
                         )}
                       </div>
-                      
+
                       {/* Nút phản hồi cho reply */}
                       <button
-                        onClick={() => { handleReply(post.id, comment.id, reply.author, reply.id, comment.id_facebookComment, reply.id_facebookReply); }}
+                        onClick={() => {
+                          handleReply(
+                            post.id,
+                            comment.id,
+                            reply.author,
+                            reply.id,
+                            comment.id_facebookComment,
+                            reply.id_facebookReply
+                          );
+                        }}
                         className={styles.replyToReplyButton}
                       >
                         Phản hồi
@@ -150,17 +162,19 @@ export const PostItem: React.FC<PostItemProps> = ({
           ))}
         </div>
       )}
-      
+
       <div className={styles.statusContainer}>
         <div className={styles.statusTags}>
-          <span className={styles.facebookTag}>
-            Facebook
-          </span>
-          <span className={`${styles.statusTag} ${post.isPosted ? styles.statusPosted : styles.statusProcessing}`}>
-            {post.isPosted ? 'Đã đăng' : 'Đang xử lý...'}
+          <span className={styles.facebookTag}>Facebook</span>
+          <span
+            className={`${styles.statusTag} ${
+              post.isPosted ? styles.statusPosted : styles.statusProcessing
+            }`}
+          >
+            {post.isPosted ? "Đã đăng" : "Đang xử lý..."}
           </span>
         </div>
-        
+
         {/* Link Facebook nếu có */}
         {post.facebookUrl && (
           <a

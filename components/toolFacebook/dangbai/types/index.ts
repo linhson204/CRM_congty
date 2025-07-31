@@ -1,6 +1,7 @@
 export interface Reply {
   id: number;
   content: string;
+  to: string;
   author: string;
   authorId: string;
   timestamp: string;
@@ -10,8 +11,12 @@ export interface Reply {
 }
 
 export interface Comment {
+  idMongodb?: string;
   id: number;
+  to: string;
+  postId: number;
   content: string;
+  userLinkFb: string;
   author: string;
   authorId: string;
   timestamp: string;
@@ -21,14 +26,15 @@ export interface Comment {
 }
 
 export interface Post {
+  idMongodb?: string;
   id: number;
   content: string;
+  to: string;
   author: string;
   authorId: string;
   timestamp: string;
   images?: string[];
   comments?: Comment[];
-  likes?: number;
   facebookUrl?: string;
   isPosted: boolean;
 }
@@ -43,7 +49,16 @@ export interface ShowReplyModal {
 }
 
 export interface WebSocketData {
-  type: 'post_sent' | 'URL_post' | 'comment' | 'reply_comment' | 'comment_byB' | 'reply_comment_byB' | 'comment_result' | 'reply_comment_result' | 'reply_reply_comment_result';
+  type:
+    | "post_sent"
+    | "URL_post"
+    | "comment"
+    | "reply_comment"
+    | "comment_byB"
+    | "reply_comment_byB"
+    | "comment_result"
+    | "reply_comment_result"
+    | "reply_reply_comment_result";
   postId?: string;
   URL?: string;
   authorName?: string;
