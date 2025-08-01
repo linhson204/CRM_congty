@@ -8,7 +8,14 @@ import styles from "@/components/crm/potential/potential.module.css";
 import stylesContract from "@/components/crm/contract/contract_action.module.css";
 import { SidebarContext } from "@/components/crm/context/resizeContext";
 import { useHeader } from "@/components/crm/hooks/useHeader";
-import { getPostbyUserId } from "../../api/toolFacebook/dang-bai/dang-bai";
+import {
+  getPostbyUserId,
+  createPost,
+} from "../../api/toolFacebook/dang-bai/dang-bai";
+import {
+  uploadImage,
+  deleteImage,
+} from "../../api/toolFacebook/dang-bai/upload";
 import { getCommentByPostId } from "../../api/toolFacebook/dang-bai/comment";
 
 // Import types and components
@@ -52,6 +59,32 @@ function DangBaiPost() {
 
   // Function để convert dữ liệu từ API sang format của component
   const convertApiPostToComponentPost = (apiPost: any): Post => {
+    // Convert images từ API response
+    let convertedImages: { name: string; url: string }[] = [];
+
+    if (apiPost.media && Array.isArray(apiPost.media)) {
+      convertedImages = apiPost.media.map((media: any) => ({
+        name: media.name || media.filename || "image",
+        url: media.url || media.link,
+      }));
+    } else if (apiPost.attachments && Array.isArray(apiPost.attachments)) {
+      convertedImages = apiPost.attachments.map((att: any) => ({
+        name: att.name || att.filename || "image",
+        url: att.url || att.link,
+      }));
+    } else if (apiPost.images && Array.isArray(apiPost.images)) {
+      convertedImages = apiPost.images.map((img: any) => {
+        if (typeof img === "string") {
+          return { name: "image", url: img };
+        } else {
+          return {
+            name: img.name || img.filename || "image",
+            url: img.url || img.link || img,
+          };
+        }
+      });
+    }
+
     return {
       idMongodb: apiPost._id,
       id: parseInt(apiPost.facebookPostId) || Date.now(), // Sử dụng facebookPostId làm id
@@ -62,18 +95,43 @@ function DangBaiPost() {
       timestamp: apiPost.createdAt
         ? new Date(apiPost.createdAt * 1000).toLocaleString("vi-VN")
         : new Date().toLocaleString("vi-VN"),
-      images:
-        apiPost.media?.map((media: any) => media.url) ||
-        apiPost.attachments?.map((att: any) => att.url) ||
-        [],
+      images: convertedImages,
       comments: [], // Sẽ được load sau nếu cần
       facebookUrl: apiPost.facebookPostUrl,
       isPosted: !!apiPost.facebookPostUrl, // Nếu có URL thì đã post thành công
     };
   };
 
+  // Function để convert reply từ API sang format của component
+  const convertApiReplyToComponentReply = (apiReply: any): Reply => {
+    return {
+      id: parseInt(apiReply.id_facebookReply) || Date.now(),
+      to: "B22858640",
+      content: apiReply.content,
+      userLinkFb: apiReply.userLinkFb || "",
+      author: apiReply.userNameFacebook || "Facebook User",
+      authorId: apiReply.userId || "facebook_user",
+      timestamp: apiReply.createdAt
+        ? new Date(apiReply.createdAt).toLocaleString("vi-VN")
+        : new Date().toLocaleString("vi-VN"),
+      id_facebookReply: apiReply.id_facebookReply,
+      facebookReplyUrl: apiReply.facebookReplyUrl || "",
+      replyToAuthor: apiReply.replyToAuthor || "",
+    };
+  };
+
   // Function để convert comment từ API sang format của component
   const convertApiCommentToComponentComment = (apiComment: any): Comment => {
+    // Convert replies nếu có
+    const replies: Reply[] = Array.isArray(apiComment.listFeedback)
+      ? apiComment.listFeedback.map(convertApiReplyToComponentReply)
+      : [];
+
+    console.log(
+      `Comment ${apiComment.facebookCommentId} có ${replies.length} replies:`,
+      replies
+    );
+
     return {
       idMongodb: apiComment._id,
       id: parseInt(apiComment.facebookCommentId) || Date.now(),
@@ -86,7 +144,7 @@ function DangBaiPost() {
       timestamp: apiComment.createdAt
         ? new Date(apiComment.createdAt * 1000).toLocaleString("vi-VN")
         : new Date().toLocaleString("vi-VN"),
-      replies: [], // TODO: Load replies nếu có API
+      replies: replies, // Sử dụng replies đã convert
       id_facebookComment: apiComment.facebookCommentId,
       facebookCommentUrl: apiComment.facebookCommentUrl || "",
     };
@@ -296,6 +354,9 @@ function DangBaiPost() {
   const [showModal, setShowModal] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<any[]>([]); // Lưu thông tin ảnh đã upload
+  const [isUploadingImages, setIsUploadingImages] = useState(false); // Loading state cho upload
+  const [isDeletingImage, setIsDeletingImage] = useState<number | null>(null); // Loading state cho delete
   const [showCommentModal, setShowCommentModal] = useState<number | null>(null);
   const [currentPostForComment, setCurrentPostForComment] =
     useState<Post | null>(null);
@@ -410,30 +471,86 @@ function DangBaiPost() {
     setShowModal(false);
     setPostContent("");
     setSelectedImages([]);
+    setUploadedImages([]); // Reset uploaded images
+    setIsUploadingImages(false); // Reset upload state
+    setIsDeletingImage(null); // Reset delete state
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
-    if (files) {
-      const imageUrls: string[] = [];
-      for (let i = 0; i < Math.min(files.length, 4); i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            imageUrls.push(e.target.result as string);
-            if (imageUrls.length === Math.min(files.length, 4)) {
-              setSelectedImages((prev) => [...prev, ...imageUrls].slice(0, 4));
-            }
-          }
-        };
-        reader.readAsDataURL(file);
+    if (files && files.length > 0) {
+      setIsUploadingImages(true);
+
+      try {
+        // Giới hạn tối đa 4 ảnh
+        const maxFiles = Math.min(files.length, 4 - uploadedImages.length);
+        const filesToUpload = Array.from(files).slice(0, maxFiles);
+
+        console.log(`🔄 Uploading ${filesToUpload.length} images...`);
+
+        // Upload ảnh lên BE
+        const uploadResponse = await uploadImage(filesToUpload);
+
+        if (uploadResponse && Array.isArray(uploadResponse)) {
+          console.log("✅ Images uploaded successfully:", uploadResponse);
+
+          // Lưu thông tin ảnh đã upload
+          setUploadedImages((prev) => [...prev, ...uploadResponse]);
+
+          // Cập nhật preview images (dùng URL từ BE)
+          const newImageUrls = uploadResponse.map((img) => img.link || img.url);
+          setSelectedImages((prev) => [...prev, ...newImageUrls]);
+
+          console.log("💾 Saved uploaded images:", uploadResponse);
+        } else {
+          console.error("❌ Invalid upload response:", uploadResponse);
+          alert("Lỗi khi upload ảnh. Vui lòng thử lại!");
+        }
+      } catch (error) {
+        console.error("❌ Error uploading images:", error);
+        alert("Lỗi khi upload ảnh. Vui lòng thử lại!");
+      } finally {
+        setIsUploadingImages(false);
       }
     }
   };
 
-  const removeImage = (index: number) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  const removeImage = async (index: number) => {
+    try {
+      setIsDeletingImage(index); // Set loading state cho ảnh này
+
+      // Lấy thông tin ảnh cần xóa
+      const imageToDelete = uploadedImages[index];
+
+      if (imageToDelete && imageToDelete.id) {
+        console.log(`🗑️ Deleting image with id: ${imageToDelete.id}`);
+
+        // Gọi API xóa ảnh trên BE
+        await deleteImage(imageToDelete.id);
+        console.log(`✅ Successfully deleted image: ${imageToDelete.id}`);
+      }
+
+      // Xóa khỏi state
+      setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+      setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+
+      console.log(`🗑️ Removed image at index ${index}`);
+    } catch (error) {
+      console.error(`❌ Error deleting image at index ${index}:`, error);
+
+      // Vẫn xóa khỏi UI ngay cả khi API fails
+      setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+      setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+
+      // Hiển thị thông báo lỗi cho user
+      alert(
+        "Có lỗi khi xóa ảnh trên server, nhưng ảnh đã được xóa khỏi danh sách."
+      );
+    } finally {
+      setIsDeletingImage(null); // Reset loading state
+    }
   };
 
   const handleComment = (post: Post) => {
@@ -545,6 +662,7 @@ function DangBaiPost() {
         id: Date.now(),
         content: replyContent, // Chỉ lưu content thuần, không ghép @tên
         to: "B22858640",
+        userLinkFb: "sadnfjdsf",
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
@@ -639,6 +757,7 @@ function DangBaiPost() {
       const newReply: Reply = {
         id: Date.now(),
         content: replyContent,
+        userLinkFb: "sadnfjdsf",
         to: "B22858640",
         author: userName,
         authorId: userID,
@@ -720,15 +839,16 @@ function DangBaiPost() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (postContent.trim()) {
       const userID = Cookies.get("userID") || "anonymous";
       const userName = Cookies.get("userName") || "Người dùng";
 
       console.log("Nội dung bài đăng:", postContent);
       console.log("User ID:", userID);
+      console.log("Uploaded images:", uploadedImages);
 
-      // Tạo bài đăng mới
+      // Tạo bài đăng mới cho UI
       const newPost: Post = {
         id: Date.now(),
         to: "B22858640",
@@ -736,11 +856,20 @@ function DangBaiPost() {
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
-        images: selectedImages,
+        images: uploadedImages.map((img) => ({
+          name: img.name || img.filename || "image",
+          url: img.link || img.url,
+        })), // Sử dụng format {name, url}
         comments: [],
         facebookUrl: undefined,
         isPosted: false,
       };
+
+      console.log("📝 Creating new post with uploaded images:", {
+        content: postContent,
+        imageCount: uploadedImages.length,
+        images: uploadedImages,
+      });
 
       // Thêm bài đăng vào đầu danh sách
       setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
@@ -754,7 +883,11 @@ function DangBaiPost() {
           authorName: userName,
           authorId: userID,
           to: "B22858640",
-          attachments: [],
+          attachments: uploadedImages.map((img) => ({
+            name: img.name || img.filename || "image",
+            url: img.link || img.url,
+            type: "image",
+          })), // Đưa images vào attachments thay vì images
           metadata: {
             category: "job_posting",
             source: "crm_tool",
@@ -945,6 +1078,8 @@ function DangBaiPost() {
         handleSubmit={handleSubmit}
         handleImageUpload={handleImageUpload}
         removeImage={removeImage}
+        isUploadingImages={isUploadingImages}
+        isDeletingImage={isDeletingImage}
       />
 
       {/* Comment Modal */}

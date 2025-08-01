@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Post, Comment, Reply, WebSocketData } from "../types";
 import Cookies from "js-cookie";
 import { createPost } from "../../../../pages/api/toolFacebook/dang-bai/dang-bai";
-import { createComment } from "../../../../pages/api/toolFacebook/dang-bai/comment";
+import {
+  createComment,
+  createReplyComment,
+} from "../../../../pages/api/toolFacebook/dang-bai/comment";
 
 export const useWebSocket = (
   posts: Post[],
@@ -79,10 +82,9 @@ export const useWebSocket = (
               updatedAt: Math.floor(Date.now() / 1000),
               attachments:
                 foundPost.images?.map((imageUrl, index) => ({
-                  name: `image_${index + 1}.jpg`,
-                  type: "image/jpeg",
-                  size: 0,
-                  url: imageUrl,
+                  name: imageUrl.name,
+                  type: "image",
+                  url: imageUrl.url,
                 })) || [],
               metadata: {
                 category: "job_posting",
@@ -329,13 +331,6 @@ export const useWebSocket = (
                       facebookCommentId: data.comment_id,
                       createdAt: Math.floor(Date.now() / 1000),
                       updatedAt: Math.floor(Date.now() / 1000),
-                      metadata: {
-                        category: "job_posting",
-                        source: "crm_tool",
-                        platform: "facebook",
-                        action: "create_comment",
-                        timestamp: new Date().toISOString(),
-                      },
                     };
 
                     console.log("payloadComment được tạo:", payloadComment);
@@ -465,6 +460,47 @@ export const useWebSocket = (
                                 "→",
                                 data.replyId
                               );
+
+                              const payloadReplyComment = {
+                                userId: userID,
+                                userNameFacebook:
+                                  data.authorName || "Người dùng",
+                                content: reply.content,
+                                userLinkFb: reply.userLinkFb,
+                                facebookReplyUrl: data.URL,
+                                replyToAuthor: comment.author,
+                                id_facebookReply: data.replyId,
+                                createdAt: Math.floor(Date.now() / 1000),
+                                updatedAt: Math.floor(Date.now() / 1000),
+                              };
+
+                              console.log(
+                                "payloadReplyComment được tạo:",
+                                payloadReplyComment
+                              );
+
+                              // Gọi API không đồng bộ sau khi đã update state
+                              createReplyComment(
+                                comment.id_facebookComment,
+                                payloadReplyComment
+                              )
+                                .then((response) => {
+                                  console.log(
+                                    "✅ payloadReplyComment đã được gửi lên API thành công",
+                                    response
+                                  );
+                                })
+                                .catch((error) => {
+                                  console.error(
+                                    "❌ Lỗi khi gửi payloadReplyComment lên API:",
+                                    error
+                                  );
+                                  console.error("❌ Error details:", {
+                                    message: error.message,
+                                    response: error.response?.data,
+                                    status: error.response?.status,
+                                  });
+                                });
                               return {
                                 ...reply,
                                 id_facebookReply: data.replyId?.toString(),
@@ -522,6 +558,48 @@ export const useWebSocket = (
                                 "→",
                                 data.replyId
                               );
+
+                              const payloadReplyComment = {
+                                userId: userID,
+                                userNameFacebook:
+                                  data.authorName || "Người dùng",
+                                content: reply.content,
+                                userLinkFb: reply.userLinkFb,
+                                facebookReplyUrl: data.URL,
+                                replyToAuthor: comment.author,
+                                id_facebookReply: data.replyId,
+                                createdAt: Math.floor(Date.now() / 1000),
+                                updatedAt: Math.floor(Date.now() / 1000),
+                              };
+
+                              console.log(
+                                "payloadReplyComment được tạo:",
+                                payloadReplyComment
+                              );
+
+                              // Gọi API không đồng bộ sau khi đã update state
+                              createReplyComment(
+                                comment.id_facebookComment,
+                                payloadReplyComment
+                              )
+                                .then((response) => {
+                                  console.log(
+                                    "✅ payloadReplyComment đã được gửi lên API thành công",
+                                    response
+                                  );
+                                })
+                                .catch((error) => {
+                                  console.error(
+                                    "❌ Lỗi khi gửi payloadReplyComment lên API:",
+                                    error
+                                  );
+                                  console.error("❌ Error details:", {
+                                    message: error.message,
+                                    response: error.response?.data,
+                                    status: error.response?.status,
+                                  });
+                                });
+
                               return {
                                 ...reply,
                                 id_facebookReply: data.replyId?.toString(),

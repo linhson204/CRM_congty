@@ -62,8 +62,12 @@ export const PostItem: React.FC<PostItemProps> = ({
           {post.images.map((image, index) => (
             <img
               key={index}
-              src={image}
-              alt={`Ảnh ${index + 1}`}
+              src={typeof image === "string" ? image : image.url}
+              alt={
+                typeof image === "string"
+                  ? `Ảnh ${index + 1}`
+                  : image.name || `Ảnh ${index + 1}`
+              }
               className={`${styles.postImage} ${
                 post.images!.length === 1
                   ? styles.postImageSingle

@@ -1,7 +1,8 @@
 export interface Reply {
   id: number;
-  content: string;
   to: string;
+  content: string;
+  userLinkFb: string;
   author: string;
   authorId: string;
   timestamp: string;
@@ -33,7 +34,7 @@ export interface Post {
   author: string;
   authorId: string;
   timestamp: string;
-  images?: string[];
+  images?: { name: string; url: string }[];
   comments?: Comment[];
   facebookUrl?: string;
   isPosted: boolean;
@@ -69,7 +70,7 @@ export interface WebSocketData {
   replyId?: string | number;
   commentId?: string;
   commentFbId?: string;
-  attachments?: any[];
+  attachments?: { name: string; url: string; type?: string }[];
   metadata?: {
     source?: string;
     category?: string;

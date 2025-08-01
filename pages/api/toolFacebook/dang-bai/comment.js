@@ -1,5 +1,4 @@
 // components/PostForm.tsx hoặc pages/post.tsx
-import { useState } from "react";
 import axios from "axios";
 
 const URL_API = "http://localhost:4000/api";
@@ -34,6 +33,27 @@ export const getCommentByPostId = async (postId, userId, facebookId) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy comment của bài đăng", error);
+    throw error;
+  }
+};
+
+export const createReplyComment = async (
+  facebookCommentId,
+  replyCommentData
+) => {
+  try {
+    const response = await axios.post(
+      `${URL_API}/comment/${facebookCommentId}/feedback`,
+      replyCommentData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi phản hồi bình luận bài", error);
     throw error;
   }
 };
