@@ -75,4 +75,8 @@ export interface WebSocketData {
     source?: string;
     category?: string;
   };
+  to?: string;
+  userLinkFb?: string;
+  linkUserReply?: string;
+  linkUserComment?: string;
 }
