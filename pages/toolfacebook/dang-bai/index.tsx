@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import Cookies from 'js-cookie';
-import styleHome from "@/components/crm/home/home.module.css";
-import styles from "@/components/crm/potential/potential.module.css";
-import stylesContract from "@/components/crm/contract/contract_action.module.css";
 import { SidebarContext } from "@/components/crm/context/resizeContext";
+import stylesContract from "@/components/crm/contract/contract_action.module.css";
+import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
+import styles from "@/components/crm/potential/potential.module.css";
+import Cookies from 'js-cookie';
 import Head from "next/head";
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 interface Post {
   id: number;
@@ -88,7 +88,7 @@ export default function DangBai() {
         {
           id: 2,
           content: "Công ty có cần thực tập sinh không ạ?",
-          author: "Lê Thị C",
+          author: "Lê Thị ABC",
           authorId: "user999",
           timestamp: "2024-01-19 16:00:00",
           replies: [
