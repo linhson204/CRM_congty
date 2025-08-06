@@ -21,7 +21,7 @@ export const createPost = async (postData) => {
 export const getPostbyUserId = async (userId, facebookId) => {
   try {
     let URI = "";
-    if (facebookId == "") {
+    if (facebookId !== "") {
       URI = `${URL_API}/post?userId=${userId}&facebookId=${facebookId}`;
     } else {
       URI = `${URL_API}/post?userId=${userId}`;

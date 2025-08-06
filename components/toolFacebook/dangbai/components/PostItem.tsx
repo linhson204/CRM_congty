@@ -16,6 +16,7 @@ interface PostItemProps {
     facebookCommentId?: string,
     facebookReplyId?: string
   ) => void;
+  disabled?: boolean; // Disable khi đang crawl
 }
 
 export const PostItem: React.FC<PostItemProps> = ({
@@ -23,6 +24,7 @@ export const PostItem: React.FC<PostItemProps> = ({
   formatTimestamp,
   handleComment,
   handleReply,
+  disabled = false,
 }) => {
   // Debug: Log comments cho post này
   console.log(`🎯 PostItem render for post ${post.id}:`, {
@@ -84,10 +86,20 @@ export const PostItem: React.FC<PostItemProps> = ({
           <button
             // onClick={() => handleComment(post.id)}
             onClick={() => handleComment(post)}
-            className={`${styles.actionButton} ${styles.commentButton}`}
+            disabled={disabled}
+            className={`${styles.actionButton} ${styles.commentButton} ${
+              disabled ? styles.buttonDisabled : ""
+            }`}
+            style={{
+              opacity: disabled ? 0.6 : 1,
+              cursor: disabled ? "not-allowed" : "pointer",
+            }}
           >
             <span>💬</span>
             <span>{post.comments?.length || 0}</span>
+            {disabled && (
+              <span style={{ marginLeft: "4px", fontSize: "10px" }}>🔄</span>
+            )}
           </button>
         </div>
       </div>
@@ -111,9 +123,16 @@ export const PostItem: React.FC<PostItemProps> = ({
               {/* Nút phản hồi */}
               <button
                 onClick={() => handleReply(post.id, comment.id, comment.author)}
-                className={styles.replyButton}
+                disabled={disabled}
+                className={`${styles.replyButton} ${
+                  disabled ? styles.buttonDisabled : ""
+                }`}
+                style={{
+                  opacity: disabled ? 0.6 : 1,
+                  cursor: disabled ? "not-allowed" : "pointer",
+                }}
               >
-                Phản hồi
+                {disabled ? "Đang crawl comment..." : "Phản hồi"}
               </button>
 
               {/* Hiển thị các phản hồi */}
@@ -154,9 +173,16 @@ export const PostItem: React.FC<PostItemProps> = ({
                             reply.id_facebookReply
                           );
                         }}
-                        className={styles.replyToReplyButton}
+                        disabled={disabled}
+                        className={`${styles.replyToReplyButton} ${
+                          disabled ? styles.buttonDisabled : ""
+                        }`}
+                        style={{
+                          opacity: disabled ? 0.6 : 1,
+                          cursor: disabled ? "not-allowed" : "pointer",
+                        }}
                       >
-                        Phản hồi
+                        {disabled ? "Đang crawl comment..." : "Phản hồi"}
                       </button>
                     </div>
                   ))}

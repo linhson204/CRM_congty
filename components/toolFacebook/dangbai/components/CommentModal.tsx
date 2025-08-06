@@ -9,6 +9,7 @@ interface CommentModalProps {
   setShowCommentModal: () => void; // Chỉ là function để đóng modal
   submitComment: (post: Post) => void;
   post?: Post; // Thông tin bài đăng hiện tại
+  disabled?: boolean; // Disable khi đang crawl
 }
 
 export const CommentModal: React.FC<CommentModalProps> = ({
@@ -18,6 +19,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
   setShowCommentModal,
   submitComment,
   post,
+  disabled = false,
 }) => {
   if (!showCommentModal || !post) return null;
 
@@ -76,12 +78,12 @@ export const CommentModal: React.FC<CommentModalProps> = ({
           </button>
           <button
             onClick={() => submitComment(post)}
-            disabled={!commentContent.trim()}
+            disabled={!commentContent.trim() || disabled}
             className={`${styles.button} ${styles.buttonPrimary} ${
-              !commentContent.trim() ? styles.buttonDisabled : ""
+              !commentContent.trim() || disabled ? styles.buttonDisabled : ""
             }`}
           >
-            Bình luận
+            {disabled ? "🔄 Đang cào comment..." : "Bình luận"}
           </button>
         </div>
       </div>

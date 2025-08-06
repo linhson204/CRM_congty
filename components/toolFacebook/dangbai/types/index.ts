@@ -1,3 +1,11 @@
+export interface FacebookAccount {
+  userNameFb: string;
+  userLinkFb: string;
+  facebookId: string;
+  username: string;
+  password: string;
+}
+
 export interface Reply {
   id: number;
   to: string;
@@ -59,7 +67,8 @@ export interface WebSocketData {
     | "reply_comment_byB"
     | "comment_result"
     | "reply_comment_result"
-    | "reply_reply_comment_result";
+    | "reply_reply_comment_result"
+    | "crawl_comment";
   postId?: string;
   URL?: string;
   authorName?: string;
@@ -71,6 +80,15 @@ export interface WebSocketData {
   commentId?: string;
   commentFbId?: string;
   attachments?: { name: string; url: string; type?: string }[];
+
+  // Fields cho crawl_comment
+  status?: "started" | "completed" | "error" | "progress";
+  message?: string;
+  postCount?: number;
+  currentPost?: number;
+  facebookId?: string;
+  from?: string | null;
+
   metadata?: {
     source?: string;
     category?: string;

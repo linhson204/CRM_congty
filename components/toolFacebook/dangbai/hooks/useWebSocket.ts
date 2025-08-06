@@ -10,15 +10,22 @@ import {
 export const useWebSocket = (
   posts: Post[],
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
-  refreshCommentsForPost?: (postId: string | number) => Promise<void>
+  refreshCommentsForPost?: (postId: string | number) => Promise<void>,
+  setCrawlingStatus?: React.Dispatch<
+    React.SetStateAction<{
+      [facebookId: string]: {
+        isActive: boolean;
+        message: string;
+        timestamp?: string;
+      };
+    }>
+  >
 ) => {
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:4000");
     const userID = Cookies.get("userID");
-    console.log("===========");
-    console.log(userID);
 
     ws.onopen = () => {
       console.log("WebSocket connected");
@@ -32,7 +39,6 @@ export const useWebSocket = (
 
     ws.onmessage = (event) => {
       const data: WebSocketData = JSON.parse(event.data);
-      console.log("WebSocket message received:", data);
 
       if (data.type === "post_sent") {
         console.log("Post sent successfully with ID:", data.postId);
@@ -738,6 +744,49 @@ export const useWebSocket = (
             return post;
           });
         });
+      } else if (data.type === "crawl_comment") {
+        // Xử lý message crawl_comment
+        console.log("🔄 Crawl comment status update:", data);
+
+        if (setCrawlingStatus && data.facebookId) {
+          console.log("🔧 Before setCrawlingStatus:", {
+            facebookId: data.facebookId,
+            status: data.status,
+            message: data.message,
+            isActive: data.status === "started" || data.status === "progress",
+          });
+
+          setCrawlingStatus((prev) => {
+            const newStatus = {
+              ...prev,
+              [data.facebookId!]: {
+                isActive:
+                  data.status === "started" || data.status === "progress",
+                message: data.message || "",
+                timestamp: data.timestamp,
+              },
+            };
+
+            console.log("🔧 After setCrawlingStatus:", {
+              previousStatus: prev,
+              newStatus: newStatus,
+              updatedAccount: data.facebookId,
+            });
+
+            return newStatus;
+          });
+
+          console.log(`📊 Crawling status for ${data.facebookId}:`, {
+            status: data.status,
+            message: data.message,
+            isActive: data.status === "started" || data.status === "progress",
+          });
+        } else {
+          console.warn("⚠️ setCrawlingStatus or facebookId missing:", {
+            setCrawlingStatus: !!setCrawlingStatus,
+            facebookId: data.facebookId,
+          });
+        }
       }
     };
 

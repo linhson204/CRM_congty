@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -24,6 +30,7 @@ import {
   Comment,
   Reply,
   ShowReplyModal,
+  FacebookAccount,
 } from "@/components/toolFacebook/dangbai/types";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 import { PostModal } from "@/components/toolFacebook/dangbai/components/PostModal";
@@ -45,17 +52,44 @@ function DangBaiPost() {
 
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
-    "user123",
-    "user456",
-    "user789",
-    "admin001",
-    "manager002",
     "22858640",
     // Thêm các ID được phép vào đây
   ];
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+
+  // States cho Facebook accounts
+  const [facebookAccounts, setFacebookAccounts] = useState<FacebookAccount[]>([
+    {
+      userNameFb: "Giản Vũ",
+      userLinkFb: "https://www.facebook.com/gian.vu.792551",
+      facebookId: "B22858640",
+      username: "gianvu17607@gmail.com",
+      password: "lvqh1234",
+    },
+    {
+      userNameFb: "Test (Chưa có)",
+      userLinkFb: "https://facebook.com/recruitment",
+      facebookId: "B33445566",
+      username: "recruitment@email.com",
+      password: "password456",
+    },
+  ]);
+
+  const [selectedFacebookAccount, setSelectedFacebookAccount] =
+    useState<FacebookAccount>(
+      facebookAccounts[0] // Chọn account đầu tiên làm mặc định
+    );
+
+  // State để track crawling status cho từng Facebook account
+  const [crawlingStatus, setCrawlingStatus] = useState<{
+    [facebookId: string]: {
+      isActive: boolean;
+      message: string;
+      timestamp?: string;
+    };
+  }>({});
 
   // Function để convert dữ liệu từ API sang format của component
   const convertApiPostToComponentPost = (apiPost: any): Post => {
@@ -88,7 +122,7 @@ function DangBaiPost() {
     return {
       idMongodb: apiPost._id,
       id: parseInt(apiPost.facebookPostId) || Date.now(), // Sử dụng facebookPostId làm id
-      to: apiPost.facebookId || "B22858640",
+      to: apiPost.facebookId || selectedFacebookAccount.facebookId,
       content: apiPost.content,
       author: apiPost.userNameFacebook || "Người dùng",
       authorId: apiPost.userId,
@@ -106,7 +140,7 @@ function DangBaiPost() {
   const convertApiReplyToComponentReply = (apiReply: any): Reply => {
     return {
       id: parseInt(apiReply.id_facebookReply) || Date.now(),
-      to: "B22858640",
+      to: selectedFacebookAccount.facebookId,
       content: apiReply.content,
       userLinkFb: apiReply.userLinkFb || "",
       author: apiReply.userNameFacebook || "Facebook User",
@@ -127,15 +161,10 @@ function DangBaiPost() {
       ? apiComment.listFeedback.map(convertApiReplyToComponentReply)
       : [];
 
-    console.log(
-      `Comment ${apiComment.facebookCommentId} có ${replies.length} replies:`,
-      replies
-    );
-
     return {
       idMongodb: apiComment._id,
       id: parseInt(apiComment.facebookCommentId) || Date.now(),
-      to: apiComment.facebookId || "B22858640",
+      to: apiComment.facebookId || selectedFacebookAccount.facebookId,
       postId: parseInt(apiComment.postId),
       content: apiComment.content,
       userLinkFb: apiComment.userLinkFb || "",
@@ -154,11 +183,7 @@ function DangBaiPost() {
   const loadCommentsForPost = async (post: Post) => {
     try {
       const userID = Cookies.get("userID") || "anonymous";
-      const facebookId = "B22858640"; // Fixed facebookId
-
-      console.log(
-        `Loading comments for post ${post.id}, facebookId: ${facebookId}, userId: ${userID}`
-      );
+      const facebookId = selectedFacebookAccount.facebookId; // Sử dụng selectedFacebookAccount
 
       const response = await getCommentByPostId(
         post.id.toString(),
@@ -166,43 +191,19 @@ function DangBaiPost() {
         facebookId
       );
 
-      console.log("🔍 Raw API response for post", post.id, ":", response);
-
       if (response.results) {
-        console.log("✅ API returned data:", response.results);
         const comments = response.results.map(
           convertApiCommentToComponentComment
         );
-        console.log("✅ Converted comments:", comments);
-        console.log(`Loaded ${comments.length} comments for post ${post.id}`);
 
         // Update post với comments
         setPosts((prevPosts) => {
-          console.log(
-            "🔄 Before updating posts with comments:",
-            prevPosts.map((p) => ({
-              id: p.id,
-              commentsCount: p.comments?.length || 0,
-            }))
-          );
-
           const updatedPosts = prevPosts.map((p) => {
             if (p.id === post.id) {
-              console.log(
-                `✅ Updating post ${p.id} with ${comments.length} comments`
-              );
               return { ...p, comments };
             }
             return p;
           });
-
-          console.log(
-            "🔄 After updating posts with comments:",
-            updatedPosts.map((p) => ({
-              id: p.id,
-              commentsCount: p.comments?.length || 0,
-            }))
-          );
 
           return updatedPosts;
         });
@@ -220,8 +221,6 @@ function DangBaiPost() {
   // Function để load comments cho tất cả posts
   const loadCommentsForAllPosts = async (postsToLoad: Post[]) => {
     try {
-      console.log(`Loading comments for ${postsToLoad.length} posts`);
-
       // Load comments cho từng post tuần tự để tránh quá tải
       for (const post of postsToLoad) {
         if (post.isPosted) {
@@ -239,7 +238,6 @@ function DangBaiPost() {
     try {
       const post = posts.find((p) => p.id.toString() === postId.toString());
       if (post && post.isPosted) {
-        console.log(`🔄 Refreshing comments for post ${postId}`);
         await loadCommentsForPost(post);
       }
     } catch (error) {
@@ -251,19 +249,19 @@ function DangBaiPost() {
   const fetchUserPosts = async (userId: string) => {
     setIsLoadingPosts(true);
     try {
-      console.log("🔄 Fetching posts for user:", userId);
-      const response = await getPostbyUserId(userId, "B22858640");
+      const response = await getPostbyUserId(
+        userId,
+        selectedFacebookAccount.facebookId
+      );
 
       if (response && response.results) {
         const convertedPosts = response.results.map(
           convertApiPostToComponentPost
         );
-        console.log("✅ Fetched posts:", convertedPosts);
         setPosts(convertedPosts);
 
         // Load comments cho tất cả posts sau khi load xong posts
         setTimeout(async () => {
-          console.log("🔄 Loading comments for all posts...");
           await loadCommentsForAllPosts(convertedPosts);
         }, 500); // Delay nhỏ để UI render trước
       } else {
@@ -293,8 +291,26 @@ function DangBaiPost() {
   );
   const [replyContent, setReplyContent] = useState("");
 
+  // Check xem Facebook account hiện tại có đang crawl không
+  const isCurrentAccountCrawling = useCallback(() => {
+    const currentStatus =
+      crawlingStatus[selectedFacebookAccount.facebookId]?.isActive || false;
+    return currentStatus;
+  }, [crawlingStatus, selectedFacebookAccount.facebookId]);
+
+  // Get crawling message cho account hiện tại
+  const getCurrentCrawlingMessage = useCallback(() => {
+    const status = crawlingStatus[selectedFacebookAccount.facebookId];
+    return status?.message || "";
+  }, [crawlingStatus, selectedFacebookAccount.facebookId]);
+
   // Use WebSocket hook
-  const websocket = useWebSocket(posts, setPosts, refreshCommentsForPost);
+  const websocket = useWebSocket(
+    posts,
+    setPosts,
+    refreshCommentsForPost,
+    setCrawlingStatus
+  );
 
   // Kiểm tra quyền truy cập và fetch posts
   useEffect(() => {
@@ -347,6 +363,16 @@ function DangBaiPost() {
       setCurrentPath("/toolfacebook/dang-bai");
     }
   }, [setHeaderTitle, setShowBackButton, setCurrentPath, hasPermission]);
+
+  // Effect để fetch posts khi selectedFacebookAccount thay đổi
+  useEffect(() => {
+    if (hasPermission && selectedFacebookAccount) {
+      const userID = Cookies.get("userID");
+      if (userID) {
+        fetchUserPosts(userID);
+      }
+    }
+  }, [hasPermission, selectedFacebookAccount]);
 
   useEffect(() => {
     if (isOpen) {
@@ -415,22 +441,16 @@ function DangBaiPost() {
         const maxFiles = Math.min(files.length, 4 - uploadedImages.length);
         const filesToUpload = Array.from(files).slice(0, maxFiles);
 
-        console.log(`🔄 Uploading ${filesToUpload.length} images...`);
-
         // Upload ảnh lên BE
         const uploadResponse = await uploadImage(filesToUpload);
 
         if (uploadResponse && Array.isArray(uploadResponse)) {
-          console.log("✅ Images uploaded successfully:", uploadResponse);
-
           // Lưu thông tin ảnh đã upload
           setUploadedImages((prev) => [...prev, ...uploadResponse]);
 
           // Cập nhật preview images (dùng URL từ BE)
           const newImageUrls = uploadResponse.map((img) => img.link || img.url);
           setSelectedImages((prev) => [...prev, ...newImageUrls]);
-
-          console.log("💾 Saved uploaded images:", uploadResponse);
         } else {
           console.error("❌ Invalid upload response:", uploadResponse);
           alert("Lỗi khi upload ảnh. Vui lòng thử lại!");
@@ -452,18 +472,13 @@ function DangBaiPost() {
       const imageToDelete = uploadedImages[index];
 
       if (imageToDelete && imageToDelete.id) {
-        console.log(`🗑️ Deleting image with id: ${imageToDelete.id}`);
-
         // Gọi API xóa ảnh trên BE
         await deleteImage(imageToDelete.id);
-        console.log(`✅ Successfully deleted image: ${imageToDelete.id}`);
       }
 
       // Xóa khỏi state
       setSelectedImages((prev) => prev.filter((_, i) => i !== index));
       setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-
-      console.log(`🗑️ Removed image at index ${index}`);
     } catch (error) {
       console.error(`❌ Error deleting image at index ${index}:`, error);
 
@@ -483,7 +498,6 @@ function DangBaiPost() {
   const handleComment = (post: Post) => {
     setShowCommentModal(post.id);
     setCurrentPostForComment(post); // Lưu thông tin post hiện tại
-    console.log("Opening comment modal for post:", post);
     setCommentContent("");
   };
 
@@ -509,20 +523,21 @@ function DangBaiPost() {
       facebookCommentId,
       facebookReplyId,
     });
-    console.log(postId),
-      console.log(facebookCommentId),
-      console.log(replyToAuthor),
-      console.log(facebookReplyId),
-      setReplyContent("");
+    setReplyContent("");
   };
 
   const submitComment = (post: Post) => {
-    if (commentContent.trim() && showCommentModal && currentPostForComment) {
+    if (
+      commentContent.trim() &&
+      showCommentModal &&
+      currentPostForComment &&
+      !isCurrentAccountCrawling()
+    ) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
       const newComment: Comment = {
         id: Date.now(),
-        to: "B22858640",
+        to: selectedFacebookAccount.facebookId,
         userLinkFb: "sadnfjdsf",
         postId: post.id,
         content: commentContent,
@@ -531,13 +546,6 @@ function DangBaiPost() {
         timestamp: new Date().toLocaleString("vi-VN"),
         replies: [],
       };
-
-      console.log("Creating comment for post:", {
-        postId: post.id,
-        postAuthor: post.author,
-        commentContent: commentContent,
-        commentAuthor: userName,
-      });
 
       setPosts((prev) =>
         (prev || []).map((p) =>
@@ -557,7 +565,7 @@ function DangBaiPost() {
           content: commentContent,
           postId: post.id.toString(),
           URL: post.facebookUrl || "",
-          to: "B22858640",
+          to: selectedFacebookAccount.facebookId,
           authorName: userName,
           commentId: Date.now().toString(), // id tạm thời theo thời gian gửi sau xóa đi
           authorId: userID,
@@ -571,7 +579,6 @@ function DangBaiPost() {
           },
         };
         websocket.send(JSON.stringify(commentData));
-        console.log("Đã gửi comment qua WebSocket:", commentData);
       }
 
       setShowCommentModal(null);
@@ -581,14 +588,14 @@ function DangBaiPost() {
   };
 
   const submitReply = () => {
-    if (replyContent.trim() && showReplyModal) {
+    if (replyContent.trim() && showReplyModal && !isCurrentAccountCrawling()) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
 
       const newReply: Reply = {
         id: Date.now(),
         content: replyContent, // Chỉ lưu content thuần, không ghép @tên
-        to: "B22858640",
+        to: selectedFacebookAccount.facebookId,
         userLinkFb: "sadnfjdsf",
         author: userName,
         authorId: userID,
@@ -656,7 +663,7 @@ function DangBaiPost() {
           URL: commentUrl,
           authorName: userName,
           authorId: userID,
-          to: "B22858640",
+          to: selectedFacebookAccount.facebookId,
           attachments: [],
           metadata: {
             category: "reply",
@@ -667,7 +674,6 @@ function DangBaiPost() {
           },
         };
         websocket.send(JSON.stringify(replyCommentData));
-        console.log("Đã gửi reply qua WebSocket:", replyCommentData);
       }
 
       setShowReplyModal(null);
@@ -677,7 +683,7 @@ function DangBaiPost() {
 
   // Function mới cho reply to reply
   const submitReplyToReply = () => {
-    if (replyContent.trim() && showReplyModal) {
+    if (replyContent.trim() && showReplyModal && !isCurrentAccountCrawling()) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
 
@@ -685,7 +691,7 @@ function DangBaiPost() {
         id: Date.now(),
         content: replyContent,
         userLinkFb: "sadnfjdsf",
-        to: "B22858640",
+        to: selectedFacebookAccount.facebookId,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
@@ -740,7 +746,7 @@ function DangBaiPost() {
 
         const replyToReplyData = {
           type: "reply_reply_comment",
-          to: "B22858640",
+          to: selectedFacebookAccount.facebookId,
           content: replyContent,
           postId: showReplyModal.postId.toString(),
           commentId: facebookCommentId, // Có thể để trống vì có replyId rồi
@@ -758,7 +764,6 @@ function DangBaiPost() {
           },
         };
         websocket.send(JSON.stringify(replyToReplyData));
-        console.log("Đã gửi reply to reply qua WebSocket:", replyToReplyData);
       }
 
       setShowReplyModal(null);
@@ -767,18 +772,14 @@ function DangBaiPost() {
   };
 
   const handleSubmit = async () => {
-    if (postContent.trim()) {
+    if (postContent.trim() && !isCurrentAccountCrawling()) {
       const userID = Cookies.get("userID") || "anonymous";
       const userName = Cookies.get("userName") || "Người dùng";
-
-      console.log("Nội dung bài đăng:", postContent);
-      console.log("User ID:", userID);
-      console.log("Uploaded images:", uploadedImages);
 
       // Tạo bài đăng mới cho UI
       const newPost: Post = {
         id: Date.now(),
-        to: "B22858640",
+        to: selectedFacebookAccount.facebookId,
         content: postContent,
         author: userName,
         authorId: userID,
@@ -792,12 +793,6 @@ function DangBaiPost() {
         isPosted: false,
       };
 
-      console.log("📝 Creating new post with uploaded images:", {
-        content: postContent,
-        imageCount: uploadedImages.length,
-        images: uploadedImages,
-      });
-
       // Thêm bài đăng vào đầu danh sách
       setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
 
@@ -809,7 +804,7 @@ function DangBaiPost() {
           content: postContent,
           authorName: userName,
           authorId: userID,
-          to: "B22858640",
+          to: selectedFacebookAccount.facebookId,
           attachments: uploadedImages.map((img) => ({
             name: img.name || img.filename || "image",
             url: img.link || img.url,
@@ -825,7 +820,6 @@ function DangBaiPost() {
         };
 
         websocket.send(JSON.stringify(postData));
-        console.log("Đã gửi post qua WebSocket:", postData);
       }
 
       handleCloseModal();
@@ -836,6 +830,26 @@ function DangBaiPost() {
     return new Date(timestamp).toLocaleString("vi-VN");
   };
 
+  // Handler để thay đổi Facebook account
+  const handleFacebookAccountChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedFacebookId = event.target.value;
+    const selectedAccount = facebookAccounts.find(
+      (account) => account.facebookId === selectedFacebookId
+    );
+
+    if (selectedAccount) {
+      setSelectedFacebookAccount(selectedAccount);
+
+      // Fetch lại posts với Facebook account mới
+      const userID = Cookies.get("userID");
+      if (userID) {
+        await fetchUserPosts(userID);
+      }
+    }
+  };
+
   return (
     <>
       <Head>
@@ -843,6 +857,16 @@ function DangBaiPost() {
         <meta name="robots" content="noindex,nofollow" />
         <title>Tool Facebook - Đăng bài</title>
         <meta name="description" content="Quản lý và đăng bài lên Facebook" />
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
       </Head>
 
       <div className={styleHome.main} ref={mainRef}>
@@ -850,6 +874,100 @@ function DangBaiPost() {
           <div className={styles.formInfoStep}>
             <div className={styles.info_step}>
               <div className={styles.main__title}>Tool Facebook - Đăng bài</div>
+
+              {/* Dropdown chọn Facebook Account */}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  padding: "16px",
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: "8px",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "#333",
+                  }}
+                >
+                  Chọn tài khoản Facebook:
+                </div>
+                <select
+                  value={selectedFacebookAccount.facebookId}
+                  onChange={handleFacebookAccountChange}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                  }}
+                >
+                  {facebookAccounts.map((account) => (
+                    <option key={account.facebookId} value={account.facebookId}>
+                      {account.userNameFb} ({account.facebookId})
+                      {crawlingStatus[account.facebookId]?.isActive
+                        ? " - 🔄 Đang cào..."
+                        : ""}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Hiển thị crawling status */}
+                {isCurrentAccountCrawling() && (
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      padding: "8px 12px",
+                      backgroundColor: "#fff3cd",
+                      border: "1px solid #ffeaa7",
+                      borderRadius: "4px",
+                      fontSize: "12px",
+                      color: "#856404",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <span style={{ animation: "spin 1s linear infinite" }}>
+                      🔄
+                    </span>
+                    <span>
+                      <strong>Đang cào comment:</strong>{" "}
+                      {getCurrentCrawlingMessage()}
+                    </span>
+                  </div>
+                )}
+
+                {/* Hiển thị thông tin account được chọn */}
+                <div
+                  style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}
+                >
+                  <div>
+                    <strong>Trang:</strong> {selectedFacebookAccount.userNameFb}
+                  </div>
+                  <div>
+                    <strong>Link:</strong>{" "}
+                    <a
+                      href={selectedFacebookAccount.userLinkFb}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#007bff" }}
+                    >
+                      {selectedFacebookAccount.userLinkFb}
+                    </a>
+                  </div>
+                  <div>
+                    <strong>ID:</strong> {selectedFacebookAccount.facebookId}
+                  </div>
+                </div>
+              </div>
+
               <div className={styles.form_add_potential}>
                 {/* Nút đăng bài mới */}
                 <div
@@ -858,6 +976,7 @@ function DangBaiPost() {
                 >
                   <button
                     onClick={handleOpenModal}
+                    disabled={isCurrentAccountCrawling()}
                     className={stylesContract.sub2}
                     style={{
                       display: "flex",
@@ -866,12 +985,18 @@ function DangBaiPost() {
                       padding: "12px 24px",
                       fontSize: "14px",
                       justifyContent: "center",
+                      opacity: isCurrentAccountCrawling() ? 0.6 : 1,
+                      cursor: isCurrentAccountCrawling()
+                        ? "not-allowed"
+                        : "pointer",
                     }}
                   >
                     <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-                      +
+                      {isCurrentAccountCrawling() ? "🔄" : "+"}
                     </span>
-                    Đăng bài mới
+                    {isCurrentAccountCrawling()
+                      ? "Đang cào comment..."
+                      : "Đăng bài mới"}
                   </button>
                 </div>
 
@@ -970,6 +1095,7 @@ function DangBaiPost() {
                           formatTimestamp={formatTimestamp}
                           handleComment={handleComment}
                           handleReply={handleReply}
+                          disabled={isCurrentAccountCrawling()}
                         />
                       ))
                     ) : (
@@ -1027,6 +1153,7 @@ function DangBaiPost() {
         setShowReplyModal={setShowReplyModal}
         submitReplyToReply={submitReplyToReply}
         submitReply={submitReply}
+        disabled={isCurrentAccountCrawling()}
       />
     </>
   );
