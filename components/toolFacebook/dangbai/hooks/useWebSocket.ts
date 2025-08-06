@@ -24,7 +24,8 @@ export const useWebSocket = (
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:4000");
+    // const ws = new WebSocket("ws://localhost:4000");
+    const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
     ws.onopen = () => {

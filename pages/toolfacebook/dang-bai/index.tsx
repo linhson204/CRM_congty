@@ -596,7 +596,7 @@ function DangBaiPost() {
         id: Date.now(),
         content: replyContent, // Chỉ lưu content thuần, không ghép @tên
         to: selectedFacebookAccount.facebookId,
-        userLinkFb: "sadnfjdsf",
+        userLinkFb: selectedFacebookAccount.userLinkFb,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
@@ -690,7 +690,7 @@ function DangBaiPost() {
       const newReply: Reply = {
         id: Date.now(),
         content: replyContent,
-        userLinkFb: "sadnfjdsf",
+        userLinkFb: selectedFacebookAccount.userLinkFb,
         to: selectedFacebookAccount.facebookId,
         author: userName,
         authorId: userID,
@@ -850,6 +850,32 @@ function DangBaiPost() {
     }
   };
 
+  // Handler để bắt đầu cào comment
+  const handleCrawlComments = () => {
+    if (isCurrentAccountCrawling() || !posts.length) {
+      return;
+    }
+
+    // Gửi yêu cầu cào comment qua WebSocket
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      const userID = Cookies.get("userID") || "anonymous";
+
+      const crawlData = {
+        type: "crawl_comment_by_CRM",
+        facebookId: selectedFacebookAccount.facebookId,
+        authorId: userID,
+        to: selectedFacebookAccount.facebookId,
+      };
+
+      console.log("🚀 Gửi yêu cầu cào comment:", crawlData);
+      websocket.send(JSON.stringify(crawlData));
+
+      // Hiển thị thông báo cho user
+    } else {
+      alert("Kết nối WebSocket không khả dụng. Vui lòng thử lại!");
+    }
+  };
+
   return (
     <>
       <Head>
@@ -974,30 +1000,63 @@ function DangBaiPost() {
                   className={styles.main__body}
                   style={{ marginBottom: "20px" }}
                 >
-                  <button
-                    onClick={handleOpenModal}
-                    disabled={isCurrentAccountCrawling()}
-                    className={stylesContract.sub2}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "12px 24px",
-                      fontSize: "14px",
-                      justifyContent: "center",
-                      opacity: isCurrentAccountCrawling() ? 0.6 : 1,
-                      cursor: isCurrentAccountCrawling()
-                        ? "not-allowed"
-                        : "pointer",
-                    }}
-                  >
-                    <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-                      {isCurrentAccountCrawling() ? "🔄" : "+"}
-                    </span>
-                    {isCurrentAccountCrawling()
-                      ? "Đang cào comment..."
-                      : "Đăng bài mới"}
-                  </button>
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <button
+                      onClick={handleOpenModal}
+                      disabled={isCurrentAccountCrawling()}
+                      className={stylesContract.sub2}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "12px 24px",
+                        fontSize: "14px",
+                        justifyContent: "center",
+                        opacity: isCurrentAccountCrawling() ? 0.6 : 1,
+                        cursor: isCurrentAccountCrawling()
+                          ? "not-allowed"
+                          : "pointer",
+                        minWidth: "160px",
+                      }}
+                    >
+                      <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                        {isCurrentAccountCrawling() ? "🔄" : "+"}
+                      </span>
+                      {isCurrentAccountCrawling()
+                        ? "Đang cào comment..."
+                        : "Đăng bài mới"}
+                    </button>
+
+                    <button
+                      onClick={handleCrawlComments}
+                      disabled={isCurrentAccountCrawling() || !posts.length}
+                      className={stylesContract.sub2}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "12px 24px",
+                        fontSize: "14px",
+                        justifyContent: "center",
+                        opacity:
+                          isCurrentAccountCrawling() || !posts.length ? 0.6 : 1,
+                        cursor:
+                          isCurrentAccountCrawling() || !posts.length
+                            ? "not-allowed"
+                            : "pointer",
+                        backgroundColor: "#28a745",
+                        borderColor: "#28a745",
+                        minWidth: "160px",
+                      }}
+                    >
+                      <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+                        {isCurrentAccountCrawling() ? "🔄" : "🔍"}
+                      </span>
+                      {isCurrentAccountCrawling()
+                        ? "Đang cào..."
+                        : "Cào comment"}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Header danh sách */}
