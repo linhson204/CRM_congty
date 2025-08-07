@@ -192,7 +192,7 @@ function DangBaiPost() {
   useEffect(() => {
     if (facebookAccounts.length > 0 && !selectedFacebookAccount) {
       console.log(
-        `📱 Setting default Facebook account: ${facebookAccounts[0].userNameFb}`
+        ` Setting default Facebook account: ${facebookAccounts[0].userNameFb}`
       );
       setSelectedFacebookAccount(facebookAccounts[0]);
     }
@@ -202,7 +202,7 @@ function DangBaiPost() {
   useEffect(() => {
     if (hasPermission && selectedFacebookAccount && currentUserID) {
       console.log(
-        `📝 Fetching posts for account: ${selectedFacebookAccount.userNameFb}`
+        ` Fetching posts for account: ${selectedFacebookAccount.userNameFb}`
       );
       postManagement.fetchUserPosts(currentUserID);
     }
@@ -279,7 +279,7 @@ function DangBaiPost() {
       const newComment: Comment = {
         id: Date.now(),
         to: selectedFacebookAccount.facebookId,
-        userLinkFb: "sadnfjdsf",
+        userLinkFb: selectedFacebookAccount.userLinkFb,
         postId: post.id,
         content: modalManagement.commentContent,
         author: userName,
@@ -310,14 +310,6 @@ function DangBaiPost() {
           authorName: userName,
           commentId: Date.now().toString(),
           authorId: userID,
-          attachments: [],
-          metadata: {
-            category: "comment",
-            source: "crm_tool",
-            platform: "facebook",
-            action: "create_comment",
-            timestamp: new Date().toISOString(),
-          },
         };
         websocket.send(JSON.stringify(commentData));
       }
@@ -408,14 +400,6 @@ function DangBaiPost() {
           authorName: userName,
           authorId: userID,
           to: selectedFacebookAccount.facebookId,
-          attachments: [],
-          metadata: {
-            category: "reply",
-            source: "crm_tool",
-            platform: "facebook",
-            action: "create_reply",
-            timestamp: new Date().toISOString(),
-          },
         };
         websocket.send(JSON.stringify(replyCommentData));
       }
@@ -506,14 +490,6 @@ function DangBaiPost() {
           URL: facebookReplyURL,
           authorName: userName,
           authorId: userID,
-          attachments: [],
-          metadata: {
-            category: "reply_to_reply",
-            source: "crm_tool",
-            platform: "facebook",
-            action: "create_reply_to_reply",
-            timestamp: new Date().toISOString(),
-          },
         };
         websocket.send(JSON.stringify(replyToReplyData));
       }
@@ -593,7 +569,7 @@ function DangBaiPost() {
 
     if (selectedAccount) {
       console.log(
-        `📱 Switching to Facebook account: ${selectedAccount.userNameFb}`
+        ` Switching to Facebook account: ${selectedAccount.userNameFb}`
       );
       setSelectedFacebookAccount(selectedAccount);
 
@@ -621,7 +597,7 @@ function DangBaiPost() {
         to: selectedFacebookAccount.facebookId,
       };
 
-      console.log("🚀 Gửi yêu cầu cào comment:", crawlData);
+      console.log("Gửi yêu cầu cào comment:", crawlData);
       websocket.send(JSON.stringify(crawlData));
 
       // Hiển thị thông báo cho user

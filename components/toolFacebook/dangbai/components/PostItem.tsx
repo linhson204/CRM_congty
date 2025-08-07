@@ -26,14 +26,6 @@ export const PostItem: React.FC<PostItemProps> = ({
   handleReply,
   disabled = false,
 }) => {
-  // Debug: Log comments cho post này
-  console.log(`🎯 PostItem render for post ${post.id}:`, {
-    postId: post.id,
-    hasComments: !!post.comments,
-    commentsLength: post.comments?.length || 0,
-    comments: post.comments,
-  });
-
   return (
     <div className={styles.postContainer}>
       <div className={styles.postHeader}>

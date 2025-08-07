@@ -4,7 +4,9 @@ import { getPostbyUserId } from "../../../../pages/api/toolFacebook/dang-bai/dan
 import { getCommentByPostId } from "../../../../pages/api/toolFacebook/dang-bai/comment";
 import Cookies from "js-cookie";
 
-export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
+export const usePostManagement = (
+  selectedFacebookAccount: FacebookAccount | null
+) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
 
@@ -40,7 +42,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
       return {
         idMongodb: apiPost._id,
         id: parseInt(apiPost.facebookPostId) || Date.now(),
-        to: apiPost.facebookId || selectedFacebookAccount.facebookId,
+        to: apiPost.facebookId || selectedFacebookAccount?.facebookId || "",
         content: apiPost.content,
         author: apiPost.userNameFacebook || "Người dùng",
         authorId: apiPost.userId,
@@ -53,7 +55,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
         isPosted: !!apiPost.facebookPostUrl,
       };
     },
-    [selectedFacebookAccount.facebookId]
+    [selectedFacebookAccount?.facebookId]
   );
 
   // Function để convert reply từ API sang format của component
@@ -61,7 +63,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
     (apiReply: any): Reply => {
       return {
         id: parseInt(apiReply.id_facebookReply) || Date.now(),
-        to: selectedFacebookAccount.facebookId,
+        to: selectedFacebookAccount?.facebookId || "",
         content: apiReply.content,
         userLinkFb: apiReply.userLinkFb || "",
         author: apiReply.userNameFacebook || "Facebook User",
@@ -74,7 +76,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
         replyToAuthor: apiReply.replyToAuthor || "",
       };
     },
-    [selectedFacebookAccount.facebookId]
+    [selectedFacebookAccount?.facebookId]
   );
 
   // Function để convert comment từ API sang format của component
@@ -87,7 +89,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
       return {
         idMongodb: apiComment._id,
         id: parseInt(apiComment.facebookCommentId) || Date.now(),
-        to: apiComment.facebookId || selectedFacebookAccount.facebookId,
+        to: apiComment.facebookId || selectedFacebookAccount?.facebookId || "",
         postId: parseInt(apiComment.postId),
         content: apiComment.content,
         userLinkFb: apiComment.userLinkFb || "",
@@ -101,12 +103,17 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
         facebookCommentUrl: apiComment.facebookCommentUrl || "",
       };
     },
-    [selectedFacebookAccount.facebookId, convertApiReplyToComponentReply]
+    [selectedFacebookAccount?.facebookId, convertApiReplyToComponentReply]
   );
 
   // Function để load comments cho từng post
   const loadCommentsForPost = useCallback(
     async (post: Post) => {
+      if (!selectedFacebookAccount) {
+        console.warn("No selected Facebook account, cannot load comments");
+        return;
+      }
+
       try {
         const userID = Cookies.get("userID") || "anonymous";
         const facebookId = selectedFacebookAccount.facebookId;
@@ -133,7 +140,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
           });
         } else {
           console.log(
-            `❌ No comments found for post ${post.id}. Response:`,
+            `No comments found for post ${post.id}. Response:`,
             response
           );
         }
@@ -141,7 +148,7 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
         console.error(`Error loading comments for post ${post.id}:`, error);
       }
     },
-    [selectedFacebookAccount.facebookId, convertApiCommentToComponentComment]
+    [selectedFacebookAccount?.facebookId, convertApiCommentToComponentComment]
   );
 
   // Function để load comments cho tất cả posts
@@ -178,6 +185,11 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
   // Function để fetch posts từ API
   const fetchUserPosts = useCallback(
     async (userId: string) => {
+      if (!selectedFacebookAccount) {
+        console.warn("No selected Facebook account, cannot fetch posts");
+        return;
+      }
+
       setIsLoadingPosts(true);
       try {
         const response = await getPostbyUserId(
@@ -195,17 +207,17 @@ export const usePostManagement = (selectedFacebookAccount: FacebookAccount) => {
             await loadCommentsForAllPosts(convertedPosts);
           }, 500);
         } else {
-          console.warn("⚠️ No posts found or invalid response");
+          console.warn("No posts found or invalid response");
           setPosts([]);
         }
       } catch (error) {
-        console.error("❌ Error fetching posts:", error);
+        console.error("Error fetching posts:", error);
       } finally {
         setIsLoadingPosts(false);
       }
     },
     [
-      selectedFacebookAccount.facebookId,
+      selectedFacebookAccount?.facebookId,
       convertApiPostToComponentPost,
       loadCommentsForAllPosts,
     ]

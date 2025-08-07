@@ -45,7 +45,7 @@ export const useWebSocket = (
         console.log("Post sent successfully with ID:", data.postId);
       } else if (data.type === "URL_post") {
         console.log(
-          "📝 Updating post with ID:",
+          " Updating post with ID:",
           data.postId,
           "with URL:",
           data.URL

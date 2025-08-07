@@ -70,13 +70,13 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
 export const getFacebookAccountsByUserID = (
   userID: string
 ): FacebookAccount[] => {
-  console.log(`📱 Getting Facebook accounts for userID: ${userID}`);
+  console.log(` Getting Facebook accounts for userID: ${userID}`);
 
   const userAccounts =
     USER_FACEBOOK_MAPPING[userID] || USER_FACEBOOK_MAPPING["default"];
 
   console.log(
-    `📱 Found ${userAccounts.length} accounts:`,
+    ` Found ${userAccounts.length} accounts:`,
     userAccounts.map((acc) => acc.userNameFb)
   );
 
