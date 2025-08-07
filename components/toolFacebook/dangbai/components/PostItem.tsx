@@ -72,7 +72,7 @@ export const PostItem: React.FC<PostItemProps> = ({
         </div>
       )}
 
-      {/* Actions: Like, Comment */}
+      {/* Actions: Comment */}
       <div className={styles.actionsContainer}>
         <div className={styles.actionButtons}>
           <button

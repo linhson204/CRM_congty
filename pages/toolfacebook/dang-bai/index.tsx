@@ -81,6 +81,11 @@ function DangBaiPost() {
     };
   }>({});
 
+  // State để track thời gian đăng bài cuối cùng cho từng Facebook account
+  const [lastPostTime, setLastPostTime] = useState<{
+    [facebookId: string]: number;
+  }>({});
+
   // Use custom hooks
   const postManagement = usePostManagement(selectedFacebookAccount);
   const modalManagement = useModalManagement();
@@ -107,6 +112,46 @@ function DangBaiPost() {
     const status = crawlingStatus[selectedFacebookAccount.facebookId];
     return status?.message || "";
   }, [crawlingStatus, selectedFacebookAccount]);
+
+  // Check xem có thể đăng bài không (kiểm tra thời gian 30 phút)
+  const canPost = useCallback(() => {
+    if (!selectedFacebookAccount) return false;
+
+    const lastTime = lastPostTime[selectedFacebookAccount.facebookId];
+    if (!lastTime) return true; // Chưa đăng bài lần nào
+
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastTime;
+    const thirtyMinutes = 30 * 60 * 1000; // 30 phút = 30 * 60 * 1000 milliseconds
+
+    return timeDiff >= thirtyMinutes;
+  }, [selectedFacebookAccount, lastPostTime]);
+
+  // Get thời gian còn lại để có thể đăng bài tiếp theo
+  const getTimeUntilNextPost = useCallback(() => {
+    if (!selectedFacebookAccount) return 0;
+
+    const lastTime = lastPostTime[selectedFacebookAccount.facebookId];
+    if (!lastTime) return 0;
+
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastTime;
+    const thirtyMinutes = 30 * 60 * 1000;
+
+    if (timeDiff >= thirtyMinutes) return 0;
+
+    return thirtyMinutes - timeDiff;
+  }, [selectedFacebookAccount, lastPostTime]);
+
+  // Format thời gian còn lại thành string dễ đọc
+  const formatTimeRemaining = useCallback((milliseconds: number) => {
+    if (milliseconds <= 0) return "";
+
+    const minutes = Math.floor(milliseconds / (60 * 1000));
+    const seconds = Math.floor((milliseconds % (60 * 1000)) / 1000);
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }, []);
 
   // Use WebSocket hook
   const websocket = useWebSocket(
@@ -228,6 +273,19 @@ function DangBaiPost() {
       mainRef.current?.classList.remove("content_resize");
     }
   }, [isOpen]);
+
+  // Effect để cập nhật UI đếm ngược mỗi giây
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Force re-render để cập nhật thời gian còn lại
+      if (selectedFacebookAccount && !canPost()) {
+        // Trigger re-render bằng cách cập nhật một dummy state
+        setLastPostTime((prev) => ({ ...prev }));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [selectedFacebookAccount, canPost]);
 
   // Hiển thị loading khi đang kiểm tra quyền hoặc load Facebook accounts
   if (isCheckingPermission || (hasPermission && isLoadingAccounts)) {
@@ -500,7 +558,11 @@ function DangBaiPost() {
   };
 
   const handleSubmit = async () => {
-    if (modalManagement.postContent.trim() && !isCurrentAccountCrawling()) {
+    if (
+      modalManagement.postContent.trim() &&
+      !isCurrentAccountCrawling() &&
+      canPost()
+    ) {
       const userID = Cookies.get("userID") || "anonymous";
       const userName = Cookies.get("userName") || "Người dùng";
 
@@ -523,6 +585,12 @@ function DangBaiPost() {
 
       // Thêm bài đăng vào đầu danh sách
       postManagement.setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
+
+      // Cập nhật thời gian đăng bài cuối cùng
+      setLastPostTime((prev) => ({
+        ...prev,
+        [selectedFacebookAccount.facebookId]: Date.now(),
+      }));
 
       // Gửi dữ liệu qua WebSocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -551,6 +619,10 @@ function DangBaiPost() {
       }
 
       modalManagement.handleCloseModal();
+    } else if (!canPost()) {
+      const timeRemaining = getTimeUntilNextPost();
+      const formattedTime = formatTimeRemaining(timeRemaining);
+      alert(`Bạn cần chờ ${formattedTime} nữa mới có thể đăng bài tiếp theo!`);
     }
   };
 
@@ -653,6 +725,9 @@ function DangBaiPost() {
                     onOpenModal={modalManagement.handleOpenModal}
                     onCrawlComments={handleCrawlComments}
                     stylesContract={stylesContract}
+                    canPost={canPost}
+                    getTimeUntilNextPost={getTimeUntilNextPost}
+                    formatTimeRemaining={formatTimeRemaining}
                   />
                 </div>
 
