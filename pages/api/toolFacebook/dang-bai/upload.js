@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const URL_API = "http://localhost:4000/api";
-const URL_API = "https://backend-crm-skmr.onrender.com/api";
+const URL_API = "http://localhost:4000/api";
+// const URL_API = "https://backend-crm-skmr.onrender.com/api";
 
 export const uploadImage = async (imageFiles) => {
   const formData = new FormData();

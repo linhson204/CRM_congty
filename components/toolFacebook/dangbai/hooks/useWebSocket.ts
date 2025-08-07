@@ -23,13 +23,13 @@ export const useWebSocket = (
 ) => {
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
-  useEffect(() => {
-    // const ws = new WebSocket("ws://localhost:4000");
-    const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
+  const connectWebSocket = () => {
+    const ws = new WebSocket("ws://localhost:4000");
+    // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
     ws.onopen = () => {
-      console.log("WebSocket connected");
+      console.log("✅ WebSocket connected successfully");
       ws.send(
         JSON.stringify({
           type: "register",
@@ -791,18 +791,31 @@ export const useWebSocket = (
       }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
+    ws.onclose = (event) => {
+      console.log("❌ WebSocket disconnected:", event.code, event.reason);
+      setWebsocket(null);
+
+      setTimeout(() => {
+        console.log("🔄 Attempting to reconnect WebSocket...");
+        connectWebSocket();
+      }, 5000);
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error("❌ WebSocket error:", error);
     };
 
     setWebsocket(ws);
+    return ws;
+  };
+
+  useEffect(() => {
+    const ws = connectWebSocket();
 
     return () => {
-      ws.close();
+      if (ws) {
+        ws.close();
+      }
     };
   }, [setPosts]);
 

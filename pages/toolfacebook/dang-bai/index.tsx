@@ -14,30 +14,35 @@ import styles from "@/components/crm/potential/potential.module.css";
 import stylesContract from "@/components/crm/contract/contract_action.module.css";
 import { SidebarContext } from "@/components/crm/context/resizeContext";
 import { useHeader } from "@/components/crm/hooks/useHeader";
-import {
-  getPostbyUserId,
-  createPost,
-} from "../../api/toolFacebook/dang-bai/dang-bai";
-import {
-  uploadImage,
-  deleteImage,
-} from "../../api/toolFacebook/dang-bai/upload";
-import { getCommentByPostId } from "../../api/toolFacebook/dang-bai/comment";
 
 // Import types and components
 import {
   Post,
   Comment,
   Reply,
-  ShowReplyModal,
   FacebookAccount,
 } from "@/components/toolFacebook/dangbai/types";
+
+// Import Facebook accounts mapping
+import {
+  USER_FACEBOOK_MAPPING,
+  getFacebookAccountsByUserID,
+} from "@/components/toolFacebook/dangbai/constants/facebookAccountsMapping";
+
+// Import custom hooks
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
+import { usePostManagement } from "@/components/toolFacebook/dangbai/hooks/usePostManagement";
+import { useModalManagement } from "@/components/toolFacebook/dangbai/hooks/useModalManagement";
+import { useImageManagement } from "@/components/toolFacebook/dangbai/hooks/useImageManagement";
+
+// Import components
 import { PostModal } from "@/components/toolFacebook/dangbai/components/PostModal";
 import { CommentModal } from "@/components/toolFacebook/dangbai/components/CommentModal";
 import { ReplyModal } from "@/components/toolFacebook/dangbai/components/ReplyModal";
 import { PostItem } from "@/components/toolFacebook/dangbai/components/PostItem";
-import customStyles from "@/components/toolFacebook/dangbai/styles/styles.module.css";
+import { FacebookAccountSelector } from "@/components/toolFacebook/dangbai/components/FacebookAccountSelector";
+import { ActionButtons } from "@/components/toolFacebook/dangbai/components/ActionButtons";
+import { PostsHeader } from "@/components/toolFacebook/dangbai/components/PostsHeader";
 
 function DangBaiPost() {
   const router = useRouter();
@@ -49,38 +54,23 @@ function DangBaiPost() {
   // States cho kiểm tra quyền
   const [hasPermission, setHasPermission] = useState(false);
   const [isCheckingPermission, setIsCheckingPermission] = useState(true);
+  const [currentUserID, setCurrentUserID] = useState<string | null>(null);
 
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
     "22858640",
+    "22614471",
     // Thêm các ID được phép vào đây
   ];
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-
-  // States cho Facebook accounts
-  const [facebookAccounts, setFacebookAccounts] = useState<FacebookAccount[]>([
-    {
-      userNameFb: "Giản Vũ",
-      userLinkFb: "https://www.facebook.com/gian.vu.792551",
-      facebookId: "B22858640",
-      username: "gianvu17607@gmail.com",
-      password: "lvqh1234",
-    },
-    {
-      userNameFb: "Test (Chưa có)",
-      userLinkFb: "https://facebook.com/recruitment",
-      facebookId: "B33445566",
-      username: "recruitment@email.com",
-      password: "password456",
-    },
-  ]);
+  // State cho Facebook accounts với static data
+  const [facebookAccounts, setFacebookAccounts] = useState<FacebookAccount[]>(
+    []
+  );
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
 
   const [selectedFacebookAccount, setSelectedFacebookAccount] =
-    useState<FacebookAccount>(
-      facebookAccounts[0] // Chọn account đầu tiên làm mặc định
-    );
+    useState<FacebookAccount | null>(null);
 
   // State để track crawling status cho từng Facebook account
   const [crawlingStatus, setCrawlingStatus] = useState<{
@@ -91,224 +81,38 @@ function DangBaiPost() {
     };
   }>({});
 
-  // Function để convert dữ liệu từ API sang format của component
-  const convertApiPostToComponentPost = (apiPost: any): Post => {
-    // Convert images từ API response
-    let convertedImages: { name: string; url: string }[] = [];
-
-    if (apiPost.media && Array.isArray(apiPost.media)) {
-      convertedImages = apiPost.media.map((media: any) => ({
-        name: media.name || media.filename || "image",
-        url: media.url || media.link,
-      }));
-    } else if (apiPost.attachments && Array.isArray(apiPost.attachments)) {
-      convertedImages = apiPost.attachments.map((att: any) => ({
-        name: att.name || att.filename || "image",
-        url: att.url || att.link,
-      }));
-    } else if (apiPost.images && Array.isArray(apiPost.images)) {
-      convertedImages = apiPost.images.map((img: any) => {
-        if (typeof img === "string") {
-          return { name: "image", url: img };
-        } else {
-          return {
-            name: img.name || img.filename || "image",
-            url: img.url || img.link || img,
-          };
-        }
-      });
-    }
-
-    return {
-      idMongodb: apiPost._id,
-      id: parseInt(apiPost.facebookPostId) || Date.now(), // Sử dụng facebookPostId làm id
-      to: apiPost.facebookId || selectedFacebookAccount.facebookId,
-      content: apiPost.content,
-      author: apiPost.userNameFacebook || "Người dùng",
-      authorId: apiPost.userId,
-      timestamp: apiPost.createdAt
-        ? new Date(apiPost.createdAt * 1000).toLocaleString("vi-VN")
-        : new Date().toLocaleString("vi-VN"),
-      images: convertedImages,
-      comments: [], // Sẽ được load sau nếu cần
-      facebookUrl: apiPost.facebookPostUrl,
-      isPosted: !!apiPost.facebookPostUrl, // Nếu có URL thì đã post thành công
-    };
-  };
-
-  // Function để convert reply từ API sang format của component
-  const convertApiReplyToComponentReply = (apiReply: any): Reply => {
-    return {
-      id: parseInt(apiReply.id_facebookReply) || Date.now(),
-      to: selectedFacebookAccount.facebookId,
-      content: apiReply.content,
-      userLinkFb: apiReply.userLinkFb || "",
-      author: apiReply.userNameFacebook || "Facebook User",
-      authorId: apiReply.userId || "facebook_user",
-      timestamp: apiReply.createdAt
-        ? new Date(apiReply.createdAt).toLocaleString("vi-VN")
-        : new Date().toLocaleString("vi-VN"),
-      id_facebookReply: apiReply.id_facebookReply,
-      facebookReplyUrl: apiReply.facebookReplyUrl || "",
-      replyToAuthor: apiReply.replyToAuthor || "",
-    };
-  };
-
-  // Function để convert comment từ API sang format của component
-  const convertApiCommentToComponentComment = (apiComment: any): Comment => {
-    // Convert replies nếu có
-    const replies: Reply[] = Array.isArray(apiComment.listFeedback)
-      ? apiComment.listFeedback.map(convertApiReplyToComponentReply)
-      : [];
-
-    return {
-      idMongodb: apiComment._id,
-      id: parseInt(apiComment.facebookCommentId) || Date.now(),
-      to: apiComment.facebookId || selectedFacebookAccount.facebookId,
-      postId: parseInt(apiComment.postId),
-      content: apiComment.content,
-      userLinkFb: apiComment.userLinkFb || "",
-      author: apiComment.userNameFacebook || "Facebook User",
-      authorId: apiComment.userId || "facebook_user",
-      timestamp: apiComment.createdAt
-        ? new Date(apiComment.createdAt * 1000).toLocaleString("vi-VN")
-        : new Date().toLocaleString("vi-VN"),
-      replies: replies, // Sử dụng replies đã convert
-      id_facebookComment: apiComment.facebookCommentId,
-      facebookCommentUrl: apiComment.facebookCommentUrl || "",
-    };
-  };
-
-  // Function để load comments cho từng post
-  const loadCommentsForPost = async (post: Post) => {
-    try {
-      const userID = Cookies.get("userID") || "anonymous";
-      const facebookId = selectedFacebookAccount.facebookId; // Sử dụng selectedFacebookAccount
-
-      const response = await getCommentByPostId(
-        post.id.toString(),
-        userID,
-        facebookId
-      );
-
-      if (response.results) {
-        const comments = response.results.map(
-          convertApiCommentToComponentComment
-        );
-
-        // Update post với comments
-        setPosts((prevPosts) => {
-          const updatedPosts = prevPosts.map((p) => {
-            if (p.id === post.id) {
-              return { ...p, comments };
-            }
-            return p;
-          });
-
-          return updatedPosts;
-        });
-      } else {
-        console.log(
-          `❌ No comments found for post ${post.id}. Response:`,
-          response
-        );
-      }
-    } catch (error) {
-      console.error(`Error loading comments for post ${post.id}:`, error);
-    }
-  };
-
-  // Function để load comments cho tất cả posts
-  const loadCommentsForAllPosts = async (postsToLoad: Post[]) => {
-    try {
-      // Load comments cho từng post tuần tự để tránh quá tải
-      for (const post of postsToLoad) {
-        if (post.isPosted) {
-          // Chỉ load comments cho posts đã được post thành công
-          await loadCommentsForPost(post);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading comments for posts:", error);
-    }
-  };
-
-  // Function để refresh comments cho một post cụ thể (dùng từ WebSocket)
-  const refreshCommentsForPost = async (postId: string | number) => {
-    try {
-      const post = posts.find((p) => p.id.toString() === postId.toString());
-      if (post && post.isPosted) {
-        await loadCommentsForPost(post);
-      }
-    } catch (error) {
-      console.error(`Error refreshing comments for post ${postId}:`, error);
-    }
-  };
-
-  // Function để fetch posts từ API
-  const fetchUserPosts = async (userId: string) => {
-    setIsLoadingPosts(true);
-    try {
-      const response = await getPostbyUserId(
-        userId,
-        selectedFacebookAccount.facebookId
-      );
-
-      if (response && response.results) {
-        const convertedPosts = response.results.map(
-          convertApiPostToComponentPost
-        );
-        setPosts(convertedPosts);
-
-        // Load comments cho tất cả posts sau khi load xong posts
-        setTimeout(async () => {
-          await loadCommentsForAllPosts(convertedPosts);
-        }, 500); // Delay nhỏ để UI render trước
-      } else {
-        console.warn("⚠️ No posts found or invalid response");
-        setPosts([]);
-      }
-    } catch (error) {
-      console.error("❌ Error fetching posts:", error);
-      // Giữ posts hiện tại nếu có lỗi
-    } finally {
-      setIsLoadingPosts(false);
-    }
-  };
-
-  const [showModal, setShowModal] = useState(false);
-  const [postContent, setPostContent] = useState("");
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<any[]>([]); // Lưu thông tin ảnh đã upload
-  const [isUploadingImages, setIsUploadingImages] = useState(false); // Loading state cho upload
-  const [isDeletingImage, setIsDeletingImage] = useState<number | null>(null); // Loading state cho delete
-  const [showCommentModal, setShowCommentModal] = useState<number | null>(null);
-  const [currentPostForComment, setCurrentPostForComment] =
-    useState<Post | null>(null);
-  const [commentContent, setCommentContent] = useState("");
-  const [showReplyModal, setShowReplyModal] = useState<ShowReplyModal | null>(
-    null
+  // Use custom hooks
+  const postManagement = usePostManagement(selectedFacebookAccount);
+  const modalManagement = useModalManagement();
+  const imageManagement = useImageManagement(
+    modalManagement.uploadedImages,
+    modalManagement.setUploadedImages,
+    modalManagement.selectedImages,
+    modalManagement.setSelectedImages,
+    modalManagement.setIsUploadingImages,
+    modalManagement.setIsDeletingImage
   );
-  const [replyContent, setReplyContent] = useState("");
 
   // Check xem Facebook account hiện tại có đang crawl không
   const isCurrentAccountCrawling = useCallback(() => {
+    if (!selectedFacebookAccount) return false;
     const currentStatus =
       crawlingStatus[selectedFacebookAccount.facebookId]?.isActive || false;
     return currentStatus;
-  }, [crawlingStatus, selectedFacebookAccount.facebookId]);
+  }, [crawlingStatus, selectedFacebookAccount]);
 
   // Get crawling message cho account hiện tại
   const getCurrentCrawlingMessage = useCallback(() => {
+    if (!selectedFacebookAccount) return "";
     const status = crawlingStatus[selectedFacebookAccount.facebookId];
     return status?.message || "";
-  }, [crawlingStatus, selectedFacebookAccount.facebookId]);
+  }, [crawlingStatus, selectedFacebookAccount]);
 
   // Use WebSocket hook
   const websocket = useWebSocket(
-    posts,
-    setPosts,
-    refreshCommentsForPost,
+    postManagement.posts,
+    postManagement.setPosts,
+    postManagement.refreshCommentsForPost,
     setCrawlingStatus
   );
 
@@ -341,9 +145,9 @@ function DangBaiPost() {
         });
 
         setHasPermission(true);
+        setCurrentUserID(userID); // Set userID để trigger fetch Facebook accounts
 
-        // Fetch posts sau khi verify permission thành công
-        await fetchUserPosts(userID);
+        // Posts sẽ được fetch sau khi có Facebook accounts
       } catch (error) {
         console.error("Lỗi kiểm tra quyền:", error);
         window.alert("Có lỗi xảy ra khi kiểm tra quyền!");
@@ -356,6 +160,59 @@ function DangBaiPost() {
     checkPermission();
   }, [router]);
 
+  // Effect để load Facebook accounts từ static data mapping khi userID thay đổi
+  useEffect(() => {
+    if (currentUserID) {
+      console.log(`🔍 Loading Facebook accounts for userID: ${currentUserID}`);
+      setIsLoadingAccounts(true);
+
+      try {
+        const userAccounts = getFacebookAccountsByUserID(currentUserID);
+        setFacebookAccounts(userAccounts);
+        console.log(
+          `✅ Loaded ${userAccounts.length} Facebook accounts for userID: ${currentUserID}`
+        );
+      } catch (error) {
+        console.error(
+          `❌ Error loading Facebook accounts for userID ${currentUserID}:`,
+          error
+        );
+        setFacebookAccounts([]); // Set empty array nếu có lỗi
+      } finally {
+        setIsLoadingAccounts(false);
+      }
+    } else {
+      console.log(`🔍 No userID, clearing Facebook accounts`);
+      setFacebookAccounts([]);
+      setSelectedFacebookAccount(null);
+    }
+  }, [currentUserID]);
+
+  // Effect để set Facebook account đầu tiên khi accounts được load
+  useEffect(() => {
+    if (facebookAccounts.length > 0 && !selectedFacebookAccount) {
+      console.log(
+        `📱 Setting default Facebook account: ${facebookAccounts[0].userNameFb}`
+      );
+      setSelectedFacebookAccount(facebookAccounts[0]);
+    }
+  }, [facebookAccounts, selectedFacebookAccount]);
+
+  // Effect để fetch posts khi có cả Facebook account và userID
+  useEffect(() => {
+    if (hasPermission && selectedFacebookAccount && currentUserID) {
+      console.log(
+        `📝 Fetching posts for account: ${selectedFacebookAccount.userNameFb}`
+      );
+      postManagement.fetchUserPosts(currentUserID);
+    }
+  }, [
+    hasPermission,
+    selectedFacebookAccount,
+    currentUserID,
+    postManagement.fetchUserPosts,
+  ]);
+
   useEffect(() => {
     if (hasPermission) {
       setHeaderTitle("Tool Facebook - Đăng bài");
@@ -363,16 +220,6 @@ function DangBaiPost() {
       setCurrentPath("/toolfacebook/dang-bai");
     }
   }, [setHeaderTitle, setShowBackButton, setCurrentPath, hasPermission]);
-
-  // Effect để fetch posts khi selectedFacebookAccount thay đổi
-  useEffect(() => {
-    if (hasPermission && selectedFacebookAccount) {
-      const userID = Cookies.get("userID");
-      if (userID) {
-        fetchUserPosts(userID);
-      }
-    }
-  }, [hasPermission, selectedFacebookAccount]);
 
   useEffect(() => {
     if (isOpen) {
@@ -382,8 +229,8 @@ function DangBaiPost() {
     }
   }, [isOpen]);
 
-  // Hiển thị loading khi đang kiểm tra quyền
-  if (isCheckingPermission) {
+  // Hiển thị loading khi đang kiểm tra quyền hoặc load Facebook accounts
+  if (isCheckingPermission || (hasPermission && isLoadingAccounts)) {
     return (
       <>
         <Head>
@@ -402,7 +249,11 @@ function DangBaiPost() {
             gap: "10px",
           }}
         >
-          <div>Đang kiểm tra quyền truy cập...</div>
+          <div>
+            {isCheckingPermission
+              ? "Đang kiểm tra quyền truy cập..."
+              : "Đang tải danh sách Facebook accounts..."}
+          </div>
           <div style={{ fontSize: "12px", color: "#666" }}>
             Tool Facebook - Đăng bài
           </div>
@@ -411,126 +262,16 @@ function DangBaiPost() {
     );
   }
 
-  // Không hiển thị gì nếu không có quyền (đã chuyển hướng)
-  if (!hasPermission) {
+  // Không hiển thị gì nếu không có quyền hoặc chưa có Facebook account
+  if (!hasPermission || !selectedFacebookAccount) {
     return null;
   }
 
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setPostContent("");
-    setSelectedImages([]);
-    setUploadedImages([]); // Reset uploaded images
-    setIsUploadingImages(false); // Reset upload state
-    setIsDeletingImage(null); // Reset delete state
-  };
-
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setIsUploadingImages(true);
-
-      try {
-        // Giới hạn tối đa 4 ảnh
-        const maxFiles = Math.min(files.length, 4 - uploadedImages.length);
-        const filesToUpload = Array.from(files).slice(0, maxFiles);
-
-        // Upload ảnh lên BE
-        const uploadResponse = await uploadImage(filesToUpload);
-
-        if (uploadResponse && Array.isArray(uploadResponse)) {
-          // Lưu thông tin ảnh đã upload
-          setUploadedImages((prev) => [...prev, ...uploadResponse]);
-
-          // Cập nhật preview images (dùng URL từ BE)
-          const newImageUrls = uploadResponse.map((img) => img.link || img.url);
-          setSelectedImages((prev) => [...prev, ...newImageUrls]);
-        } else {
-          console.error("❌ Invalid upload response:", uploadResponse);
-          alert("Lỗi khi upload ảnh. Vui lòng thử lại!");
-        }
-      } catch (error) {
-        console.error("❌ Error uploading images:", error);
-        alert("Lỗi khi upload ảnh. Vui lòng thử lại!");
-      } finally {
-        setIsUploadingImages(false);
-      }
-    }
-  };
-
-  const removeImage = async (index: number) => {
-    try {
-      setIsDeletingImage(index); // Set loading state cho ảnh này
-
-      // Lấy thông tin ảnh cần xóa
-      const imageToDelete = uploadedImages[index];
-
-      if (imageToDelete && imageToDelete.id) {
-        // Gọi API xóa ảnh trên BE
-        await deleteImage(imageToDelete.id);
-      }
-
-      // Xóa khỏi state
-      setSelectedImages((prev) => prev.filter((_, i) => i !== index));
-      setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-    } catch (error) {
-      console.error(`❌ Error deleting image at index ${index}:`, error);
-
-      // Vẫn xóa khỏi UI ngay cả khi API fails
-      setSelectedImages((prev) => prev.filter((_, i) => i !== index));
-      setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-
-      // Hiển thị thông báo lỗi cho user
-      alert(
-        "Có lỗi khi xóa ảnh trên server, nhưng ảnh đã được xóa khỏi danh sách."
-      );
-    } finally {
-      setIsDeletingImage(null); // Reset loading state
-    }
-  };
-
-  const handleComment = (post: Post) => {
-    setShowCommentModal(post.id);
-    setCurrentPostForComment(post); // Lưu thông tin post hiện tại
-    setCommentContent("");
-  };
-
-  const handleCloseCommentModal = () => {
-    setShowCommentModal(null);
-    setCurrentPostForComment(null);
-    setCommentContent("");
-  };
-
-  const handleReply = (
-    postId: number,
-    commentId: number,
-    replyToAuthor?: string,
-    replyId?: any,
-    facebookCommentId?: string,
-    facebookReplyId?: string
-  ) => {
-    setShowReplyModal({
-      postId,
-      commentId,
-      replyToAuthor,
-      replyId,
-      facebookCommentId,
-      facebookReplyId,
-    });
-    setReplyContent("");
-  };
-
   const submitComment = (post: Post) => {
     if (
-      commentContent.trim() &&
-      showCommentModal &&
-      currentPostForComment &&
+      modalManagement.commentContent.trim() &&
+      modalManagement.showCommentModal &&
+      modalManagement.currentPostForComment &&
       !isCurrentAccountCrawling()
     ) {
       const userName = Cookies.get("userName") || "Người dùng";
@@ -540,14 +281,14 @@ function DangBaiPost() {
         to: selectedFacebookAccount.facebookId,
         userLinkFb: "sadnfjdsf",
         postId: post.id,
-        content: commentContent,
+        content: modalManagement.commentContent,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
         replies: [],
       };
 
-      setPosts((prev) =>
+      postManagement.setPosts((prev) =>
         (prev || []).map((p) =>
           p.id === post.id
             ? {
@@ -562,12 +303,12 @@ function DangBaiPost() {
       if (websocket && websocket.readyState === WebSocket.OPEN) {
         const commentData = {
           type: "comment",
-          content: commentContent,
+          content: modalManagement.commentContent,
           postId: post.id.toString(),
           URL: post.facebookUrl || "",
           to: selectedFacebookAccount.facebookId,
           authorName: userName,
-          commentId: Date.now().toString(), // id tạm thời theo thời gian gửi sau xóa đi
+          commentId: Date.now().toString(),
           authorId: userID,
           attachments: [],
           metadata: {
@@ -581,35 +322,37 @@ function DangBaiPost() {
         websocket.send(JSON.stringify(commentData));
       }
 
-      setShowCommentModal(null);
-      setCurrentPostForComment(null);
-      setCommentContent("");
+      modalManagement.handleCloseCommentModal();
     }
   };
 
   const submitReply = () => {
-    if (replyContent.trim() && showReplyModal && !isCurrentAccountCrawling()) {
+    if (
+      modalManagement.replyContent.trim() &&
+      modalManagement.showReplyModal &&
+      !isCurrentAccountCrawling()
+    ) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
 
       const newReply: Reply = {
         id: Date.now(),
-        content: replyContent, // Chỉ lưu content thuần, không ghép @tên
+        content: modalManagement.replyContent,
         to: selectedFacebookAccount.facebookId,
         userLinkFb: selectedFacebookAccount.userLinkFb,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
-        replyToAuthor: showReplyModal.replyToAuthor, // Lưu thông tin người được reply riêng
+        replyToAuthor: modalManagement.showReplyModal.replyToAuthor,
       };
 
-      setPosts((prev) =>
+      postManagement.setPosts((prev) =>
         (prev || []).map((post) =>
-          post.id === showReplyModal.postId
+          post.id === modalManagement.showReplyModal!.postId
             ? {
                 ...post,
                 comments: post.comments?.map((comment) =>
-                  comment.id === showReplyModal.commentId
+                  comment.id === modalManagement.showReplyModal!.commentId
                     ? {
                         ...comment,
                         replies: [...(comment.replies || []), newReply],
@@ -623,10 +366,9 @@ function DangBaiPost() {
 
       // Gửi reply qua websocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
-        // Tìm comment cha để lấy facebookCommentUrl nếu có
         let commentUrl = "";
-        const currentPost = (posts || []).find(
-          (post) => post.id === showReplyModal.postId
+        const currentPost = (postManagement.posts || []).find(
+          (post) => post.id === modalManagement.showReplyModal!.postId
         );
         if (
           currentPost &&
@@ -634,13 +376,14 @@ function DangBaiPost() {
           currentPost.comments.length > 0
         ) {
           const parentComment = currentPost.comments.find(
-            (comment) => comment.id === showReplyModal.commentId
+            (comment) =>
+              comment.id === modalManagement.showReplyModal!.commentId
           );
           if (parentComment && parentComment.facebookCommentUrl) {
             commentUrl = parentComment.facebookCommentUrl;
           }
         }
-        // Lấy id_facebookComment để gửi qua WebSocket
+
         let facebookCommentId = "";
         if (
           currentPost &&
@@ -648,7 +391,8 @@ function DangBaiPost() {
           currentPost.comments.length > 0
         ) {
           const parentComment = currentPost.comments.find(
-            (comment) => comment.id === showReplyModal.commentId
+            (comment) =>
+              comment.id === modalManagement.showReplyModal!.commentId
           );
           if (parentComment && parentComment.id_facebookComment) {
             facebookCommentId = parentComment.id_facebookComment;
@@ -657,9 +401,9 @@ function DangBaiPost() {
 
         const replyCommentData = {
           type: "reply_comment",
-          content: replyContent, // Gửi qua WebSocket với @tên
-          postId: showReplyModal.postId.toString(),
-          commentId: facebookCommentId, // Sử dụng id_facebookComment thay vì local commentId
+          content: modalManagement.replyContent,
+          postId: modalManagement.showReplyModal!.postId.toString(),
+          commentId: facebookCommentId,
           URL: commentUrl,
           authorName: userName,
           authorId: userID,
@@ -676,35 +420,39 @@ function DangBaiPost() {
         websocket.send(JSON.stringify(replyCommentData));
       }
 
-      setShowReplyModal(null);
-      setReplyContent("");
+      modalManagement.setShowReplyModal(null);
+      modalManagement.setReplyContent("");
     }
   };
 
   // Function mới cho reply to reply
   const submitReplyToReply = () => {
-    if (replyContent.trim() && showReplyModal && !isCurrentAccountCrawling()) {
+    if (
+      modalManagement.replyContent.trim() &&
+      modalManagement.showReplyModal &&
+      !isCurrentAccountCrawling()
+    ) {
       const userName = Cookies.get("userName") || "Người dùng";
       const userID = Cookies.get("userID") || "anonymous";
 
       const newReply: Reply = {
         id: Date.now(),
-        content: replyContent,
+        content: modalManagement.replyContent,
         userLinkFb: selectedFacebookAccount.userLinkFb,
         to: selectedFacebookAccount.facebookId,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
-        replyToAuthor: showReplyModal.replyToAuthor,
+        replyToAuthor: modalManagement.showReplyModal.replyToAuthor,
       };
 
-      setPosts((prev) =>
+      postManagement.setPosts((prev) =>
         (prev || []).map((post) =>
-          post.id === showReplyModal.postId
+          post.id === modalManagement.showReplyModal!.postId
             ? {
                 ...post,
                 comments: post.comments?.map((comment) =>
-                  comment.id === showReplyModal.commentId
+                  comment.id === modalManagement.showReplyModal!.commentId
                     ? {
                         ...comment,
                         replies: [...(comment.replies || []), newReply],
@@ -722,33 +470,37 @@ function DangBaiPost() {
         let facebookReplyId = "";
         let facebookCommentId = "";
         let facebookReplyURL = "";
-        const currentPost = (posts || []).find(
-          (post) => post.id === showReplyModal.postId
+        const currentPost = postManagement.posts.find(
+          (post) => post.id === modalManagement.showReplyModal!.postId
         );
         if (currentPost && currentPost.comments) {
           // Tìm comment cha theo id (có thể là string hoặc string)
           const parentComment = currentPost.comments.find((comment) => {
             return (
-              comment.id_facebookComment === showReplyModal.facebookCommentId
+              comment.id_facebookComment ===
+              modalManagement.showReplyModal!.facebookCommentId
             );
           });
-          facebookReplyURL =
-            parentComment.facebookCommentUrl +
-            "&reply_comment_id=" +
-            showReplyModal.facebookReplyId.toString();
-          if (parentComment && parentComment.id_facebookComment) {
-            facebookCommentId = parentComment.id_facebookComment;
-          }
-          if (parentComment && parentComment.replies) {
-            facebookReplyId = showReplyModal.facebookReplyId.toString();
+          if (parentComment) {
+            facebookReplyURL =
+              parentComment.facebookCommentUrl +
+              "&reply_comment_id=" +
+              modalManagement.showReplyModal!.facebookReplyId.toString();
+            if (parentComment.id_facebookComment) {
+              facebookCommentId = parentComment.id_facebookComment;
+            }
+            if (parentComment.replies) {
+              facebookReplyId =
+                modalManagement.showReplyModal!.facebookReplyId.toString();
+            }
           }
         }
 
         const replyToReplyData = {
           type: "reply_reply_comment",
           to: selectedFacebookAccount.facebookId,
-          content: replyContent,
-          postId: showReplyModal.postId.toString(),
+          content: modalManagement.replyContent,
+          postId: modalManagement.showReplyModal!.postId.toString(),
           commentId: facebookCommentId, // Có thể để trống vì có replyId rồi
           replyId: facebookReplyId, // ID của reply được phản hồi
           URL: facebookReplyURL,
@@ -766,13 +518,13 @@ function DangBaiPost() {
         websocket.send(JSON.stringify(replyToReplyData));
       }
 
-      setShowReplyModal(null);
-      setReplyContent("");
+      modalManagement.setShowReplyModal(null);
+      modalManagement.setReplyContent("");
     }
   };
 
   const handleSubmit = async () => {
-    if (postContent.trim() && !isCurrentAccountCrawling()) {
+    if (modalManagement.postContent.trim() && !isCurrentAccountCrawling()) {
       const userID = Cookies.get("userID") || "anonymous";
       const userName = Cookies.get("userName") || "Người dùng";
 
@@ -780,11 +532,11 @@ function DangBaiPost() {
       const newPost: Post = {
         id: Date.now(),
         to: selectedFacebookAccount.facebookId,
-        content: postContent,
+        content: modalManagement.postContent,
         author: userName,
         authorId: userID,
         timestamp: new Date().toLocaleString("vi-VN"),
-        images: uploadedImages.map((img) => ({
+        images: modalManagement.uploadedImages.map((img) => ({
           name: img.name || img.filename || "image",
           url: img.link || img.url,
         })), // Sử dụng format {name, url}
@@ -794,18 +546,18 @@ function DangBaiPost() {
       };
 
       // Thêm bài đăng vào đầu danh sách
-      setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
+      postManagement.setPosts((prevPosts) => [newPost, ...(prevPosts || [])]);
 
       // Gửi dữ liệu qua WebSocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
         const postData = {
           type: "new_post",
           postId: newPost.id.toString(),
-          content: postContent,
+          content: modalManagement.postContent,
           authorName: userName,
           authorId: userID,
           to: selectedFacebookAccount.facebookId,
-          attachments: uploadedImages.map((img) => ({
+          attachments: modalManagement.uploadedImages.map((img) => ({
             name: img.name || img.filename || "image",
             url: img.link || img.url,
             type: "image",
@@ -822,7 +574,7 @@ function DangBaiPost() {
         websocket.send(JSON.stringify(postData));
       }
 
-      handleCloseModal();
+      modalManagement.handleCloseModal();
     }
   };
 
@@ -840,19 +592,21 @@ function DangBaiPost() {
     );
 
     if (selectedAccount) {
+      console.log(
+        `📱 Switching to Facebook account: ${selectedAccount.userNameFb}`
+      );
       setSelectedFacebookAccount(selectedAccount);
 
       // Fetch lại posts với Facebook account mới
-      const userID = Cookies.get("userID");
-      if (userID) {
-        await fetchUserPosts(userID);
+      if (currentUserID) {
+        await postManagement.fetchUserPosts(currentUserID);
       }
     }
   };
 
   // Handler để bắt đầu cào comment
   const handleCrawlComments = () => {
-    if (isCurrentAccountCrawling() || !posts.length) {
+    if (isCurrentAccountCrawling() || !postManagement.posts.length) {
       return;
     }
 
@@ -901,239 +655,46 @@ function DangBaiPost() {
             <div className={styles.info_step}>
               <div className={styles.main__title}>Tool Facebook - Đăng bài</div>
 
-              {/* Dropdown chọn Facebook Account */}
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "16px",
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: "8px",
-                  border: "1px solid #e0e0e0",
-                }}
-              >
-                <div
-                  style={{
-                    marginBottom: "8px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "#333",
-                  }}
-                >
-                  Chọn tài khoản Facebook:
-                </div>
-                <select
-                  value={selectedFacebookAccount.facebookId}
-                  onChange={handleFacebookAccountChange}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                  }}
-                >
-                  {facebookAccounts.map((account) => (
-                    <option key={account.facebookId} value={account.facebookId}>
-                      {account.userNameFb} ({account.facebookId})
-                      {crawlingStatus[account.facebookId]?.isActive
-                        ? " - 🔄 Đang cào..."
-                        : ""}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Hiển thị crawling status */}
-                {isCurrentAccountCrawling() && (
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      padding: "8px 12px",
-                      backgroundColor: "#fff3cd",
-                      border: "1px solid #ffeaa7",
-                      borderRadius: "4px",
-                      fontSize: "12px",
-                      color: "#856404",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
-                  >
-                    <span style={{ animation: "spin 1s linear infinite" }}>
-                      🔄
-                    </span>
-                    <span>
-                      <strong>Đang cào comment:</strong>{" "}
-                      {getCurrentCrawlingMessage()}
-                    </span>
-                  </div>
-                )}
-
-                {/* Hiển thị thông tin account được chọn */}
-                <div
-                  style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}
-                >
-                  <div>
-                    <strong>Trang:</strong> {selectedFacebookAccount.userNameFb}
-                  </div>
-                  <div>
-                    <strong>Link:</strong>{" "}
-                    <a
-                      href={selectedFacebookAccount.userLinkFb}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: "#007bff" }}
-                    >
-                      {selectedFacebookAccount.userLinkFb}
-                    </a>
-                  </div>
-                  <div>
-                    <strong>ID:</strong> {selectedFacebookAccount.facebookId}
-                  </div>
-                </div>
-              </div>
+              {/* Facebook Account Selector */}
+              <FacebookAccountSelector
+                selectedFacebookAccount={selectedFacebookAccount}
+                facebookAccounts={facebookAccounts}
+                crawlingStatus={crawlingStatus}
+                isCurrentAccountCrawling={isCurrentAccountCrawling}
+                getCurrentCrawlingMessage={getCurrentCrawlingMessage}
+                onAccountChange={handleFacebookAccountChange}
+              />
 
               <div className={styles.form_add_potential}>
-                {/* Nút đăng bài mới */}
+                {/* Action Buttons */}
                 <div
                   className={styles.main__body}
                   style={{ marginBottom: "20px" }}
                 >
-                  <div style={{ display: "flex", gap: "12px" }}>
-                    <button
-                      onClick={handleOpenModal}
-                      disabled={isCurrentAccountCrawling()}
-                      className={stylesContract.sub2}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        padding: "12px 24px",
-                        fontSize: "14px",
-                        justifyContent: "center",
-                        opacity: isCurrentAccountCrawling() ? 0.6 : 1,
-                        cursor: isCurrentAccountCrawling()
-                          ? "not-allowed"
-                          : "pointer",
-                        minWidth: "160px",
-                      }}
-                    >
-                      <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        {isCurrentAccountCrawling() ? "🔄" : "+"}
-                      </span>
-                      {isCurrentAccountCrawling()
-                        ? "Đang cào comment..."
-                        : "Đăng bài mới"}
-                    </button>
-
-                    <button
-                      onClick={handleCrawlComments}
-                      disabled={isCurrentAccountCrawling() || !posts.length}
-                      className={stylesContract.sub2}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        padding: "12px 24px",
-                        fontSize: "14px",
-                        justifyContent: "center",
-                        opacity:
-                          isCurrentAccountCrawling() || !posts.length ? 0.6 : 1,
-                        cursor:
-                          isCurrentAccountCrawling() || !posts.length
-                            ? "not-allowed"
-                            : "pointer",
-                        backgroundColor: "#28a745",
-                        borderColor: "#28a745",
-                        minWidth: "160px",
-                      }}
-                    >
-                      <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-                        {isCurrentAccountCrawling() ? "🔄" : "🔍"}
-                      </span>
-                      {isCurrentAccountCrawling()
-                        ? "Đang cào..."
-                        : "Cào comment"}
-                    </button>
-                  </div>
+                  <ActionButtons
+                    isCurrentAccountCrawling={isCurrentAccountCrawling}
+                    postsLength={postManagement.posts.length}
+                    onOpenModal={modalManagement.handleOpenModal}
+                    onCrawlComments={handleCrawlComments}
+                    stylesContract={stylesContract}
+                  />
                 </div>
 
-                {/* Header danh sách */}
+                {/* Posts List */}
                 <div className={styles.main__body}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "16px",
-                      paddingBottom: "12px",
-                      borderBottom: "2px solid #e0e0e0",
+                  <PostsHeader
+                    postsLength={postManagement.posts.length}
+                    isLoadingPosts={postManagement.isLoadingPosts}
+                    onRefreshPosts={() => {
+                      if (currentUserID) {
+                        postManagement.fetchUserPosts(currentUserID);
+                      }
                     }}
-                  >
-                    <h2
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        margin: 0,
-                        color: "#333",
-                      }}
-                    >
-                      Danh sách bài đăng
-                    </h2>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          const userID = Cookies.get("userID");
-                          if (userID) {
-                            fetchUserPosts(userID);
-                          }
-                        }}
-                        style={{
-                          background: "none",
-                          border: "1px solid #007bff",
-                          color: "#007bff",
-                          padding: "4px 8px",
-                          borderRadius: "4px",
-                          fontSize: "12px",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                        disabled={isLoadingPosts}
-                      >
-                        ↻ Làm mới
-                      </button>
-                      {isLoadingPosts && (
-                        <span style={{ fontSize: "12px", color: "#666" }}>
-                          Đang tải...
-                        </span>
-                      )}
-                      <span
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "4px 12px",
-                          borderRadius: "12px",
-                          fontSize: "12px",
-                          fontWeight: "500",
-                        }}
-                      >
-                        {posts?.length || 0} bài
-                      </span>
-                    </div>
-                  </div>
+                  />
 
                   {/* Render posts using PostItem component */}
                   <div>
-                    {isLoadingPosts ? (
+                    {postManagement.isLoadingPosts ? (
                       <div
                         style={{
                           display: "flex",
@@ -1146,14 +707,15 @@ function DangBaiPost() {
                       >
                         Đang tải danh sách bài đăng...
                       </div>
-                    ) : posts && posts.length > 0 ? (
-                      posts.map((post) => (
+                    ) : postManagement.posts &&
+                      postManagement.posts.length > 0 ? (
+                      postManagement.posts.map((post) => (
                         <PostItem
                           key={post.id}
                           post={post}
                           formatTimestamp={formatTimestamp}
-                          handleComment={handleComment}
-                          handleReply={handleReply}
+                          handleComment={modalManagement.handleComment}
+                          handleReply={modalManagement.handleReply}
                           disabled={isCurrentAccountCrawling()}
                         />
                       ))
@@ -1181,35 +743,35 @@ function DangBaiPost() {
 
       {/* Post Modal */}
       <PostModal
-        showModal={showModal}
-        postContent={postContent}
-        setPostContent={setPostContent}
-        selectedImages={selectedImages}
-        setSelectedImages={setSelectedImages}
-        handleCloseModal={handleCloseModal}
+        showModal={modalManagement.showModal}
+        postContent={modalManagement.postContent}
+        setPostContent={modalManagement.setPostContent}
+        selectedImages={modalManagement.selectedImages}
+        setSelectedImages={modalManagement.setSelectedImages}
+        handleCloseModal={modalManagement.handleCloseModal}
         handleSubmit={handleSubmit}
-        handleImageUpload={handleImageUpload}
-        removeImage={removeImage}
-        isUploadingImages={isUploadingImages}
-        isDeletingImage={isDeletingImage}
+        handleImageUpload={imageManagement.handleImageUpload}
+        removeImage={imageManagement.removeImage}
+        isUploadingImages={modalManagement.isUploadingImages}
+        isDeletingImage={modalManagement.isDeletingImage}
       />
 
       {/* Comment Modal */}
       <CommentModal
-        showCommentModal={showCommentModal}
-        commentContent={commentContent}
-        setCommentContent={setCommentContent}
-        setShowCommentModal={handleCloseCommentModal}
+        showCommentModal={modalManagement.showCommentModal}
+        commentContent={modalManagement.commentContent}
+        setCommentContent={modalManagement.setCommentContent}
+        setShowCommentModal={modalManagement.handleCloseCommentModal}
         submitComment={submitComment}
-        post={currentPostForComment}
+        post={modalManagement.currentPostForComment}
       />
 
       {/* Reply Modal */}
       <ReplyModal
-        showReplyModal={showReplyModal}
-        replyContent={replyContent}
-        setReplyContent={setReplyContent}
-        setShowReplyModal={setShowReplyModal}
+        showReplyModal={modalManagement.showReplyModal}
+        replyContent={modalManagement.replyContent}
+        setReplyContent={modalManagement.setReplyContent}
+        setShowReplyModal={modalManagement.setShowReplyModal}
         submitReplyToReply={submitReplyToReply}
         submitReply={submitReply}
         disabled={isCurrentAccountCrawling()}
