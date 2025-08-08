@@ -23,14 +23,14 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
     {
       userNameFb: "Hoàng Hiếu",
       userLinkFb: "https://facebook.com/admin.recruitment",
-      facebookId: "B22614471",
+      facebookId: "B22735395",
       username: "0966026485",
       password: "hieu18",
     },
     {
       userNameFb: "Gia Giang",
       userLinkFb: "https://facebook.com/hr.manager",
-      facebookId: "B22614472",
+      facebookId: "B22614471",
       username: "901763358",
       password: "tuyendung123",
     },
