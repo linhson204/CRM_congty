@@ -14,54 +14,41 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
     {
       userNameFb: "Giản Vũ",
       userLinkFb: "https://www.facebook.com/gian.vu.792551",
-      facebookId: "B22858640",
+      facebookId: "B22623688",
       username: "gianvu17607@gmail.com",
-      password: "lvqh1234",
-    },
-    {
-      userNameFb: "Giản Vũ - Page 2",
-      userLinkFb: "https://www.facebook.com/gian.vu.page2",
-      facebookId: "B22858641",
-      username: "gianvu.page2@gmail.com",
       password: "lvqh1234",
     },
   ],
   "22614471": [
     {
-      userNameFb: "Admin Recruitment",
+      userNameFb: "Hoàng Hiếu",
       userLinkFb: "https://facebook.com/admin.recruitment",
       facebookId: "B22614471",
-      username: "admin.recruitment@email.com",
-      password: "password123",
+      username: "0966026485",
+      password: "hieu18",
     },
     {
-      userNameFb: "HR Manager",
+      userNameFb: "Gia Giang",
       userLinkFb: "https://facebook.com/hr.manager",
       facebookId: "B22614472",
-      username: "hr.manager@email.com",
-      password: "password456",
+      username: "901763358",
+      password: "tuyendung123",
+    },
+    {
+      userNameFb: "Phương Nam",
+      userLinkFb: "https://facebook.com/hr.manager",
+      facebookId: "B22614472",
+      username: "0382785319",
+      password: "hhp123988",
     },
   ],
-  // Thêm mapping cho các userID khác ở đây
-  // Ví dụ:
-  // "12345678": [
-  //   {
-  //     userNameFb: "Tên Facebook Account",
-  //     userLinkFb: "https://www.facebook.com/link",
-  //     facebookId: "B12345678",
-  //     username: "email@example.com",
-  //     password: "password123",
-  //   }
-  // ],
-
-  // Default account cho những user chưa có mapping
-  default: [
+  "22865595": [
     {
-      userNameFb: "Default Account",
-      userLinkFb: "https://facebook.com/default",
-      facebookId: "B00000000",
-      username: "default@email.com",
-      password: "default123",
+      userNameFb: "Phương Nam",
+      userLinkFb: "https://facebook.com/hr.manager",
+      facebookId: "B22865595",
+      username: "0382785319",
+      password: "hhp123988",
     },
   ],
 };
