@@ -24,7 +24,8 @@ export const useWebSocket = (
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   const connectWebSocket = () => {
-    const ws = new WebSocket("ws://123.24.206.25:4000");
+    // const ws = new WebSocket("ws://123.24.206.25:4000");
+    const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
@@ -211,10 +212,11 @@ export const useWebSocket = (
                 ...post,
                 comments: [...(post.comments || []), newCommentFromB],
               };
+              console.log("DATA", data);
 
               const payloadComment = {
                 post_id: post.idMongodb,
-                facebookId: data.to || "B22858640",
+                facebookId: data.authorId,
                 userId: userID,
                 userNameFacebook: data.authorName || "Người dùng",
                 content: data.content,
