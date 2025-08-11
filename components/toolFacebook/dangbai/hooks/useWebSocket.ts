@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { Post, Comment, Reply, WebSocketData } from "../types";
 import Cookies from "js-cookie";
-import { createPost } from "../../../../pages/api/toolFacebook/dang-bai/dang-bai";
-import {
-  createComment,
-  createReplyComment,
-} from "../../../../pages/api/toolFacebook/dang-bai/comment";
 
 export const useWebSocket = (
   posts: Post[],
@@ -72,88 +67,6 @@ export const useWebSocket = (
             return post;
           });
 
-          const foundPost = prev.find(
-            (post) => post.id.toString() === data.postId
-          );
-
-          if (!foundPost) {
-            console.error("❌ No post found with ID:", data.postId);
-          } else {
-            const payloadPost = {
-              facebookId: foundPost.to || "B22858640",
-              userId: userID,
-              userNameFacebook: data.authorName || "Người dùng",
-              content: foundPost.content,
-              facebookPostId: foundPost.id.toString(),
-              facebookPostUrl: data.URL,
-              createdAt: Math.floor(Date.now() / 1000),
-              updatedAt: Math.floor(Date.now() / 1000),
-              attachments:
-                foundPost.images?.map((imageUrl, index) => ({
-                  name: imageUrl.name,
-                  type: "image",
-                  url: imageUrl.url,
-                })) || [],
-              metadata: {
-                category: "job_posting",
-                source: "crm_tool",
-                platform: "facebook",
-                action: "create_post",
-                timestamp: new Date().toISOString(),
-              },
-            };
-
-            console.log("PayloadPost được tạo:", payloadPost);
-
-            // Gọi API không đồng bộ sau khi đã update state
-            createPost(payloadPost)
-              .then((response) => {
-                console.log(
-                  "✅ PayloadPost đã được gửi lên API thành công",
-                  response
-                );
-
-                // Kiểm tra response structure - có thể _id nằm trong response.data
-                const mongoId = response._id || response.data?._id;
-
-                // Lưu MongoDB ID vào post sau khi tạo thành công
-                if (mongoId) {
-                  console.log("💾 Saving MongoDB ID to post:", mongoId);
-
-                  setPosts((prevPosts) => {
-                    const updatedPosts = prevPosts.map((post) => {
-                      if (post.id.toString() === data.postId) {
-                        return {
-                          ...post,
-                          idMongodb: mongoId,
-                        };
-                      }
-                      return post;
-                    });
-
-                    console.log(
-                      "✅ MongoDB ID đã được lưu vào post:",
-                      data.postId
-                    );
-                    return updatedPosts;
-                  });
-                } else {
-                  console.warn("⚠️ Response không chứa MongoDB ID:", {
-                    response,
-                    checkedFields: ["_id", "data._id", "id"],
-                  });
-                }
-              })
-              .catch((error) => {
-                console.error("❌ Lỗi khi gửi PayloadPost lên API:", error);
-                console.error("❌ Error details:", {
-                  message: error.message,
-                  response: error.response?.data,
-                  status: error.response?.status,
-                });
-              });
-          }
-
           return updatedPosts;
         });
       } else if (data.type === "comment_byB") {
@@ -212,84 +125,7 @@ export const useWebSocket = (
                 ...post,
                 comments: [...(post.comments || []), newCommentFromB],
               };
-              console.log("DATA", data);
 
-              const payloadComment = {
-                post_id: post.idMongodb,
-                facebookId: data.authorId,
-                userId: userID,
-                userNameFacebook: data.authorName || "Người dùng",
-                content: data.content,
-                postId: data.postId,
-                userLinkFb: data.linkUserComment,
-                facebookCommentUrl: data.URL,
-                facebookCommentId: data.commentFbId,
-                createdAt: Math.floor(Date.now() / 1000),
-                updatedAt: Math.floor(Date.now() / 1000),
-              };
-
-              console.log("payloadComment được tạo:", payloadComment);
-
-              // Gọi API không đồng bộ sau khi đã update state
-              createComment(payloadComment)
-                .then((response) => {
-                  console.log(
-                    "✅ payloadComment đã được gửi lên API thành công",
-                    response
-                  );
-
-                  // Kiểm tra response structure - có thể _id nằm trong response.data
-                  const mongoId = response._id || response.data?._id;
-
-                  // Lưu MongoDB ID vào comment sau khi tạo thành công
-                  if (mongoId) {
-                    console.log("💾 Saving MongoDB ID to comment:", mongoId);
-
-                    setPosts((prevPosts) => {
-                      const updatedPosts = prevPosts.map((post) => {
-                        if (post.id.toString() === data.postId) {
-                          return {
-                            ...post,
-                            comments:
-                              post.comments?.map((comment) => {
-                                if (
-                                  comment.content === data.content &&
-                                  comment.id_facebookComment ===
-                                    data.commentFbId
-                                ) {
-                                  return {
-                                    ...comment,
-                                    idMongodb: mongoId,
-                                  };
-                                }
-                                return comment;
-                              }) || [],
-                          };
-                        }
-                        return post;
-                      });
-
-                      console.log(
-                        "✅ MongoDB ID đã được lưu vào comment:",
-                        data.comment_id
-                      );
-                      return updatedPosts;
-                    });
-                  } else {
-                    console.warn("⚠️ Response không chứa MongoDB ID:", {
-                      response,
-                      checkedFields: ["_id", "data._id", "id"],
-                    });
-                  }
-                })
-                .catch((error) => {
-                  console.error("❌ Lỗi khi gửi PayloadPost lên API:", error);
-                  console.error("❌ Error details:", {
-                    message: error.message,
-                    response: error.response?.data,
-                    status: error.response?.status,
-                  });
-                });
               console.log(
                 "Updated post comments count:",
                 updatedPost.comments.length
@@ -368,45 +204,6 @@ export const useWebSocket = (
                         "Updated comment replies count:",
                         updatedComment.replies.length
                       );
-                      const payloadReplyComment = {
-                        userId: userID,
-                        userNameFacebook: data.authorName || "Người dùng",
-                        content: data.content,
-                        userLinkFb: data.linkUserReply,
-                        facebookReplyUrl: data.URL,
-                        replyToAuthor: comment.author,
-                        id_facebookReply: data.replyId,
-                        createdAt: Math.floor(Date.now() / 1000),
-                        updatedAt: Math.floor(Date.now() / 1000),
-                      };
-
-                      console.log(
-                        "payloadReplyComment được tạo:",
-                        payloadReplyComment
-                      );
-
-                      // Gọi API không đồng bộ sau khi đã update state
-                      createReplyComment(
-                        comment.id_facebookComment,
-                        payloadReplyComment
-                      )
-                        .then((response) => {
-                          console.log(
-                            "✅ payloadReplyComment đã được gửi lên API thành công",
-                            response
-                          );
-                        })
-                        .catch((error) => {
-                          console.error(
-                            "❌ Lỗi khi gửi payloadReplyComment lên API:",
-                            error
-                          );
-                          console.error("❌ Error details:", {
-                            message: error.message,
-                            response: error.response?.data,
-                            status: error.response?.status,
-                          });
-                        });
                       return updatedComment;
                     }
                     return comment;
@@ -445,93 +242,9 @@ export const useWebSocket = (
                       data.comment_id
                     );
 
-                    const payloadComment = {
-                      post_id: post.idMongodb,
-                      facebookId: comment.to || "B22858640",
-                      userId: userID,
-                      userNameFacebook: data.authorName || "Người dùng",
-                      content: comment.content,
-                      postId: comment.postId,
-                      userLinkFb: comment.userLinkFb,
-                      facebookCommentUrl: data.URL,
-                      facebookCommentId: data.comment_id,
-                      createdAt: Math.floor(Date.now() / 1000),
-                      updatedAt: Math.floor(Date.now() / 1000),
-                    };
-
-                    console.log("payloadComment được tạo:", payloadComment);
-
-                    // Gọi API không đồng bộ sau khi đã update state
-                    createComment(payloadComment)
-                      .then((response) => {
-                        console.log(
-                          "✅ payloadComment đã được gửi lên API thành công",
-                          response
-                        );
-
-                        // Kiểm tra response structure - có thể _id nằm trong response.data
-                        const mongoId = response._id || response.data?._id;
-
-                        // Lưu MongoDB ID vào comment sau khi tạo thành công
-                        if (mongoId) {
-                          console.log(
-                            "💾 Saving MongoDB ID to comment:",
-                            mongoId
-                          );
-
-                          setPosts((prevPosts) => {
-                            const updatedPosts = prevPosts.map((post) => {
-                              if (post.id.toString() === data.postId) {
-                                return {
-                                  ...post,
-                                  comments:
-                                    post.comments?.map((comment) => {
-                                      if (
-                                        comment.content === data.content &&
-                                        comment.id_facebookComment ===
-                                          data.comment_id
-                                      ) {
-                                        return {
-                                          ...comment,
-                                          idMongodb: mongoId,
-                                        };
-                                      }
-                                      return comment;
-                                    }) || [],
-                                };
-                              }
-                              return post;
-                            });
-
-                            console.log(
-                              "✅ MongoDB ID đã được lưu vào comment:",
-                              data.comment_id
-                            );
-                            return updatedPosts;
-                          });
-                        } else {
-                          console.warn("⚠️ Response không chứa MongoDB ID:", {
-                            response,
-                            checkedFields: ["_id", "data._id", "id"],
-                          });
-                        }
-                      })
-                      .catch((error) => {
-                        console.error(
-                          "❌ Lỗi khi gửi PayloadPost lên API:",
-                          error
-                        );
-                        console.error("❌ Error details:", {
-                          message: error.message,
-                          response: error.response?.data,
-                          status: error.response?.status,
-                        });
-                      });
-
                     return {
                       ...comment,
                       id_facebookComment: data.comment_id,
-                      // facebookCommentUrl: data.URL ? (data.URL + '?comment_id=' + data.comment_id) : ''
                       facebookCommentUrl: data.URL,
                       // Cập nhật tên tác giả nếu có thông tin từ B
                       ...(data.authorName && { author: data.authorName }),
@@ -587,46 +300,6 @@ export const useWebSocket = (
                                 data.replyId
                               );
 
-                              const payloadReplyComment = {
-                                userId: userID,
-                                userNameFacebook:
-                                  data.authorName || "Người dùng",
-                                content: reply.content,
-                                userLinkFb: reply.userLinkFb,
-                                facebookReplyUrl: data.URL,
-                                replyToAuthor: comment.author,
-                                id_facebookReply: data.replyId,
-                                createdAt: Math.floor(Date.now() / 1000),
-                                updatedAt: Math.floor(Date.now() / 1000),
-                              };
-
-                              console.log(
-                                "payloadReplyComment được tạo:",
-                                payloadReplyComment
-                              );
-
-                              // Gọi API không đồng bộ sau khi đã update state
-                              createReplyComment(
-                                comment.id_facebookComment,
-                                payloadReplyComment
-                              )
-                                .then((response) => {
-                                  console.log(
-                                    "✅ payloadReplyComment đã được gửi lên API thành công",
-                                    response
-                                  );
-                                })
-                                .catch((error) => {
-                                  console.error(
-                                    "❌ Lỗi khi gửi payloadReplyComment lên API:",
-                                    error
-                                  );
-                                  console.error("❌ Error details:", {
-                                    message: error.message,
-                                    response: error.response?.data,
-                                    status: error.response?.status,
-                                  });
-                                });
                               return {
                                 ...reply,
                                 id_facebookReply: data.replyId?.toString(),
@@ -684,47 +357,6 @@ export const useWebSocket = (
                                 "→",
                                 data.replyId
                               );
-
-                              const payloadReplyComment = {
-                                userId: userID,
-                                userNameFacebook:
-                                  data.authorName || "Người dùng",
-                                content: reply.content,
-                                userLinkFb: reply.userLinkFb,
-                                facebookReplyUrl: data.URL,
-                                replyToAuthor: comment.author,
-                                id_facebookReply: data.replyId,
-                                createdAt: Math.floor(Date.now() / 1000),
-                                updatedAt: Math.floor(Date.now() / 1000),
-                              };
-
-                              console.log(
-                                "payloadReplyComment được tạo:",
-                                payloadReplyComment
-                              );
-
-                              // Gọi API không đồng bộ sau khi đã update state
-                              createReplyComment(
-                                comment.id_facebookComment,
-                                payloadReplyComment
-                              )
-                                .then((response) => {
-                                  console.log(
-                                    "✅ payloadReplyComment đã được gửi lên API thành công",
-                                    response
-                                  );
-                                })
-                                .catch((error) => {
-                                  console.error(
-                                    "❌ Lỗi khi gửi payloadReplyComment lên API:",
-                                    error
-                                  );
-                                  console.error("❌ Error details:", {
-                                    message: error.message,
-                                    response: error.response?.data,
-                                    status: error.response?.status,
-                                  });
-                                });
 
                               return {
                                 ...reply,
