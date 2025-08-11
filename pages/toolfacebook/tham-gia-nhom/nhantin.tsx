@@ -134,8 +134,8 @@ export default function MessagingPage() {
 
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Nhắn tin");
-    setShowBackButton(false);
-    setCurrentPath("/toolfacebook/nhan-tin");
+    setShowBackButton(true);
+    setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
   useEffect(() => {

@@ -90,8 +90,6 @@ export default function MessagingPage() {
         const response = await fetch('../../data/message.json');
         
         // Cách 2: Nếu import trực tiếp
-        // const data = await import('@/data/accountjson.json');
-        
         if (!response.ok) throw new Error('Failed to fetch data');
         const rawData = await response.json();
         
@@ -108,12 +106,6 @@ export default function MessagingPage() {
             ...obj[id]
           }
         });
-        
-        // Cập nhật state với dữ liệu đã kiểm tra
-        // setConvers(data.map(user => ({
-        //   ...user,
-        //   last_5_messages: user.last_5_messages || [] // Đảm bảo groups luôn là mảng
-        // })));
 
         setConvers(formatted);
         
@@ -134,8 +126,8 @@ export default function MessagingPage() {
 
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Nhắn tin");
-    setShowBackButton(false);
-    setCurrentPath("/toolfacebook/nhan-tin");
+    setShowBackButton(true);
+    setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
   useEffect(() => {
