@@ -6,8 +6,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
-import { MdPublic } from "react-icons/md";
-import data from '../../../api/account.json';
+import { MdGroupAdd, MdPublic } from "react-icons/md";
+import data from '../../../../public/data/account.json';
 import style from '../styles.module.css';
 
 interface Group {
@@ -47,6 +47,7 @@ export default function Detail() {
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
     const [uname, setUname] = useState('');
+    const [pendingGr, setpendingGr] = useState<number[]>([]);
     // const [groups, setGroups] = useState<Groups[]>([
     //     { 
     //         id: 1, GroupName: 'ViecHay3656', GrIn: 300, 
@@ -124,6 +125,20 @@ export default function Detail() {
         }
     }, [account]);
 
+    // useEffect(() => {
+    //     const isReload =
+    //     performance.navigation?.type === 1 || // type 1 = reload (legacy API)
+    //     (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming)?.type === "reload";
+
+    //     const cameFromOutside =
+    //     !document.referrer.includes(window.location.origin); // Không phải điều hướng nội bộ
+
+    //     // Chỉ redirect nếu reload và đến từ cùng origin (nghĩa là user bấm F5)
+    //     if (isReload && !cameFromOutside) {
+    //     router.replace("/toolfacebook/tham-gia-nhom/HomePage");
+    //     }
+    // }, []);
+
     const filteredGroups = useMemo(() => {
         return groups.filter(group => {
         // 1. Lọc theo tên (luôn áp dụng)
@@ -141,9 +156,10 @@ export default function Detail() {
         (!filterJoined && !filterNotJoin) || // Không chọn trạng thái tham gia nào
         (filterJoined && group.isJoin === true) ||
         (filterNotJoin && group.isJoin === false);
-
+        
+        const result = nameMatch && statusMatch && joinMatch;
         // Phải thỏa mãn cả 3 điều kiện
-        return nameMatch && statusMatch && joinMatch;
+        return result;
     });
     }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
 
@@ -178,10 +194,14 @@ export default function Detail() {
         router.push('/toolfacebook/tham-gia-nhom/HomePage');
     };
 
-    // if(filteredGroups == null){
-    //     setCurrentPage = 0;
-    // }
-
+    const PendingHandle = () => {
+        // if (pendingGr.includes(group.id)) {
+        //     setpendingGr(pendingGr.filter(id => id !== group.id));
+        // } else {
+        //     setpendingGr([...pendingGr, group.id]);
+        // }
+    }
+    
     // const [groups, setGroups] = useState<Groups[]>([]);
     // useEffect(() => {
     //     fetch('../../api/UserDataTest')
@@ -305,11 +325,11 @@ export default function Detail() {
                                                         ) : (
                                                             <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
                                                         )}
-                                                        <h2 style={{marginLeft: '10px'}}>{group.GroupState}</h2>
+                                                        <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.GroupState}</h2>
                                                     </div>
                                                     <div id="member" style={{marginLeft: '20px'}} className={style.BlockRow}>
                                                         <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
-                                                        <h2 style={{marginLeft: '10px'}}>{group.Member}</h2>
+                                                        <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Member}</h2>
                                                     </div>
                                                     {group.isJoin ? (
                                                         <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
@@ -317,8 +337,10 @@ export default function Detail() {
                                                             <button className={style.buttonOutGr}>Rời nhóm</button> {/* onclick */}
                                                         </div>
                                                     ) : (
-                                                        <button className={style.buttonBack} onClick={() => setSent(!Sent)}>
-                                                            {Sent ? 'Tham gia nhóm' : 'Đang chờ duyệt'}
+                                                        <button className={`${style.buttonBack} ${style.BlockRow}`} onClick={PendingHandle}>
+                                                                <MdGroupAdd className={style.ic}></MdGroupAdd>
+                                                                <p>tham gia nhóm</p>
+                                                                {/* {() ? style.onQueue : style.buttonBack} */}
                                                         </button>
                                                     )}
                                                 </div>

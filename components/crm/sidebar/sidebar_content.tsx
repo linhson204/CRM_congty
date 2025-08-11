@@ -1114,7 +1114,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
           {
             blank: "",
             label: "Tham gia nhóm",
-            link: "/toolfacebook/tham-gia-nhom/account/HomePage",
+            link: "/toolfacebook/tham-gia-nhom/HomePage",
           },
         ],
         content: "Tool facebook",

@@ -1,0 +1,396 @@
+import { SidebarContext } from "@/components/crm/context/resizeContext";
+import styleHome from "@/components/crm/home/home.module.css";
+import { useHeader } from "@/components/crm/hooks/useHeader";
+import styles from "@/components/crm/potential/potential.module.css";
+import Head from "next/head";
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FaPaperPlane, FaSearch } from 'react-icons/fa';
+import { FaComments } from 'react-icons/fa6';
+import { MdOutlineAttachFile } from "react-icons/md";
+import style from './styles.module.css';
+
+interface Message {
+  id: number;
+  sender: string;
+  content: string;
+  timestamp: string;
+  isMe: boolean;
+}
+
+interface User {
+  id: number;
+  name: string;
+  avatar?: string;
+  lastMessage?: string;
+  unread?: number;
+  Active?: boolean;
+}
+
+// fetch data prepare
+interface Conversations {
+  id: number;
+  sender: string;
+  last_message: string;
+  last_message_time: string;
+  last_5_messages: messages[];
+}
+
+interface messages {
+  id?: number;
+  sender: string;
+  content: string;
+  repiledCont?: string;
+  repliedTo?: string;
+}
+
+export default function MessagingPage() {
+  const mainRef = useRef<HTMLDivElement>(null);
+  const { isOpen } = useContext<any>(SidebarContext);
+  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
+  const router = useRouter();
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [activeUser, setActiveUser] = useState<number | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [convers, setConvers] = useState<Conversations[]>([])
+
+  // Sample data
+  const [users, setUsers] = useState<User[]>([
+    {
+      id: 1,
+      name: "Nguyen Van A",
+      avatar: "",
+      lastMessage: "Xin chào, bạn khỏe không?",
+      unread: 2,
+      Active: true
+    },
+    {
+      id: 2,
+      name: "Tran Thi B",
+      avatar: "",
+      lastMessage: "Tôi đã gửi tài liệu cho bạn",
+      unread: 0,
+      Active: false
+    },
+    {
+      id: 3,
+      name: "Le Van C",
+      avatar: "",
+      lastMessage: "Cuộc họp lúc 3 giờ chiều",
+      unread: 5,
+      Active: true
+    },
+    {
+      id: 4,
+      name: "Pham Thi D",
+      avatar: "",
+      lastMessage: "Cảm ơn về sự giúp đỡ!",
+      unread: 0,
+      Active: false
+    },
+    {
+      id: 5,
+      name: "Hoang Van E",
+      avatar: "",
+      lastMessage: "Bạn đã xem tài liệu chưa?",
+      unread: 1,
+      Active: true
+    }
+  ]);
+
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      sender: "Nguyen Van A",
+      content: "Xin chào, bạn có thể giúp tôi được không?",
+      timestamp: "10:30 AM",
+      isMe: false
+    },
+    {
+      id: 2,
+      sender: "You",
+      content: "Tôi có thể giúp gì cho bạn?",
+      timestamp: "10:32 AM",
+      isMe: true,
+    },
+    {
+      id: 3,
+      sender: "Nguyen Van A",
+      content: "Tôi cần hỗ trợ về vấn đề đăng bài trên Facebook",
+      timestamp: "10:33 AM",
+      isMe: false
+    },
+    {
+      id: 4,
+      sender: "You",
+      content: "Vâng, tôi sẽ hướng dẫn bạn ngay",
+      timestamp: "10:35 AM",
+      isMe: true
+    }
+  ]);
+
+  const handleSendMessage = () => { //gui tin nhan -> them phan tra data cho tool de gui lai (socket?)
+    if (currentMessage.trim() === "") return;
+    
+    const newMessage: Message = {
+      id: messages.length + 1,
+      sender: "You",
+      content: currentMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isMe: true
+    };
+    
+    setMessages([...messages, newMessage]);
+    setCurrentMessage("");
+    
+    // Simulate reply after 1 second
+    setTimeout(() => {
+      const replyMessage: Message = {
+        id: messages.length + 2,
+        sender: users.find(u => u.id === activeUser)?.name || "User",
+        content: `Đây là phản hồi tự động cho: "${currentMessage}"`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isMe: false
+      };
+      setMessages(prev => [...prev, replyMessage]);
+    }, 1000);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // const [users, setUsers] = useState<User[]>([]);
+  //massage.json
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        // Cách 1: Nếu file JSON trong public folder
+        const response = await fetch('../../data/message.json');
+        
+        // Cách 2: Nếu import trực tiếp
+        // const data = await import('@/data/accountjson.json');
+        
+        if (!response.ok) throw new Error('Failed to fetch data');
+        const data = await response.json();
+        
+        // Kiểm tra cấu trúc dữ liệu
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format: Expected array');
+        }
+        
+        // Cập nhật state với dữ liệu đã kiểm tra
+        setConvers(data.map(user => ({
+          ...user,
+          // last_5_messages: user.last_5_messages || [] // Đảm bảo groups luôn là mảng
+        })));
+        
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        // Xử lý lỗi (hiển thị thông báo, v.v.)
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  console.log(convers)
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    setHeaderTitle("Tool Facebook - Nhắn tin");
+    setShowBackButton(false);
+    setCurrentPath("/toolfacebook/nhan-tin");
+  }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
+
+  useEffect(() => {
+    if (isOpen) {
+      mainRef.current?.classList.add("content_resize");
+    } else {
+      mainRef.current?.classList.remove("content_resize");
+    }
+  }, [isOpen]);
+
+  return (
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Tool Facebook - Nhắn tin</title>
+        <meta name="description" content="Nhắn tin với các tài khoản Facebook" />
+      </Head>
+      
+      <div className={styleHome.main} ref={mainRef}>
+        <div className={styles.main_importfile}>
+          <div className={styles.info_step}>
+            <div className={styles.main__title}>Tool Facebook - NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
+            <div className={styles.form_add_potential}>
+              <div className={`${styles.main__body} ${style.messagingContainer}`}>
+                <div className={style.userList}>
+                  <div className={style.searchContainer}>
+                    <FaSearch className={style.searchIcon} />
+                    <input 
+                      type="text" 
+                      placeholder="Tìm kiếm tin nhắn..."
+                      className={style.searchInput}
+                    />
+                  </div>
+                  
+                  {/* sidebar list tai khoan */}
+                  {users.map(user => (
+                    <div 
+                      key={user.id}
+                      className={`${style.userItem} ${activeUser === user.id ? style.activeUser : ''}`}
+                      onClick={() => setActiveUser(user.id)}
+                    >
+                      <div className={style.avatarContainer}>
+                        <div className={style.avatar}>
+                          {user.name.charAt(0)}
+                        </div>
+                        {user.Active && <div className={style.onlineIndicator}></div>}
+                      </div>
+                      <div className={style.userInfo}>
+                        <div className={style.userHeader}>
+                          <h3 className={style.userName}>
+                            {user.name}
+                          </h3>
+                          {/* <span className={style.lastMessageTime}>
+                            {user.lastMessage.length > 15 ? 
+                              user.lastMessage.substring(0, 15) + '...' : 
+                              user.lastMessage}
+                          </span> */}
+                        </div>
+                        <div className={style.userLastMessage}>
+                          <p className={style.messagePreview}>
+                            {user.lastMessage.length > 30 ? 
+                              user.lastMessage.substring(0, 30) + '...' : 
+                              user.lastMessage}
+                          </p>
+                          {user.unread > 0 && (
+                            <span className={style.unreadBadge}>
+                              {user.unread}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Right side - Chat area */}
+                <div className={style.chatArea}>
+                  {activeUser ? (
+                    <>
+                      {/* Chat header */}
+                      <div className={style.chatHeader}>
+                        <div className={style.chatAvatar}>
+                          {users.find(u => u.id === activeUser)?.name.charAt(0)}
+                        </div>
+                        <div className={style.chatUserInfo}>
+                          <h3 className={style.chatUserName}>
+                            {users.find(u => u.id === activeUser)?.name}
+                          </h3>
+                          <p className={`${style.userStatus} ${
+                            users.find(u => u.id === activeUser)?.Active ? style.online : style.offline
+                          }`}>
+                            {users.find(u => u.id === activeUser)?.Active ? 'Online' : 'Offline'}
+                          </p>
+                        </div>
+                        <button className={style.chatOptions}>
+                          <BsThreeDotsVertical size={20} />
+                        </button>
+                      </div>
+                      
+                      {/* Messages area */}
+                      <div className={style.messagesContainer}>
+                        {messages.map(message => (
+                          <div 
+                            key={message.id}
+                            className={`${style.messageWrapper} ${
+                              message.isMe ? style.sentMessage : style.receivedMessage
+                            }`}
+                          >
+                            <div className={`${style.messageBubble} ${
+                              message.isMe ? style.sent : style.received
+                            }`}>
+                              {message.content}
+                            </div>
+                            <span className={style.messageTime}>
+                              {message.timestamp}
+                            </span>
+                          </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                      </div>
+                      
+                      {/* Message input */}
+                      <div className={style.messageInputContainer}>
+                        <button className={style.attachButton}>
+                          <MdOutlineAttachFile size={24} />
+                        </button>
+                        <textarea
+                          value={currentMessage}
+                          onChange={(e) => setCurrentMessage(e.target.value)}
+                          onKeyPress={handleKeyPress}
+                          placeholder="Nhập tin nhắn..."
+                          className={style.messageInput}
+                          rows={1}
+                        />
+                        <button 
+                          onClick={handleSendMessage}
+                          disabled={!currentMessage.trim()}
+                          className={`${style.sendButton} ${
+                            !currentMessage.trim() ? style.disabled : ''
+                          }`}
+                        >
+                          <FaPaperPlane />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className={style.emptyState}>
+                      <FaComments className={style.emptyIcon} />
+                      <h3 className={style.emptyTitle}>Chọn một cuộc trò chuyện</h3>
+                      <p className={style.emptyText}>Bắt đầu trò chuyện với các tài khoản Facebook của bạn</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .userItem:hover {
+          background-color: #f5f5f5 !important;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+          from { 
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+    </>
+  );
+}
