@@ -58,8 +58,8 @@ function DangBaiPost() {
 
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
-    "22858640",
     "22614471",
+    "22773024"
     // Thêm các ID được phép vào đây
   ];
 

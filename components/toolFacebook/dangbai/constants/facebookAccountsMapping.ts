@@ -10,13 +10,20 @@ export interface FacebookAccount {
 }
 
 export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
-  "22858640": [
+  "22773024": [
     {
       userNameFb: "Giản Vũ",
       userLinkFb: "https://www.facebook.com/gian.vu.792551",
       facebookId: "B22623688",
       username: "gianvu17607@gmail.com",
       password: "lvqh1234",
+    },
+    {
+      userNameFb: "Gia Giang",
+      userLinkFb: "https://facebook.com/hr.manager",
+      facebookId: "B22614471",
+      username: "901763358",
+      password: "tuyendung123",
     },
   ],
   "22614471": [
@@ -28,25 +35,9 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
       password: "hieu18",
     },
     {
-      userNameFb: "Gia Giang",
-      userLinkFb: "https://facebook.com/hr.manager",
-      facebookId: "B22614471",
-      username: "901763358",
-      password: "tuyendung123",
-    },
-    {
       userNameFb: "Phương Nam",
       userLinkFb: "https://facebook.com/hr.manager",
       facebookId: "B22614472",
-      username: "0382785319",
-      password: "hhp123988",
-    },
-  ],
-  "22865595": [
-    {
-      userNameFb: "Phương Nam",
-      userLinkFb: "https://facebook.com/hr.manager",
-      facebookId: "B22865595",
       username: "0382785319",
       password: "hhp123988",
     },
