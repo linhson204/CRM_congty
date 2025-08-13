@@ -1,56 +1,41 @@
 import React from "react";
+import { PiWarningCircleLight } from "react-icons/pi";
+import style from "../styles.module.css";
 
-interface PopupProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title?: string;
-  children?: React.ReactNode;
+
+interface ConfirmLeaveGroupProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    groupName: string;
 }
 
-const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, children }) => {
-    if (!isOpen) return null;
+const ConfirmLeaveGroup: React.FC<ConfirmLeaveGroupProps> = ({
+    isOpen,
+    onClose,
+    onConfirm,
+    groupName
+    }) => {
+        if (!isOpen) return null;
 
-    return (
-        <div
-        style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-        }}
-        >
-        <div
-            style={{
-            background: "#fff",
-            padding: "20px",
-            borderRadius: "8px",
-            minWidth: "300px",
-            maxWidth: "90%",
-            position: "relative",
-            }}
-        >
-            {title && <h2 style={{ marginTop: 0 }}>{title}</h2>}
-            <button
-            onClick={onClose}
-            style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                background: "transparent",
-                border: "none",
-                fontSize: "18px",
-                cursor: "pointer",
-            }}
-            >
-            ✖
-            </button>
-            <div>{children}</div>
-        </div>
-        </div>
-    );
-};
+        return (
+            <div className={style.PopupContainer}>
+                <div className={style.PopupOutGrICWrapper}>
+                    <div>
+                        <PiWarningCircleLight style={{width: '50px', height: '50px'}}/>
+                    </div></div>
+                <h2 className={style.PopupOutGrHeader}> Xác nhận rời nhóm </h2>
+                <p className={style.PopupOutGrContent}> Bạn có chắc chắn muốn rời nhóm <strong>{groupName}</strong> không?</p>
+                <div className={style.BlockRow}>
+                    <button onClick={onClose} className={style.PopupOutGrCancelButton}>
+                        Hủy
+                    </button>
+                    <button onClick={onConfirm} className={style.PopupOutGrConfirmButton}>
+                        Rời nhóm
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
-export default Popup;
+export default ConfirmLeaveGroup;

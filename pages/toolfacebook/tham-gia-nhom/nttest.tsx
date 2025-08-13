@@ -5,9 +5,11 @@ import styles from "@/components/crm/potential/potential.module.css";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { AiFillPicture } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaPaperPlane, FaSearch } from 'react-icons/fa';
 import { FaComments } from 'react-icons/fa6';
+import { MdOutlineAttachFile } from "react-icons/md";
 import style from './styles.module.css';
 
 // fetch data prepare
@@ -138,6 +140,12 @@ export default function MessagingPage() {
     }
   }, [isOpen]);
 
+  const handleFileUpload = () => {
+  };
+
+  const handleImageUpload = () => {
+  };
+
   console.log(convers)
 
   return (
@@ -152,7 +160,7 @@ export default function MessagingPage() {
       <div className={styleHome.main} ref={mainRef}>
         <div className={styles.main_importfile}>
           <div className={styles.info_step}>
-            <div className={styles.main__title}>Tool Facebook - NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
+            <div className={styles.main__title}>Tài khoản FB đang sử dụng: Nguyen Van A</div>
             <div className={styles.form_add_potential}>
               <div className={`${styles.main__body} ${style.messagingContainer}`}>
                 <div className={style.userList}>
@@ -258,8 +266,12 @@ export default function MessagingPage() {
                       
                       {/* Message input */}
                       <div className={style.messageInputContainer}>
-                        <button className={style.attachButton}>
-                          {/* <MdOutlineAttachFile size={24} /> */}
+                        <button className={style.attachButton} onClick={handleFileUpload}>
+                          <MdOutlineAttachFile size={24} />
+                        </button>
+                        <button onClick={handleImageUpload} className={style.messageImageButton}
+                                style={{marginLeft: '2px', marginRight: '7px'}}>
+                          <AiFillPicture size={24} />
                         </button>
                         <textarea
                           value={currentMessage}

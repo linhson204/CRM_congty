@@ -156,65 +156,38 @@ export default function DangBai() {
               <div className={styles.form_add_potential}>
                 {/* Header danh sách */}
                 <div className={styles.main__body}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    marginBottom: '16px',
-                    paddingBottom: '12px',
-                    borderBottom: '2px solid #e0e0e0'
-                  }}>
-                    <h2 style={{ 
-                      fontSize: '18px', 
-                      fontWeight: '600', 
-                      margin: 0,
-                      color: '#333'
-                    }}>
-                    </h2>
-                    <span style={{
-                      backgroundColor: '#007bff',
-                      color: 'white',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '15px',
-                      fontWeight: '500'
-                    }}>
-                      Tổng số tài khoản: {users.length}
-                    </span>
+                  <div className={style.headerList}>
+                    <h2>Danh Sách Tài Khoản ToolFB đang sử dụng</h2>
+                    <span>Tổng số tài khoản: {users.length}</span>
                   </div>
                   {/* list tk */}
                   <div style={{overflowY: 'scroll'}} className={style.BlockColumn}>
                     <div className={style.BlockRow}>
                       <p style={{padding: '5px'}}>Số tài khoản tìm được: {filteredUser.length}/{users.length}</p>
-                      <div style={{
-                        display: 'flex',
-                        gap: '10px',
-                        marginBottom: '16px',
-                        alignItems: 'center'
-                      }}>
-                      <div className={style.BlockRow} style={{marginLeft: '50px'}}>
-                        <label style={{ fontWeight: '500', marginBottom: '0px', marginRight: '10px', paddingTop: '4px' }}>Lọc trạng thái:</label>
-                        <select 
-                          value={activeFilter === null ? 'all' : activeFilter.toString()}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            setActiveFilter(
-                              value === 'all' ? null : 
-                              value === 'true' ? true : false
-                            );
-                            setCurrentPage(1);
-                          }}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            border: '1px solid #ddd'
-                          }}
-                        >
-                          <option value="all">Tất cả</option>
-                          <option value="true">Online</option>
-                          <option value="false">Offline</option>
-                        </select>
-                      </div>
+                      <div style={{display: 'flex', gap: '10px', marginBottom: '16px', alignItems: 'center'}}> 
+                        <div className={style.BlockRow} style={{marginLeft: '50px'}}>
+                          <label style={{ fontWeight: '500', marginBottom: '0px', marginRight: '10px', paddingTop: '4px' }}>Lọc trạng thái:</label>
+                          <select 
+                            value={activeFilter === null ? 'all' : activeFilter.toString()}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setActiveFilter(
+                                value === 'all' ? null : 
+                                value === 'true' ? true : false
+                              );
+                              setCurrentPage(1);
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '4px',
+                              border: '1px solid #ddd'
+                            }}
+                          >
+                            <option value="all">Tất cả</option>
+                            <option value="true">Online</option>
+                            <option value="false">Offline</option>
+                          </select>
+                        </div>
                       </div>
                       <div id="searchContainer" style={{marginLeft: 'auto'}} className={`${style.BlockRow} ${style.searchContainer}`}>
                         <FaSearch className={style.searchIcon} />

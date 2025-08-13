@@ -42,7 +42,7 @@ export default function DangBai() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
 
   // Lay data
@@ -81,8 +81,6 @@ export default function DangBai() {
     fetchUsers();
   }, []);
 
-  console.log(users);
-
   // const filteredUser = search.trim() === ''
   // ? users
   // : users.filter((user) => {
@@ -101,8 +99,6 @@ export default function DangBai() {
     return activeMatch && nameMatch;
   });
 
-  console.log(filteredUser)
-
   //Phan Lai trang
   const filteredPage = filteredUser.slice(
     (currentPage - 1) * itemsPerPage,
@@ -116,12 +112,12 @@ export default function DangBai() {
   const handleUserClick = () => {
     const timeout = 500;
     setTimeout(() => {
-          router.push('/toolfacebook/tham-gia-nhom/nhantin');
+      router.push('/toolfacebook/tham-gia-nhom/nhantin');
     }, timeout);
   };
 
   const PostClick = () => {
-      router.push('/toolfacebook/dang-bai');
+    router.push('/toolfacebook/dang-bai');
   };
     
   // 
@@ -156,65 +152,38 @@ export default function DangBai() {
               <div className={styles.form_add_potential}>
                 {/* Header danh sách */}
                 <div className={styles.main__body}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    marginBottom: '16px',
-                    paddingBottom: '12px',
-                    borderBottom: '2px solid #e0e0e0'
-                  }}>
-                    <h2 style={{ 
-                      fontSize: '18px', 
-                      fontWeight: '600', 
-                      margin: 0,
-                      color: '#333'
-                    }}>
-                    </h2>
-                    <span style={{
-                      backgroundColor: '#007bff',
-                      color: 'white',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '15px',
-                      fontWeight: '500'
-                    }}>
-                      Tổng số tài khoản: {users.length}
-                    </span>
+                  <div className={style.headerList}>
+                    <h2>Danh Sách Tài Khoản ToolFB đang sử dụng</h2>
+                    <span>Tổng số tài khoản: {users.length}</span>
                   </div>
                   {/* list tk */}
                   <div style={{overflowY: 'scroll'}} className={style.BlockColumn}>
                     <div className={style.BlockRow}>
                       <p style={{padding: '5px'}}>Số tài khoản tìm được: {filteredUser.length}/{users.length}</p>
-                      <div style={{
-                        display: 'flex',
-                        gap: '10px',
-                        marginBottom: '16px',
-                        alignItems: 'center'
-                      }}>
-                      <div className={style.BlockRow} style={{marginLeft: '50px'}}>
-                        <label style={{ fontWeight: '500', marginBottom: '0px', marginRight: '10px', paddingTop: '4px' }}>Lọc trạng thái:</label>
-                        <select 
-                          value={activeFilter === null ? 'all' : activeFilter.toString()}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            setActiveFilter(
-                              value === 'all' ? null : 
-                              value === 'true' ? true : false
-                            );
-                            setCurrentPage(1);
-                          }}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            border: '1px solid #ddd'
-                          }}
-                        >
-                          <option value="all">Tất cả</option>
-                          <option value="true">Online</option>
-                          <option value="false">Offline</option>
-                        </select>
-                      </div>
+                      <div style={{display: 'flex', gap: '10px', marginBottom: '16px', alignItems: 'center'}}> 
+                        <div className={style.BlockRow} style={{marginLeft: '50px'}}>
+                          <label style={{ fontWeight: '500', marginBottom: '0px', marginRight: '10px', paddingTop: '4px' }}>Lọc trạng thái:</label>
+                          <select 
+                            value={activeFilter === null ? 'all' : activeFilter.toString()}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setActiveFilter(
+                                value === 'all' ? null : 
+                                value === 'true' ? true : false
+                              );
+                              setCurrentPage(1);
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '4px',
+                              border: '1px solid #ddd'
+                            }}
+                          >
+                            <option value="all">Tất cả</option>
+                            <option value="true">Online</option>
+                            <option value="false">Offline</option>
+                          </select>
+                        </div>
                       </div>
                       <div id="searchContainer" style={{marginLeft: 'auto'}} className={`${style.BlockRow} ${style.searchContainer}`}>
                         <FaSearch className={style.searchIcon} />
@@ -228,7 +197,7 @@ export default function DangBai() {
                     </div>
                     {/* goi list danh sach tai khoan */}
                     {filteredPage.map(item => (
-                      <div key={item.id} className={style.Block}>
+                      <div key={item.id} className={style.Blocktest}>
                         <div id="User_Info" style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
                           <div id="TopRow" className={style.BlockRow}>
                             <p id="User_Name" style={{fontSize: '30px', fontStyle: 'bold'}} className={style.user_name}>{item.name}</p>
@@ -252,27 +221,23 @@ export default function DangBai() {
                                 <div onClick={handleUserClick} className={style.Message}><FaComments style={{width: '40px', height: '40px'}}></FaComments></div>
                               )}
                           </div>
-                          <div id="SecondRow" className={`${style.BlockRow}`}>
+                          <div id="test" className={style.BlockRow} style={{gap: '20px', marginTop: '10px'}}>
                             <div id="User_Friend" className={`${style.Block_Content} ${style.BlockRow}`}>
                               <div><IoPerson className={style.ic}></IoPerson></div>
                               <p className={style.user_text}>{item.friend}</p>
                             </div>
-                            <div id="Post" className={style.BlockRow} style={{marginLeft: '40px'}}>
+                            <div id="Post" className={style.BlockRow}>
                               <div><BsFileEarmarkPost className={style.ic}></BsFileEarmarkPost></div>
                               <p className={style.user_text}>{item.Post}</p>
                             </div>
-                          </div>
-                          <div id="ThirdRow" className={`${style.BlockRow}`}>
                             <div id="User_GrIn" className={`${style.Block_Content} ${style.BlockRow}`}>
                               <div><FaUserGroup className={style.ic}></FaUserGroup></div>
                               <p className={style.user_text}>{item.groups.filter(g => g.isJoin).length}</p>
                             </div>
-                            <div id="Comment" className={style.BlockRow} style={{marginLeft: '40px'}}>
+                            <div id="Comment" className={style.BlockRow}>
                               <div style={{paddingTop: '2px'}}><FaCommentAlt style={{width: '17px', height: '17px'}}></FaCommentAlt></div>
                               <p className={style.user_text}>{item.Comment}</p>
                             </div>
-                          </div>
-                          <div id="BottomRow" className={`${style.BlockRow}`}>
                             <div id="User_GrOut" className={`${style.Block_Content} ${style.BlockRow}`}>
                               <div><MdGroupOff className={style.ic}></MdGroupOff></div>
                               <p className={style.user_text}>{item.groups.filter(g => !g.isJoin).length}</p>
