@@ -42,6 +42,15 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
       password: "hhp123988",
     },
   ],
+  "22858640": [
+    {
+      userNameFb: "Giản Vũ",
+      userLinkFb: "https://www.facebook.com/gian.vu.792551",
+      facebookId: "B22623688",
+      username: "gianvu17607@gmail.com",
+      password: "lvqh1234",
+    },
+  ],
 };
 
 // Helper function để lấy Facebook accounts theo userID
