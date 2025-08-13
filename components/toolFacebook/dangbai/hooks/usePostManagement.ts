@@ -191,12 +191,14 @@ export const usePostManagement = (
       }
 
       setIsLoadingPosts(true);
+      setPosts([]);
+
       try {
         const response = await getPostbyUserId(
           userId,
           selectedFacebookAccount.facebookId
         );
-
+        setTimeout(async () => {}, 2000);
         if (response && response.results) {
           const convertedPosts = response.results.map(
             convertApiPostToComponentPost
