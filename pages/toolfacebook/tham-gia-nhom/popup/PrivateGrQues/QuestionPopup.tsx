@@ -32,20 +32,26 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
         const handleSubmit = () => {
             onSubmit(answers);
             handleClose();
+
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className={style.modalOverLay}>
-            <div className={style.modalContent}>
-                <div className={style.modalHeader}>
-                <h2>Vui lòng trả lời các câu hỏi</h2>
-                <button className={style.closeButton} onClick={handleClose}>
-                    &times;
-                </button>
+        <div className={style.modalOverlay}>
+            <div className={`${style.modalContent} ${style.BlockColumn}`} onClick={(e) => e.stopPropagation()}>
+                <div className={style.BlockRow}>
+                    <h1>Trả lời câu hỏi</h1><br /><br />
+                    <button className={style.closeButton} onClick={handleClose}>
+                        &times;
+                    </button>
                 </div>
-                
+                <div className={style.pendingNotification}>
+                    <p style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '8px'}}>Yêu cầu của bạn đang chờ phê duyệt</p>
+                    <p>Hãy trả lời những câu hỏi sau của quản trị viên nhóm để họ có thể xem xét
+                    yêu cầu tham gia của bạn. Câu trả lời của bạn sẽ chỉ hiển thị với quản trị viên 
+                    và người kiểm duyệt.</p>
+                </div>
                 <div className={style.modalBody}>
                 {questions.map(q => (
                     <QuestionRenderer

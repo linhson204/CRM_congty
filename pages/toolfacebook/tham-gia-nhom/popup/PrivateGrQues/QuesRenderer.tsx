@@ -27,11 +27,12 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({ question, value, on
 
 const TextQuestion = ({ question, value, onChange }) => (
   <div className={style.question}>
-    <label>
+    <label className={style.quesHeader}>
       {question.question}
       {question.required && <span className={style.required}>*</span>}
     </label>
     <textarea
+      style={{resize: 'none'}}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       maxLength={question.maxLength || 250}
@@ -45,13 +46,13 @@ const TextQuestion = ({ question, value, onChange }) => (
 
 const SingleSelectQuestion = ({ question, value, onChange }) => (
   <div className={style.question}>
-    <label>
+    <label className={style.quesHeader}>
       {question.question}
-      {question.required && <span className="required">*</span>}
+      {question.required && <span className="required"></span>}
     </label>
-    <div className="options">
+    <div className={style.BlockColumn}>
       {question.options?.map(option => (
-        <label key={option} className="option">
+        <label key={option} className={style.radioOption}>
           <input
             type="radio"
             name={`q_${question.id}`}
@@ -77,13 +78,13 @@ const MultiSelectQuestion = ({ question, value = [], onChange }) => {
 
   return (
     <div className="question">
-      <label>
+      <label className={style.quesHeader}>
         {question.question}
         {question.required && <span className="required">*</span>}
       </label>
-      <div className="options">
+      <div className={style.BlockColumn}>
         {question.options?.map(option => (
-          <label key={option} className="option">
+          <label key={option} className={style.checkboxOption}>
             <input
               type="checkbox"
               value={option}

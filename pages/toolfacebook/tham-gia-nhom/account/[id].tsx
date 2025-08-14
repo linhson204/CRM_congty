@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
+import { HiMiniQueueList } from "react-icons/hi2";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
@@ -46,7 +47,7 @@ export default function Detail() {
     const [filterPrivate, setFilterPrivate] = useState(false);
     const [filterJoined, setFilterJoined] = useState(false);
     const [filterNotJoin, setFilterNotJoin] = useState(false);
-    const [Sent, setSent] = useState(true);
+    const [Sent, setSent] = useState(false);
     const { id } = router.query;
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
@@ -104,6 +105,13 @@ export default function Detail() {
         question: "Bạn quan tâm đến chủ đề nào?",
         options: ["Mua bán", "Kỹ thuật", "Du lịch"],
         required: false
+    },
+    {
+        id: 4,
+        type: 'radio', // Chọn nhiều lựa chọn
+        question: "Con gà có mấy chân?",
+        options: ["2", "4", "6", "8", "10"],
+        required: true
     }
     ];
     //
@@ -218,6 +226,35 @@ export default function Detail() {
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
     const handleLeavePopup = () => { 
         setShowPopup(false);
+    };
+
+    const validateRequiredFields = (questions: Question[], answers: Record<number, any>): 
+                                { isValid: boolean; errors: Record<number, string> } => {
+    const errors: Record<number, string> = {};
+    let isValid = true;
+
+    // Kiểm tra trường rỗng
+    questions.forEach((question) => {
+        if (question.required) {
+        const answer = answers[question.id];
+        
+        // Kiểm tra theo từng loại câu hỏi
+        if (question.type === 'textarea' || question.type === 'radio') {
+            if (!answer || answer.toString().trim() === '') {
+            errors[question.id] = 'Vui lòng điền trường này';
+            isValid = false;
+            }
+        } 
+        else if (question.type === 'checkbox') {
+            if (!answer || answer.length === 0) {
+            errors[question.id] = 'Vui lòng chọn ít nhất một lựa chọn';
+            isValid = false;
+            }
+        }
+        }
+    });
+
+    return { isValid, errors };
     };
 
     return (
@@ -337,9 +374,10 @@ export default function Detail() {
                                 </OutGrFs>
                                 <QuestionPopup
                                     isOpen={showPrivateGrQues}
-                                    onClose={() => setShowPrivateGrQues(false)}
+                                    onClose={() => {setShowPrivateGrQues(false)}}
                                     questions={approvalQuestions}
                                     onSubmit={(answers) => {
+                                        setSent(true);
                                         // Xử lý dữ liệu ở đây
                                         if (privateGrSelected) {
                                         console.log(id, privateGrSelected, answers);
@@ -378,17 +416,37 @@ export default function Detail() {
                                                         <button className={style.buttonOutGr} onClick={() => {SetGrOutSelected(group.id); setShowPopup(true);}}>Rời nhóm</button> {/* onclick */}
                                                     </div>
                                                 ) : (
-                                                    <button className={`${style.buttonBack} ${style.BlockRow}`}
-                                                            onClick={() => {
-                                                                {if (group.GroupState === "Private") {
-                                                                    setPrivateGrSelected(group.id);
-                                                                    setShowPrivateGrQues(true);
-                                                                } else {console.log(1)}
-                                                                }}}>
-                                                            <MdGroupAdd className={style.ic}></MdGroupAdd>
-                                                            <p>tham gia nhóm</p>
+                                                    <div className={`${style.BlockRow}`} style={{marginLeft: 'auto'}}>
+                                                            {/* them list danh sách các nhóm trong queue thay phan compare */}
+                                                            {Sent && privateGrSelected === group.id ?  
+                                                            (
+                                                                <div className={style.BlockRow}>
+                                                                    <button className={style.buttonOutGr} 
+                                                                            style={{marginRight: '10px'}}
+                                                                            onClick={() => {setSent(false);}}>
+                                                                                Huỷ bỏ
+                                                                    </button>
+                                                                    <div className={style.BlockRow}>
+                                                                        <div className={`${style.BlockRow} ${style.onQueue}`}>
+                                                                            <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}></HiMiniQueueList>
+                                                                            <p style={{paddingTop: '2px'}}>Đang chờ duyệt</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <div className={`${style.BlockRow} ${style.buttonBack}`}
+                                                                    onClick={() => {
+                                                                        {if (group.GroupState === "Private") {
+                                                                            setPrivateGrSelected(group.id);
+                                                                            setShowPrivateGrQues(true);
+                                                                        } else {console.log(1)}
+                                                                        }}}>
+                                                                    <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}></MdGroupAdd>
+                                                                    <p style={{paddingTop: '2px'}}>tham gia nhóm</p>
+                                                                </div>
+                                                            )}
                                                             {/* {() ? style.onQueue : style.buttonBack} */}
-                                                    </button>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>

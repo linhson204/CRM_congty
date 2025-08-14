@@ -68,15 +68,14 @@
     font-size: 16px;
     line-height: 19px;
     column-gap: 5px;
-    margin-left: auto;
+    /* margin-left: auto; */
 }
 
 .onQueue {
-    background-color: #ffffff;
+    background-color: rgba(234, 234, 24, 0.685);
     border-radius: 10px;
-    border: 1px solid rgb(240, 240, 24);
     padding: 9px 21px;
-    color: black;
+    color: rgb(0, 0, 0);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     line-height: 19px;
@@ -90,7 +89,7 @@
 
 .actbut:hover,
 .buttonBack:hover,
-.buttonOutGr:hover {
+.buttonOutGr:hover{
     text-decoration-line: underline;
     cursor: pointer;
 }
@@ -600,7 +599,8 @@
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  width: 500px;
+  width: 700px;
+  height: 800px;
   max-width: 90%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-y: scroll;
@@ -614,14 +614,36 @@
 }
 
 .closeButton {
+  margin-left: auto;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 40px;
   cursor: pointer;
 }
 
 .modalBody {
   margin-bottom: 20px;
+  padding-right: 20px;
+  overflow-y: scroll;
+  /* height: 300px; */
+}
+
+.modalBody::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modalBody::-webkit-scrollbar-track {
+  background: #cdcdcd; /* Màu nền track */
+  border-radius: 10px;
+}
+
+.modalBody::-webkit-scrollbar-thumb {
+  background: #888; /* Màu thumb */
+  border-radius: 5px;
+}
+
+.modalBody::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Màu thumb khi hover */
 }
 
 .modalFooter {
@@ -631,20 +653,31 @@
 }
 
 .cancelButton {
-  padding: 8px 16px;
-  background-color: #e0e0e0;
+  padding: 10px;
+  color: #0866ff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cancelButton:hover {
+  background-color: #dbdbdb;
 }
 
 .submitButton {
-  padding: 8px 16px;
-  background-color: #4caf50;
+  padding: 10px 30px 10px 30px;
+  background-color: #0866ff;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-left: 20px;
 }
 
 .question {
@@ -663,4 +696,46 @@
   color: red;
   margin-left: 4px;
 }
-/*  */
+
+.pendingNotification {
+  padding: 10px;
+  background-color: #e3e3e3;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-right: 30px;
+}
+
+.quesHeader {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* radiobutton */
+.radioOption input[type="radio"] {
+  width: 20px; /* Kích thước */
+  height: 20px;
+  border: 2px solid #ccc; /* Viền */
+  border-radius: 50%; /* Hình tròn */
+  outline: none;
+  cursor: pointer;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.radioOption input[type="radio"]:hover {
+  border-color: #2c2c2c;
+}
+
+/* checkboxbutton */
+.checkboxOption input[type="checkbox"] {
+  width: 20px; /* Kích thước */
+  height: 20px;
+  border: 2px solid #ccc; /* Viền */
+  border-radius: 4px; /* Bo góc */
+  outline: none;
+  cursor: pointer;
+  margin-right: 8px;
+  vertical-align: middle;
+  position: relative;
+}
