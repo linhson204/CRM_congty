@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
+import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
+import OutGrFs from "../popup/OutGrFS";
 import style from '../styles.module.css';
 
 interface Group {
@@ -46,55 +48,16 @@ export default function Detail() {
     const { id } = router.query;
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
+    //loading ten
     const [uname, setUname] = useState('');
-    const [pendingGr, setpendingGr] = useState<number[]>([]);
-    // const [groups, setGroups] = useState<Groups[]>([
-    //     { 
-    //         id: 1, GroupName: 'ViecHay3656', GrIn: 300, 
-    //         GrNotIn: 10, GroupState: 'Public', Member: 300, 
-    //         State: 'Chưa tham gia', isJoin: false
-    //     },
-    //     { 
-    //         id: 2, GroupName: 'Timviec6s', GrIn: 100, 
-    //         GrNotIn: 15, GroupState: 'Private', Member: 20, 
-    //         State: 'Đã tham gia', isJoin: true
-    //     },
-    //     { 
-    //         id: 3, GroupName: 'Jobgovn', GrIn: 122, 
-    //         GrNotIn: 22, GroupState: 'Private', Member: 25, 
-    //         State: 'Chưa tham gia', isJoin: false
-    //     },
-    //     { 
-    //         id: 4, GroupName: 'Timviec3s', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Public', Member: 30, 
-    //         State: 'Đã tham gia', isJoin: true
-    //     },
-    //     { 
-    //         id: 5, GroupName: 'Topcv365', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Private', Member: 30, 
-    //         State: 'Chưa tham gia', isJoin: false
-    //     },
-    //     { 
-    //         id: 6, GroupName: 'Viecnhanh3s', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Public', Member: 30, 
-    //         State: 'Đã tham gia', isJoin: true
-    //     },
-    //     { 
-    //         id: 7, GroupName: 'CVnhanh247', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Public', Member: 30, 
-    //         State: 'Chưa tham gia', isJoin: false
-    //     },
-    //     { 
-    //         id: 8, GroupName: 'Vieccham246', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Private', Member: 30, 
-    //         State: 'Đã tham gia', isJoin: true
-    //     },
-    //     { 
-    //         id: 9, GroupName: 'Viecsieunhanh249', GrIn: 322, 
-    //         GrNotIn: 11, GroupState: 'Private', Member: 30, 
-    //         State: 'Đã tham gia', isJoin: true
-    //     },
-    // ]);
+
+    //tham gia nhóm
+    const [pendingGr, setpendingGr] = useState<number | null>(null);
+
+    //Popup rời nhóm
+    const [showPopup, setShowPopup] = useState(false);
+    const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
+    // const [groups, setGroups] = useState<Groups[]>([]);
     // console.log(groups)
 
     // useEffect(() => {
@@ -106,6 +69,13 @@ export default function Detail() {
     //     };
     //     fetchData();
     // }, [id]);
+    // const [groups, setGroups] = useState<Groups[]>([]);
+    // useEffect(() => {
+    //     fetch('../../api/UserDataTest')
+    //     .then(res => res.json())
+    //     .then(data => setGroups(data));
+    // }, []);
+    //
 
     useEffect(() => { //xu li su kien moi khi tim dung account
         if (!id) return;
@@ -116,6 +86,20 @@ export default function Detail() {
         }, 100);
         return () => clearTimeout(timer);
     }, [id]);
+
+    useEffect(() => {
+        setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
+        setShowBackButton(true);
+        setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
+    }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
+
+    useEffect(() => {
+        if (isOpen) {
+            mainRef.current?.classList.add("content_resize");
+        } else {
+            mainRef.current?.classList.remove("content_resize");
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         if (account) {
@@ -138,6 +122,12 @@ export default function Detail() {
     //     router.replace("/toolfacebook/tham-gia-nhom/HomePage");
     //     }
     // }, []);
+
+    useEffect(() => {
+        if(pendingGr) {
+            PendingHandleData(pendingGr);
+        }
+    }, [pendingGr]);
 
     const filteredGroups = useMemo(() => {
         return groups.filter(group => {
@@ -176,39 +166,28 @@ export default function Detail() {
         router.push('/toolfacebook/dang-bai');
     };
 
-    useEffect(() => {
-        setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
-        setShowBackButton(true);
-        setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
-    }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
-
-    useEffect(() => {
-        if (isOpen) {
-            mainRef.current?.classList.add("content_resize");
-        } else {
-            mainRef.current?.classList.remove("content_resize");
-        }
-    }, [isOpen]);
-
     const BackPageClick = () => {
         router.push('/toolfacebook/tham-gia-nhom/HomePage');
     };
 
-    const PendingHandle = () => {
+    const PendingHandle = (id: number) => {
+        setpendingGr(id);
+    };
+
+    const PendingHandleData = (GrId: number) => {
         // if (pendingGr.includes(group.id)) {
         //     setpendingGr(pendingGr.filter(id => id !== group.id));
         // } else {
         //     setpendingGr([...pendingGr, group.id]);
         // }
+        //call API tra id user id nhom vao day
+        console.log(id, GrId);
     }
-    
-    // const [groups, setGroups] = useState<Groups[]>([]);
-    // useEffect(() => {
-    //     fetch('../../api/UserDataTest')
-    //     .then(res => res.json())
-    //     .then(data => setGroups(data));
-    // }, []);
-    //
+
+    // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
+    const handleLeavePopup = () => { 
+        setShowPopup(false);
+    };
 
     return (
     <>
@@ -223,127 +202,151 @@ export default function Detail() {
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
                         <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
-                            <div style={{padding: '10px'}} className={styles.form_add_potential}>
-                                {/* Title + BackButton */}
-                                <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                    <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}>CHI TIẾT TÀI KHOẢN</p>
-                                    {/* <button className={style.buttonBack} onClick={BackPageClick}>
-                                        Quay lại
-                                    </button> */}
+                        <div style={{padding: '10px'}} className={styles.form_add_potential}>
+                            {/* Title + BackButton */}
+                            <div style={{marginTop:'10px'}} className={style.BlockRow}>
+                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}>CHI TIẾT TÀI KHOẢN</p>
+                                {/* <button className={style.buttonBack} onClick={BackPageClick}>
+                                    Quay lại
+                                </button> */}
+                            </div>
+                            {/* Name + GroupIn/NotIn */}
+                            <div style={{marginTop: '20px'}} className={style.BlockRow}>
+                                <div id="UserName" className={style.BlockRow}>
+                                    <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
+                                    <p className={style.nameDetail}>{uname}</p>
                                 </div>
-                                {/* Name + GroupIn/NotIn */}
-                                <div style={{marginTop: '20px'}} className={style.BlockRow}>
-                                    <div id="UserName" className={style.BlockRow}>
-                                        <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                        <p className={style.nameDetail}>{uname}</p>
-                                    </div>
-                                    <div style={{display: 'flex', flexDirection: 'column', marginLeft: 'auto'}}>
-                                        <div>Số nhóm đã tham gia: {groups.filter(group => group.isJoin === true).length} </div>
-                                        <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === false).length}</div>
-                                    </div>
+                                <div style={{display: 'flex', flexDirection: 'column', marginLeft: 'auto'}}>
+                                    <div>Số nhóm đã tham gia: {groups.filter(group => group.isJoin === true).length} </div>
+                                    <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === false).length}</div>
                                 </div>
+                            </div>
 
-                                {/* thanh checkbox + ten */}
-                                <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
-                                    <input
-                                        style={{marginLeft: '0px'}}
-                                        className={style.searchBar}
-                                        type="text" placeholder="TimKiem"
-                                        value={search}
+                            {/* thanh checkbox + ten */}
+                            <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
+                                <input
+                                    style={{marginLeft: '0px'}}
+                                    className={style.searchBar}
+                                    type="text" placeholder="TimKiem"
+                                    value={search}
+                                    onChange={(e) => {
+                                        setSearch(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                />
+                                <div className={style.BlockRow} style={{marginLeft: 'auto', paddingTop: '10px'}}>
+                                    <input 
+                                        type="checkbox"
+                                        className={style.checkbox}
+                                        checked={filterPublic}
                                         onChange={(e) => {
-                                            setSearch(e.target.value);
                                             setCurrentPage(1);
+                                            setFilterPublic(e.target.checked)
                                         }}
-                                    />
-                                    <div className={style.BlockRow} style={{marginLeft: 'auto', paddingTop: '10px'}}>
-                                        <input 
-                                            type="checkbox"
-                                            className={style.checkbox}
-                                            checked={filterPublic}
-                                            onChange={(e) => {
-                                                setCurrentPage(1);
-                                                setFilterPublic(e.target.checked)
-                                            }}
-                                            />
-                                        <p style={{width: 'fit-content'}}>Nhóm công khai</p>
-                                    </div>
-                                    <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                        <input 
-                                            type="checkbox" 
-                                            className={style.checkbox}
-                                            checked={filterPrivate}
-                                            onChange={(e) => {
-                                                setCurrentPage(1);
-                                                setFilterPrivate(e.target.checked)
-                                            }}
-                                            />
-                                        <p style={{width: 'fit-content'}}>Nhóm riêng tư</p>
-                                    </div>
-                                    <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                        <input 
-                                            type="checkbox" 
-                                            className={style.checkbox}
-                                            checked={filterJoined}
-                                            onChange={(e) => {
-                                                setCurrentPage(1);
-                                                setFilterJoined(e.target.checked)
-                                            }}
-                                            />
-                                        <p style={{width: 'fit-content'}}>Đã tham gia</p>
-                                    </div>
-                                    <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                        <input 
-                                            type="checkbox" 
-                                            className={style.checkbox}
-                                            checked={filterNotJoin}
-                                            onChange={(e) => {
-                                                setCurrentPage(1);
-                                                setFilterNotJoin(e.target.checked)
-                                            }}
-                                            />
-                                        <p style={{width: 'fit-content'}}>Chưa tham gia</p>
-                                    </div>
+                                        />
+                                    <p style={{width: 'fit-content'}}>Nhóm công khai</p>
                                 </div>
-                                {/* List Nhóm */}
+                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
+                                    <input 
+                                        type="checkbox" 
+                                        className={style.checkbox}
+                                        checked={filterPrivate}
+                                        onChange={(e) => {
+                                            setCurrentPage(1);
+                                            setFilterPrivate(e.target.checked)
+                                        }}
+                                        />
+                                    <p style={{width: 'fit-content'}}>Nhóm riêng tư</p>
+                                </div>
+                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
+                                    <input 
+                                        type="checkbox" 
+                                        className={style.checkbox}
+                                        checked={filterJoined}
+                                        onChange={(e) => {
+                                            setCurrentPage(1);
+                                            setFilterJoined(e.target.checked)
+                                        }}
+                                        />
+                                    <p style={{width: 'fit-content'}}>Đã tham gia</p>
+                                </div>
+                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
+                                    <input 
+                                        type="checkbox" 
+                                        className={style.checkbox}
+                                        checked={filterNotJoin}
+                                        onChange={(e) => {
+                                            setCurrentPage(1);
+                                            setFilterNotJoin(e.target.checked)
+                                        }}
+                                        />
+                                    <p style={{width: 'fit-content'}}>Chưa tham gia</p>
+                                </div>
+                            </div>
+                            {/* List Nhóm */}
+                            <div>
+                                <OutGrFs isOpen={showPopup} onClose={() => setShowPopup(false)}>
+                                        <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
+                                        <h2 className={style.PopupOutGrHeader}> 
+                                            Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                        </h2>
+                                        <p className={style.PopupOutGrContent}>
+                                            Hành động này sẽ không thể hoàn tác.
+                                        </p>
+                                        <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
+                                            <button onClick={() => setShowPopup(false)} className={style.PopupOutGrCancelButton}>
+                                                Hủy
+                                            </button>
+                                            <button 
+                                                onClick={() => {handleLeavePopup()}}
+                                                className={style.PopupOutGrConfirmButton}>
+                                                Xác nhận
+                                            </button>
+                                        </div>
+                                </OutGrFs>
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
                                     {filteredPage.map(group => (
                                         <div key={group.id} className={`${style.Block} ${style.BlockColumn}`}>
-                                                <div id="TopRow" className={style.BlockRow}>
-                                                    <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
-                                                    <h2 style={{marginLeft: 'auto'}}>
-                                                        {group.isJoin ? (
-                                                            <p>Đã tham gia</p>
-                                                        ) : (
-                                                            <p>Chưa tham gia</p>
-                                                        )}
-                                                    </h2>
-                                                </div>
-                                                <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
-                                                    <div id="GrState" className={style.BlockRow}>
-                                                        {group.GroupState == "Public" ? (
-                                                            <div style={{paddingTop: '3px'}}><MdPublic className={style.ic}></MdPublic></div>
-                                                        ) : (
-                                                            <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
-                                                        )}
-                                                        <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.GroupState}</h2>
-                                                    </div>
-                                                    <div id="member" style={{marginLeft: '20px'}} className={style.BlockRow}>
-                                                        <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
-                                                        <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Member}</h2>
-                                                    </div>
+                                            <div id="TopRow" className={style.BlockRow}>
+                                                <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
+                                                <h2 style={{marginLeft: 'auto'}}>
                                                     {group.isJoin ? (
-                                                        <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
-                                                            <button className={style.buttonBack} onClick={PostClick}>Đăng bài</button>
-                                                            <button className={style.buttonOutGr}>Rời nhóm</button> {/* onclick */}
-                                                        </div>
+                                                        <p>Đã tham gia</p>
                                                     ) : (
-                                                        <button className={`${style.buttonBack} ${style.BlockRow}`} onClick={PendingHandle}>
-                                                                <MdGroupAdd className={style.ic}></MdGroupAdd>
-                                                                <p>tham gia nhóm</p>
-                                                                {/* {() ? style.onQueue : style.buttonBack} */}
-                                                        </button>
+                                                        <p>Chưa tham gia</p>
                                                     )}
+                                                </h2>
+                                            </div>
+                                            <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
+                                                <div id="GrState" className={style.BlockRow}>
+                                                    {group.GroupState == "Public" ? (
+                                                        <div style={{paddingTop: '3px'}}><MdPublic className={style.ic}></MdPublic></div>
+                                                    ) : (
+                                                        <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
+                                                    )}
+                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.GroupState}</h2>
                                                 </div>
+                                                <div id="member" style={{marginLeft: '20px'}} className={style.BlockRow}>
+                                                    <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
+                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Member}</h2>
+                                                </div>
+                                                {group.isJoin ? (
+                                                    <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
+                                                        <button className={style.buttonBack} onClick={PostClick}>Đăng bài</button>
+                                                        <button className={style.buttonOutGr} onClick={() => {SetGrOutSelected(group.id); setShowPopup(true);}}>Rời nhóm</button> {/* onclick */}
+                                                    </div>
+                                                ) : (
+                                                    <button className={`${style.buttonBack} ${style.BlockRow}`}
+                                                            onClick={() => {
+                                                                (group.GroupState == "Private") ? 
+                                                                (console.log('popupprivate')) : (console.log('confirmpublic'));
+                                                                }}>
+                                                            <MdGroupAdd className={style.ic}></MdGroupAdd>
+                                                            <p>tham gia nhóm</p>
+                                                            {/* {() ? style.onQueue : style.buttonBack} */}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     ))}
                                     <div id="PageIndexBar" className={style.BlockRow} style={{marginLeft: 'auto', marginRight: '20px', marginTop: '10px'}}>
@@ -357,6 +360,7 @@ export default function Detail() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>

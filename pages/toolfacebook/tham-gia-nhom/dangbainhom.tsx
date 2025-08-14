@@ -110,7 +110,7 @@ export default function GroupPostingPage() {
       borderRadius: "6px",
       padding: "10px",
       fontSize: "14px",
-      resize: "none",
+      resize: "none" as 'none',
     },
     postActions: { marginTop: "10px", textAlign: "right" },
     postButton: {

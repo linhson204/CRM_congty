@@ -10,6 +10,8 @@ import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
 import OutGrFs from "../popup/OutGrFS";
+import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
+import { Question } from "../popup/PrivateGrQues/types";
 import style from '../styles.module.css';
 
 interface Group {
@@ -37,7 +39,7 @@ export default function Detail() {
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 3;
+    const itemsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
     const [filterPublic, setFilterPublic] = useState(false);
@@ -53,6 +55,9 @@ export default function Detail() {
 
     //tham gia nhóm
     const [pendingGr, setpendingGr] = useState<number | null>(null);
+    //tham gia nhóm kín
+    const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
+    const [privateGrSelected, setPrivateGrSelected] = useState<number | null>(null);
 
     //Popup rời nhóm
     const [showPopup, setShowPopup] = useState(false);
@@ -77,6 +82,32 @@ export default function Detail() {
     // }, []);
     //
 
+    // Danh sách câu hỏi mẫu
+    const approvalQuestions: Question[] = [
+    {
+        id: 1,
+        type: 'textarea', // Kiểu nhập text
+        question: "Giới thiệu ngắn về bản thân?",
+        required: true,
+        maxLength: 250
+    },
+    {
+        id: 2,
+        type: 'radio', // Chọn 1 lựa chọn
+        question: "Bạn có đồng ý với nội quy nhóm?",
+        options: ["Có", "Không"],
+        required: true
+    },
+    {
+        id: 3,
+        type: 'checkbox', // Chọn nhiều lựa chọn
+        question: "Bạn quan tâm đến chủ đề nào?",
+        options: ["Mua bán", "Kỹ thuật", "Du lịch"],
+        required: false
+    }
+    ];
+    //
+    
     useEffect(() => { //xu li su kien moi khi tim dung account
         if (!id) return;
         const timer = setTimeout(() => {
@@ -304,9 +335,20 @@ export default function Detail() {
                                             </button>
                                         </div>
                                 </OutGrFs>
+                                <QuestionPopup
+                                    isOpen={showPrivateGrQues}
+                                    onClose={() => setShowPrivateGrQues(false)}
+                                    questions={approvalQuestions}
+                                    onSubmit={(answers) => {
+                                        // Xử lý dữ liệu ở đây
+                                        if (privateGrSelected) {
+                                        console.log(id, privateGrSelected, answers);
+                                        }
+                                    }}
+                                />
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
                                     {filteredPage.map(group => (
-                                        <div key={group.id} className={`${style.Block} ${style.BlockColumn}`}>
+                                        <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
                                                 <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
@@ -338,9 +380,11 @@ export default function Detail() {
                                                 ) : (
                                                     <button className={`${style.buttonBack} ${style.BlockRow}`}
                                                             onClick={() => {
-                                                                (group.GroupState == "Private") ? (PendingHandle(group.id)) : (console.log(1));
-                                                                
-                                                                }}>
+                                                                {if (group.GroupState === "Private") {
+                                                                    setPrivateGrSelected(group.id);
+                                                                    setShowPrivateGrQues(true);
+                                                                } else {console.log(1)}
+                                                                }}}>
                                                             <MdGroupAdd className={style.ic}></MdGroupAdd>
                                                             <p>tham gia nhóm</p>
                                                             {/* {() ? style.onQueue : style.buttonBack} */}
