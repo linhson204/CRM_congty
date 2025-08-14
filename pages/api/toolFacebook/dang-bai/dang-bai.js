@@ -2,8 +2,8 @@
 import { useState } from "react";
 import axios from "axios";
 
-const URL_API = "http://123.24.206.25:4000/api";
-// const URL_API = "http://localhost:4000/api";
+const URL_API = "https://socket.hungha365.com:4000/api";
+// const URL_API = "https://localhost:4000/api";
 // const URL_API = "https://backend-crm-skmr.onrender.com/api";
 
 export const createPost = async (postData) => {
@@ -20,9 +20,9 @@ export const createPost = async (postData) => {
   }
 };
 
-export const getPostbyUserId = async (userId, facebookId) => {
+export const getPostbyUserId = async (userId, facebookId, page = 1) => {
   try {
-    let URI = `${URL_API}/post?userId=${userId}&facebookId=${facebookId}`;
+    let URI = `${URL_API}/post?userId=${userId}&facebookId=${facebookId}&page=${page}`;
     const response = await axios.get(URI, {
       headers: {
         "Content-Type": "application/json",

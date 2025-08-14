@@ -250,13 +250,16 @@ function DangBaiPost() {
       console.log(
         ` Fetching posts for account: ${selectedFacebookAccount.userNameFb}`
       );
-      postManagement.fetchUserPosts(currentUserID);
+      // Reset pagination và fetch page 1
+      postManagement.resetPagination();
+      postManagement.fetchUserPosts(currentUserID, 1);
     }
   }, [
     hasPermission,
     selectedFacebookAccount,
     currentUserID,
     postManagement.fetchUserPosts,
+    postManagement.resetPagination,
   ]);
 
   useEffect(() => {
@@ -739,7 +742,8 @@ function DangBaiPost() {
                     isLoadingPosts={postManagement.isLoadingPosts}
                     onRefreshPosts={() => {
                       if (currentUserID) {
-                        postManagement.fetchUserPosts(currentUserID);
+                        postManagement.resetPagination();
+                        postManagement.fetchUserPosts(currentUserID, 1);
                       }
                     }}
                   />
@@ -786,6 +790,142 @@ function DangBaiPost() {
                       </div>
                     )}
                   </div>
+
+                  {/* Pagination Controls */}
+                  {postManagement.totalPages > 1 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "20px",
+                        gap: "10px",
+                        borderTop: "1px solid #eee",
+                        marginTop: "20px",
+                      }}
+                    >
+                      {/* First Page Button */}
+                      <button
+                        onClick={() => {
+                          if (currentUserID) {
+                            postManagement.goToFirstPage(currentUserID);
+                          }
+                        }}
+                        disabled={
+                          !postManagement.hasPrevPage ||
+                          postManagement.isLoadingPosts
+                        }
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #ddd",
+                          borderRadius: "4px",
+                          backgroundColor: !postManagement.hasPrevPage
+                            ? "#f5f5f5"
+                            : "#fff",
+                          cursor: !postManagement.hasPrevPage
+                            ? "not-allowed"
+                            : "pointer",
+                          fontSize: "14px",
+                        }}
+                      >
+                        ««
+                      </button>
+
+                      {/* Previous Page Button */}
+                      <button
+                        onClick={() => {
+                          if (currentUserID) {
+                            postManagement.goToPreviousPage(currentUserID);
+                          }
+                        }}
+                        disabled={
+                          !postManagement.hasPrevPage ||
+                          postManagement.isLoadingPosts
+                        }
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #ddd",
+                          borderRadius: "4px",
+                          backgroundColor: !postManagement.hasPrevPage
+                            ? "#f5f5f5"
+                            : "#fff",
+                          cursor: !postManagement.hasPrevPage
+                            ? "not-allowed"
+                            : "pointer",
+                          fontSize: "14px",
+                        }}
+                      >
+                        « Trước
+                      </button>
+
+                      {/* Page Info */}
+                      <span
+                        style={{
+                          margin: "0 15px",
+                          fontSize: "14px",
+                          color: "#666",
+                        }}
+                      >
+                        Trang {postManagement.currentPage} /{" "}
+                        {postManagement.totalPages}({postManagement.totalPosts}{" "}
+                        bài)
+                      </span>
+
+                      {/* Next Page Button */}
+                      <button
+                        onClick={() => {
+                          if (currentUserID) {
+                            postManagement.goToNextPage(currentUserID);
+                          }
+                        }}
+                        disabled={
+                          !postManagement.hasNextPage ||
+                          postManagement.isLoadingPosts
+                        }
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #ddd",
+                          borderRadius: "4px",
+                          backgroundColor: !postManagement.hasNextPage
+                            ? "#f5f5f5"
+                            : "#fff",
+                          cursor: !postManagement.hasNextPage
+                            ? "not-allowed"
+                            : "pointer",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Sau »
+                      </button>
+
+                      {/* Last Page Button */}
+                      <button
+                        onClick={() => {
+                          if (currentUserID) {
+                            postManagement.goToLastPage(currentUserID);
+                          }
+                        }}
+                        disabled={
+                          !postManagement.hasNextPage ||
+                          postManagement.isLoadingPosts
+                        }
+                        style={{
+                          padding: "8px 12px",
+                          border: "1px solid #ddd",
+                          borderRadius: "4px",
+                          backgroundColor: !postManagement.hasNextPage
+                            ? "#f5f5f5"
+                            : "#fff",
+                          cursor: !postManagement.hasNextPage
+                            ? "not-allowed"
+                            : "pointer",
+                          fontSize: "14px",
+                        }}
+                      >
+                        »»
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

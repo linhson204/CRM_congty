@@ -19,13 +19,14 @@ export const useWebSocket = (
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   const connectWebSocket = () => {
-    const ws = new WebSocket("wss://123.24.206.25:4000");
-    // const ws = new WebSocket("ws://localhost:4000");
+    // const ws = new WebSocket("ws://123.24.206.25:4000");
+    // const ws = new WebSocket("wss://socket.hungha365.com:4000");
+    const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
     ws.onopen = () => {
-      console.log("✅ WebSocket connected successfully");
+      console.log(" WebSocket connected successfully");
       ws.send(
         JSON.stringify({
           type: "register",
@@ -50,12 +51,7 @@ export const useWebSocket = (
         setPosts((prev) => {
           const updatedPosts = prev.map((post) => {
             if (post.id.toString() === data.postId) {
-              console.log(
-                "✅ Found and updating post:",
-                post.id,
-                "→",
-                data.URL
-              );
+              console.log(" Found and updating post:", post.id, "→", data.URL);
               return {
                 ...post,
                 facebookUrl: data.URL,
@@ -120,7 +116,7 @@ export const useWebSocket = (
 
           return prev.map((post) => {
             if (post.id.toString() === data.postId.toString()) {
-              console.log("✅ Adding new comment from B to post:", post.id);
+              console.log(" Adding new comment from B to post:", post.id);
               const updatedPost = {
                 ...post,
                 comments: [...(post.comments || []), newCommentFromB],
@@ -193,7 +189,7 @@ export const useWebSocket = (
                       comment.id_facebookComment === data.commentId?.toString()
                     ) {
                       console.log(
-                        "✅ Adding new reply from B to comment:",
+                        " Adding new reply from B to comment:",
                         comment.id
                       );
                       const updatedComment = {
@@ -236,7 +232,7 @@ export const useWebSocket = (
                     !comment.id_facebookComment
                   ) {
                     console.log(
-                      "✅ Found and updating comment:",
+                      " Found and updating comment:",
                       comment.id,
                       "→",
                       data.comment_id
@@ -294,7 +290,7 @@ export const useWebSocket = (
                           comment.replies?.map((reply) => {
                             if (!reply.id_facebookReply) {
                               console.log(
-                                "✅ Found and updating reply:",
+                                " Found and updating reply:",
                                 reply.id,
                                 "→",
                                 data.replyId
@@ -352,7 +348,7 @@ export const useWebSocket = (
                           comment.replies?.map((reply) => {
                             if (!reply.id_facebookReply) {
                               console.log(
-                                "✅ Found and updating reply:",
+                                " Found and updating reply:",
                                 reply.id,
                                 "→",
                                 data.replyId
