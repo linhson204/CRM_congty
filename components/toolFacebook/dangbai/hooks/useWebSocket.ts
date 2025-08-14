@@ -20,8 +20,8 @@ export const useWebSocket = (
 
   const connectWebSocket = () => {
     // const ws = new WebSocket("ws://123.24.206.25:4000");
-    // const ws = new WebSocket("wss://socket.hungha365.com:4000");
-    const ws = new WebSocket("ws://localhost:4000");
+    const ws = new WebSocket("wss://socket.hungha365.com:4000");
+    // const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
@@ -418,6 +418,8 @@ export const useWebSocket = (
             facebookId: data.facebookId,
           });
         }
+      } else {
+        console.log("Dữ liệu nghe từ websocket", data);
       }
     };
 

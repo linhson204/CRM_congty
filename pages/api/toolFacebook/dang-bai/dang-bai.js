@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 
 const URL_API = "https://socket.hungha365.com:4000/api";
-// const URL_API = "https://localhost:4000/api";
+// const URL_API = "http://localhost:4000/api";
 // const URL_API = "https://backend-crm-skmr.onrender.com/api";
 
 export const createPost = async (postData) => {
