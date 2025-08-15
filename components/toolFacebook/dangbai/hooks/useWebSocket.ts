@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Post, Comment, Reply, WebSocketData } from "../types";
 import Cookies from "js-cookie";
+import { USER_FACEBOOK_MAPPING } from "../constants/facebookAccountsMapping";
 
 export const useWebSocket = (
   posts: Post[],
@@ -45,6 +46,45 @@ export const useWebSocket = (
 
     ws.onmessage = (event) => {
       const data: WebSocketData = JSON.parse(event.data);
+
+      // Xử lý data có connectedClients để cập nhật online/offline status
+      if (data.connectedClients && setOnlineStatus) {
+        console.log("📊 Received connectedClients data:", data);
+
+        const userID = Cookies.get("userID");
+        if (userID && USER_FACEBOOK_MAPPING[userID]) {
+          const userFacebookAccounts = USER_FACEBOOK_MAPPING[userID];
+
+          // Tạo object online status mới
+          const newOnlineStatus: {
+            [facebookId: string]: { isOnline: boolean; lastSeen?: string };
+          } = {};
+
+          // Duyệt qua tất cả Facebook accounts của user hiện tại
+          userFacebookAccounts.forEach((account) => {
+            const isOnline = data.connectedClients!.includes(
+              account.facebookId
+            );
+            newOnlineStatus[account.facebookId] = {
+              isOnline: isOnline,
+              lastSeen: data.timestamp || new Date().toISOString(),
+            };
+
+            console.log(
+              `📊 ${account.facebookId} (${account.userNameFb}): ${
+                isOnline ? "🟢 Online" : "🔴 Offline"
+              }`
+            );
+          });
+
+          // Cập nhật state
+          setOnlineStatus(newOnlineStatus);
+          console.log(
+            "📊 Updated online status for all user's Facebook accounts:",
+            newOnlineStatus
+          );
+        }
+      }
 
       if (data.type === "post_sent") {
         console.log("Post sent successfully with ID:", data.postId);
@@ -425,36 +465,6 @@ export const useWebSocket = (
             setCrawlingStatus: !!setCrawlingStatus,
             facebookId: data.facebookId,
           });
-        }
-      } else if (data.type === "online") {
-        // Xử lý message khi Facebook account online
-        console.log("🟢 Facebook account online:", data);
-
-        if (setOnlineStatus && data.facebookId) {
-          setOnlineStatus((prev) => ({
-            ...prev,
-            [data.facebookId!]: {
-              isOnline: true,
-              lastSeen: data.timestamp,
-            },
-          }));
-
-          console.log(`📊 Online status for ${data.facebookId}: online`);
-        }
-      } else if (data.type === "client_disconnected") {
-        // Xử lý message khi Facebook account offline
-        console.log("🔴 Facebook account disconnected:", data);
-
-        if (setOnlineStatus && data.clientId) {
-          setOnlineStatus((prev) => ({
-            ...prev,
-            [data.clientId!]: {
-              isOnline: false,
-              lastSeen: data.timestamp,
-            },
-          }));
-
-          console.log(`📊 Offline status for ${data.clientId}: offline`);
         }
       } else {
         console.log("Dữ liệu nghe từ websocket", data);

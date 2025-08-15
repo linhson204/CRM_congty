@@ -93,6 +93,7 @@ export interface WebSocketData {
 
   // Fields cho online/offline status
   clientId?: string;
+  connectedClients?: string[]; // Danh sách các Facebook ID đang online
 
   metadata?: {
     source?: string;
