@@ -9,12 +9,14 @@ interface QuestionPopupProps {
     questions: Question[];
     initialAnswers?: Record<number, any>;
     onSubmit?: (answers: Record<number, any>) => void;
+    children: React.ReactNode;
 }
 
 const QuestionPopup: React.FC<QuestionPopupProps> = ({
     isOpen,
     onClose,
     questions,
+    children,
     initialAnswers = {},
     onSubmit
     }) => {
@@ -46,6 +48,7 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
                         &times;
                     </button>
                 </div>
+                {children}
                 <div className={style.pendingNotification}>
                     <p style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '8px'}}>Yêu cầu của bạn đang chờ phê duyệt</p>
                     <p>Hãy trả lời những câu hỏi sau của quản trị viên nhóm để họ có thể xem xét

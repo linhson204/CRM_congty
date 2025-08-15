@@ -146,8 +146,6 @@ export default function MessagingPage() {
     }
   }, [isOpen]);
 
-  console.log(convers)
-
   return (
     <>
       <Head>

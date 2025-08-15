@@ -17,7 +17,7 @@ export default function FullscreenPopup({
     return (
         <div
         className={style.fullscreenPopup}
-        onClick={onClose}
+        onClick={(e) => e.stopPropagation()}
         >
         <div
             className={style.fullscreenPopupContent}

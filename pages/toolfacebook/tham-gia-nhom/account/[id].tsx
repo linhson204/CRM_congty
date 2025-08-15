@@ -64,7 +64,8 @@ export default function Detail() {
     //tham gia nhóm kín
     const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
     const [privateGrSelected, setPrivateGrSelected] = useState<number | null>(null);
-    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false)
+    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
+    const [popupHeader, setpopupHeader] = useState<any[]>([]);
 
     //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
@@ -461,19 +462,25 @@ export default function Detail() {
                                         if (privateGrSelected) {
                                         console.log(id, privateGrSelected, answers);
                                         }
-                                    }}
-                                />
+                                    }}>
+                                        <div className={`${style.BlockColumn} ${style.PopupQuesHeader}`}>
+                                            <div className={style.PQHGrName}>{popupHeader[0]}</div>
+                                            <div className={style.BlockRow}>
+                                                <div className={style.BlockRow}>
+                                                    <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
+                                                    <p style={{textAlign: 'center', padding: '0 auto'}}>{popupHeader[1]}</p>
+                                                </div>
+                                                <p>{popupHeader[2]} thành viên</p>
+                                            </div>
+                                        </div>
+                                </QuestionPopup>
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
                                     {filteredPage.map(group => (
                                         <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
                                                 <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
-                                                    {group.isJoin == 1 ? (
-                                                        <p>Đã tham gia</p>
-                                                    ) : (
-                                                        <p>Chưa tham gia</p>
-                                                    )}
+                                                    {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
                                                 </h2>
                                             </div>
                                             <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
@@ -508,6 +515,7 @@ export default function Detail() {
                                                             {if (group.GroupState === "Private") {
                                                                 setPrivateGrSelected(group.id);
                                                                 setShowPrivateGrQues(true);
+                                                                setpopupHeader([group.GroupName, group.GroupState, group.Member]);
                                                             } else {UpdateGrState(group.id)}
                                                             }}}>
                                                         <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
