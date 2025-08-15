@@ -67,7 +67,7 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
                 <button className={style.cancelButton} onClick={handleClose}>
                     Hủy
                 </button>
-                <button className={style.submitButton} onClick={handleSubmit}>
+                <button className={style.submitButton} onClick={handleSubmit} disabled={Object.keys(answers).length === 0}>
                     Gửi
                 </button>
                 </div>

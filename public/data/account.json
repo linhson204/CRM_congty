@@ -10,9 +10,9 @@
         "Mess": 12, 
         "Active": true,
         "groups": [
-            { "id": 1, "GroupName": "ViecHay1234", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 2, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": false},
-            { "id": 3, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": true}
+            { "id": 1, "GroupName": "ViecHay1234", "GroupState": "Public", "Member": 300, "isJoin": 2 },
+            { "id": 2, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            { "id": 3, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "isJoin": 3}
         ]
     },
     {
@@ -25,8 +25,8 @@
         "Comment": 1037,
         "Active": false,
         "groups": [
-            { "id": 1, "GroupName": "ViecHay3656", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 2, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": false}
+            { "id": 1, "GroupName": "ViecHay3656", "GroupState": "Public", "Member": 300, "isJoin": 1 },
+            { "id": 2, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "isJoin": 2}
         ]
     },
     {
@@ -39,12 +39,12 @@
         "Comment": 714,
         "Mess": 200,
         "groups": [
-            { "id": 1, "GroupName": "ViecHay247", "GroupState": "Public", "Member": 300, "State": "Chưa tham gia", "isJoin": false },
-            { "id": 2, "GroupName": "Timviec3s", "GroupState": "Private", "Member": 20, "State": "Đã tham gia", "isJoin": true},
-            { "id": 3, "GroupName": "Viecnhanh245", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 4, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": false},
-            { "id": 5, "GroupName": "TopCv365", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 6, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": false}
+            { "id": 1, "GroupName": "ViecHay247", "GroupState": "Public", "Member": 300, "isJoin": 1 },
+            { "id": 2, "GroupName": "Timviec3s", "GroupState": "Private", "Member": 20, "isJoin": 3},
+            { "id": 3, "GroupName": "Viecnhanh245", "GroupState": "Public", "Member": 300, "isJoin": 2 },
+            { "id": 4, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            { "id": 5, "GroupName": "TopCv365", "GroupState": "Public", "Member": 300, "isJoin": 3 },
+            { "id": 6, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "isJoin": 2}
         ]
     },
     { 
@@ -56,12 +56,12 @@
         "Post": 1425,
         "Comment": 517,
         "groups": [
-            { "id": 1, "GroupName": "ViecHay247", "GroupState": "Public", "Member": 300, "State": "Chưa tham gia", "isJoin": false },
-            { "id": 2, "GroupName": "Timviec3s", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            { "id": 3, "GroupName": "Viecnhanh245", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 4, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "State": "Đã tham gia", "isJoin": true},
-            { "id": 5, "GroupName": "TopCv365", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true },
-            { "id": 6, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "State": "Chua tham gia", "isJoin": false}
+            { "id": 1, "GroupName": "ViecHay247", "GroupState": "Public", "Member": 300, "isJoin": 2 },
+            { "id": 2, "GroupName": "Timviec3s", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            { "id": 3, "GroupName": "Viecnhanh245", "GroupState": "Public", "Member": 300, "isJoin": 3 },
+            { "id": 4, "GroupName": "Jobgovn", "GroupState": "Private", "Member": 20, "isJoin": 2},
+            { "id": 5, "GroupName": "TopCv365", "GroupState": "Public", "Member": 300, "isJoin": 1 },
+            { "id": 6, "GroupName": "Timviec6s", "GroupState": "Private", "Member": 20, "isJoin": 3}
         ]
     },
     {
@@ -74,12 +74,12 @@
         "Comment": 678,
         "Mess": 45,
         "groups": [
-            {"id": 1, "GroupName": "CareerLink24", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "JobFast247", "GroupState": "Private", "Member": 50, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "WorkNow365", "GroupState": "Public", "Member": 200, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "TopJobFinder", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "CareerBuilderVN", "GroupState": "Public", "Member": 180, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "JobSeekers", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "CareerLink24", "GroupState": "Public", "Member": 150, "isJoin": 2},
+            {"id": 2, "GroupName": "JobFast247", "GroupState": "Private", "Member": 50, "isJoin": 1},
+            {"id": 3, "GroupName": "WorkNow365", "GroupState": "Public", "Member": 200, "isJoin": 3},
+            {"id": 4, "GroupName": "TopJobFinder", "GroupState": "Private", "Member": 30, "isJoin": 2},
+            {"id": 5, "GroupName": "CareerBuilderVN", "GroupState": "Public", "Member": 180, "isJoin": 1},
+            {"id": 6, "GroupName": "JobSeekers", "GroupState": "Private", "Member": 40, "isJoin": 3}
         ]
     },
     {
@@ -92,12 +92,12 @@
         "Comment": 890,
         "Mess": 67,
         "groups": [
-            {"id": 1, "GroupName": "VietnamWorks", "GroupState": "Public", "Member": 250, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "ITJobsVN", "GroupState": "Private", "Member": 60, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "FinanceCareers", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "MarketingJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "HRProfessionals", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "DesignJobs", "GroupState": "Private", "Member": 45, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "VietnamWorks", "GroupState": "Public", "Member": 250, "isJoin": 1},
+            {"id": 2, "GroupName": "ITJobsVN", "GroupState": "Private", "Member": 60, "isJoin": 3},
+            {"id": 3, "GroupName": "FinanceCareers", "GroupState": "Public", "Member": 120, "isJoin": 2},
+            {"id": 4, "GroupName": "MarketingJobs", "GroupState": "Private", "Member": 35, "isJoin": 1},
+            {"id": 5, "GroupName": "HRProfessionals", "GroupState": "Public", "Member": 90, "isJoin": 3},
+            {"id": 6, "GroupName": "DesignJobs", "GroupState": "Private", "Member": 45, "isJoin": 2}
         ]
     },
     {
@@ -110,12 +110,12 @@
         "Comment": 765,
         "Mess": 23,
         "groups": [
-            {"id": 1, "GroupName": "TechJobsVietnam", "GroupState": "Public", "Member": 300, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "LegalCareers", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "HealthcareJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "EducationJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "ConstructionJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "LogisticsJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "TechJobsVietnam", "GroupState": "Public", "Member": 300, "isJoin": 3},
+            {"id": 2, "GroupName": "LegalCareers", "GroupState": "Private", "Member": 25, "isJoin": 1},
+            {"id": 3, "GroupName": "HealthcareJobs", "GroupState": "Public", "Member": 150, "isJoin": 2},
+            {"id": 4, "GroupName": "EducationJobs", "GroupState": "Private", "Member": 40, "isJoin": 3},
+            {"id": 5, "GroupName": "ConstructionJobs", "GroupState": "Public", "Member": 80, "isJoin": 1},
+            {"id": 6, "GroupName": "LogisticsJobs", "GroupState": "Private", "Member": 30, "isJoin": 2}
         ]
     },
     {
@@ -128,12 +128,12 @@
         "Comment": 987,
         "Mess": 56,
         "groups": [
-            {"id": 1, "GroupName": "SalesJobsVN", "GroupState": "Public", "Member": 200, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "CustomerServiceJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "RetailJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "HospitalityJobs", "GroupState": "Private", "Member": 45, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "ManufacturingJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "EngineeringJobs", "GroupState": "Private", "Member": 50, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "SalesJobsVN", "GroupState": "Public", "Member": 200, "isJoin": 2},
+            {"id": 2, "GroupName": "CustomerServiceJobs", "GroupState": "Private", "Member": 35, "isJoin": 3},
+            {"id": 3, "GroupName": "RetailJobs", "GroupState": "Public", "Member": 100, "isJoin": 1},
+            {"id": 4, "GroupName": "HospitalityJobs", "GroupState": "Private", "Member": 45, "isJoin": 2},
+            {"id": 5, "GroupName": "ManufacturingJobs", "GroupState": "Public", "Member": 70, "isJoin": 3},
+            {"id": 6, "GroupName": "EngineeringJobs", "GroupState": "Private", "Member": 50, "isJoin": 1}
         ]
     },
     {
@@ -146,12 +146,12 @@
         "Comment": 654,
         "Mess": 34,
         "groups": [
-            {"id": 1, "GroupName": "AccountingJobs", "GroupState": "Public", "Member": 180, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "AuditJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "BankingJobs", "GroupState": "Public", "Member": 160, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "InsuranceJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "RealEstateJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "ConsultingJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "AccountingJobs", "GroupState": "Public", "Member": 180, "isJoin": 1},
+            {"id": 2, "GroupName": "AuditJobs", "GroupState": "Private", "Member": 30, "isJoin": 3},
+            {"id": 3, "GroupName": "BankingJobs", "GroupState": "Public", "Member": 160, "isJoin": 2},
+            {"id": 4, "GroupName": "InsuranceJobs", "GroupState": "Private", "Member": 25, "isJoin": 1},
+            {"id": 5, "GroupName": "RealEstateJobs", "GroupState": "Public", "Member": 90, "isJoin": 3},
+            {"id": 6, "GroupName": "ConsultingJobs", "GroupState": "Private", "Member": 40, "isJoin": 2}
         ]
     },
     {
@@ -164,12 +164,12 @@
         "Comment": 876,
         "Mess": 45,
         "groups": [
-            {"id": 1, "GroupName": "MediaJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "AdvertisingJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "PRJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "JournalismJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "EntertainmentJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "SportsJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "MediaJobs", "GroupState": "Public", "Member": 120, "isJoin": 2},
+            {"id": 2, "GroupName": "AdvertisingJobs", "GroupState": "Private", "Member": 35, "isJoin": 1},
+            {"id": 3, "GroupName": "PRJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 4, "GroupName": "JournalismJobs", "GroupState": "Private", "Member": 20, "isJoin": 2},
+            {"id": 5, "GroupName": "EntertainmentJobs", "GroupState": "Public", "Member": 70, "isJoin": 1},
+            {"id": 6, "GroupName": "SportsJobs", "GroupState": "Private", "Member": 25, "isJoin": 3}
         ]
     },
     {
@@ -183,12 +183,12 @@
         "Mess": 29,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "ScienceJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "ResearchJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "EnvironmentalJobs", "GroupState": "Public", "Member": 60, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "AgricultureJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "EnergyJobs", "GroupState": "Public", "Member": 40, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "MiningJobs", "GroupState": "Private", "Member": 10, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "ScienceJobs", "GroupState": "Public", "Member": 90, "isJoin": 3},
+            {"id": 2, "GroupName": "ResearchJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 3, "GroupName": "EnvironmentalJobs", "GroupState": "Public", "Member": 60, "isJoin": 2},
+            {"id": 4, "GroupName": "AgricultureJobs", "GroupState": "Private", "Member": 15, "isJoin": 3},
+            {"id": 5, "GroupName": "EnergyJobs", "GroupState": "Public", "Member": 40, "isJoin": 1},
+            {"id": 6, "GroupName": "MiningJobs", "GroupState": "Private", "Member": 10, "isJoin": 2}
         ]
     },
     {
@@ -201,12 +201,12 @@
         "Comment": 890,
         "Mess": 38,
         "groups": [
-            {"id": 1, "GroupName": "GovernmentJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "NGOJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "NonprofitJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "InternationalJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "DiplomaticJobs", "GroupState": "Public", "Member": 40, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "SecurityJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "GovernmentJobs", "GroupState": "Public", "Member": 150, "isJoin": 1},
+            {"id": 2, "GroupName": "NGOJobs", "GroupState": "Private", "Member": 30, "isJoin": 3},
+            {"id": 3, "GroupName": "NonprofitJobs", "GroupState": "Public", "Member": 70, "isJoin": 2},
+            {"id": 4, "GroupName": "InternationalJobs", "GroupState": "Private", "Member": 25, "isJoin": 1},
+            {"id": 5, "GroupName": "DiplomaticJobs", "GroupState": "Public", "Member": 40, "isJoin": 3},
+            {"id": 6, "GroupName": "SecurityJobs", "GroupState": "Private", "Member": 20, "isJoin": 2}
         ]
     },
     {
@@ -219,12 +219,12 @@
         "Comment": 678,
         "Mess": 27,
         "groups": [
-            {"id": 1, "GroupName": "TranslationJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "InterpreterJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "LanguageJobs", "GroupState": "Public", "Member": 60, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "TourismJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "TravelJobs", "GroupState": "Public", "Member": 50, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "AviationJobs", "GroupState": "Private", "Member": 10, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "TranslationJobs", "GroupState": "Public", "Member": 80, "isJoin": 2},
+            {"id": 2, "GroupName": "InterpreterJobs", "GroupState": "Private", "Member": 15, "isJoin": 1},
+            {"id": 3, "GroupName": "LanguageJobs", "GroupState": "Public", "Member": 60, "isJoin": 3},
+            {"id": 4, "GroupName": "TourismJobs", "GroupState": "Private", "Member": 20, "isJoin": 2},
+            {"id": 5, "GroupName": "TravelJobs", "GroupState": "Public", "Member": 50, "isJoin": 1},
+            {"id": 6, "GroupName": "AviationJobs", "GroupState": "Private", "Member": 10, "isJoin": 3}
         ]
     },
     {
@@ -237,12 +237,12 @@
         "Comment": 987,
         "Mess": 49,
         "groups": [
-            {"id": 1, "GroupName": "FashionJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "BeautyJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "LuxuryJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "ArtJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "DesignerJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "CreativeJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "FashionJobs", "GroupState": "Public", "Member": 100, "isJoin": 3},
+            {"id": 2, "GroupName": "BeautyJobs", "GroupState": "Private", "Member": 25, "isJoin": 1},
+            {"id": 3, "GroupName": "LuxuryJobs", "GroupState": "Public", "Member": 70, "isJoin": 2},
+            {"id": 4, "GroupName": "ArtJobs", "GroupState": "Private", "Member": 15, "isJoin": 3},
+            {"id": 5, "GroupName": "DesignerJobs", "GroupState": "Public", "Member": 90, "isJoin": 1},
+            {"id": 6, "GroupName": "CreativeJobs", "GroupState": "Private", "Member": 20, "isJoin": 2}
         ]
     },
     {
@@ -255,12 +255,12 @@
         "Comment": 765,
         "Mess": 31,
         "groups": [
-            {"id": 1, "GroupName": "StartupJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "EntrepreneurJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "VentureJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "InnovationJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "TechStartups", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "BusinessJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "StartupJobs", "GroupState": "Public", "Member": 120, "isJoin": 1},
+            {"id": 2, "GroupName": "EntrepreneurJobs", "GroupState": "Private", "Member": 30, "isJoin": 2},
+            {"id": 3, "GroupName": "VentureJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 4, "GroupName": "InnovationJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 5, "GroupName": "TechStartups", "GroupState": "Public", "Member": 100, "isJoin": 2},
+            {"id": 6, "GroupName": "BusinessJobs", "GroupState": "Private", "Member": 25, "isJoin": 3}
         ]
     },
     {
@@ -274,12 +274,12 @@
         "Mess": 58,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "FreelanceJobs", "GroupState": "Public", "Member": 200, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "RemoteJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "PartTimeJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "ContractJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "GigJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "TemporaryJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "FreelanceJobs", "GroupState": "Public", "Member": 200, "isJoin": 2},
+            {"id": 2, "GroupName": "RemoteJobs", "GroupState": "Private", "Member": 40, "isJoin": 3},
+            {"id": 3, "GroupName": "PartTimeJobs", "GroupState": "Public", "Member": 150, "isJoin": 1},
+            {"id": 4, "GroupName": "ContractJobs", "GroupState": "Private", "Member": 30, "isJoin": 2},
+            {"id": 5, "GroupName": "GigJobs", "GroupState": "Public", "Member": 90, "isJoin": 3},
+            {"id": 6, "GroupName": "TemporaryJobs", "GroupState": "Private", "Member": 20, "isJoin": 1}
         ]
     },
     {
@@ -293,12 +293,12 @@
         "Mess": 36,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "StudentJobs", "GroupState": "Public", "Member": 180, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "InternshipJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "GraduateJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "EntryLevelJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "CampusJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "ApprenticeshipJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "StudentJobs", "GroupState": "Public", "Member": 180, "isJoin": 3},
+            {"id": 2, "GroupName": "InternshipJobs", "GroupState": "Private", "Member": 35, "isJoin": 1},
+            {"id": 3, "GroupName": "GraduateJobs", "GroupState": "Public", "Member": 120, "isJoin": 2},
+            {"id": 4, "GroupName": "EntryLevelJobs", "GroupState": "Private", "Member": 25, "isJoin": 3},
+            {"id": 5, "GroupName": "CampusJobs", "GroupState": "Public", "Member": 80, "isJoin": 1},
+            {"id": 6, "GroupName": "ApprenticeshipJobs", "GroupState": "Private", "Member": 15, "isJoin": 2}
         ]
     },
     {
@@ -311,12 +311,12 @@
         "Comment": 1209,
         "Mess": 67,
         "groups": [
-            {"id": 1, "GroupName": "ExecutiveJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "ManagementJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "DirectorJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "SeniorJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "LeadershipJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "CLevelJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "ExecutiveJobs", "GroupState": "Public", "Member": 100, "isJoin": 1},
+            {"id": 2, "GroupName": "ManagementJobs", "GroupState": "Private", "Member": 30, "isJoin": 3},
+            {"id": 3, "GroupName": "DirectorJobs", "GroupState": "Public", "Member": 70, "isJoin": 2},
+            {"id": 4, "GroupName": "SeniorJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 5, "GroupName": "LeadershipJobs", "GroupState": "Public", "Member": 90, "isJoin": 3},
+            {"id": 6, "GroupName": "CLevelJobs", "GroupState": "Private", "Member": 15, "isJoin": 2}
         ]
     },
     {
@@ -330,12 +330,12 @@
         "Mess": 42,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "DataScienceJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "AIJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "MachineLearningJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "BigDataJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "AnalyticsJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "BusinessIntelligenceJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "DataScienceJobs", "GroupState": "Public", "Member": 150, "isJoin": 2},
+            {"id": 2, "GroupName": "AIJobs", "GroupState": "Private", "Member": 40, "isJoin": 1},
+            {"id": 3, "GroupName": "MachineLearningJobs", "GroupState": "Public", "Member": 120, "isJoin": 3},
+            {"id": 4, "GroupName": "BigDataJobs", "GroupState": "Private", "Member": 30, "isJoin": 2},
+            {"id": 5, "GroupName": "AnalyticsJobs", "GroupState": "Public", "Member": 100, "isJoin": 1},
+            {"id": 6, "GroupName": "BusinessIntelligenceJobs", "GroupState": "Private", "Member": 25, "isJoin": 3}
         ]
     },
     {
@@ -348,12 +348,12 @@
         "Comment": 1356,
         "Mess": 75,
         "groups": [
-            {"id": 1, "GroupName": "CloudComputingJobs", "GroupState": "Public", "Member": 180, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "DevOpsJobs", "GroupState": "Private", "Member": 45, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "CybersecurityJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "NetworkJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "SystemAdminJobs", "GroupState": "Public", "Member": 110, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "ITSupportJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "CloudComputingJobs", "GroupState": "Public", "Member": 180, "isJoin": 3},
+            {"id": 2, "GroupName": "DevOpsJobs", "GroupState": "Private", "Member": 45, "isJoin": 1},
+            {"id": 3, "GroupName": "CybersecurityJobs", "GroupState": "Public", "Member": 150, "isJoin": 2},
+            {"id": 4, "GroupName": "NetworkJobs", "GroupState": "Private", "Member": 35, "isJoin": 3},
+            {"id": 5, "GroupName": "SystemAdminJobs", "GroupState": "Public", "Member": 110, "isJoin": 1},
+            {"id": 6, "GroupName": "ITSupportJobs", "GroupState": "Private", "Member": 30, "isJoin": 2}
         ]
     },
     {
@@ -367,12 +367,12 @@
         "Mess": 53,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "WebDevelopmentJobs", "GroupState": "Public", "Member": 200, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "MobileDevJobs", "GroupState": "Private", "Member": 50, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "FrontendJobs", "GroupState": "Public", "Member": 180, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "BackendJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "FullStackJobs", "GroupState": "Public", "Member": 160, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "GameDevJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "WebDevelopmentJobs", "GroupState": "Public", "Member": 200, "isJoin": 1},
+            {"id": 2, "GroupName": "MobileDevJobs", "GroupState": "Private", "Member": 50, "isJoin": 2},
+            {"id": 3, "GroupName": "FrontendJobs", "GroupState": "Public", "Member": 180, "isJoin": 3},
+            {"id": 4, "GroupName": "BackendJobs", "GroupState": "Private", "Member": 40, "isJoin": 1},
+            {"id": 5, "GroupName": "FullStackJobs", "GroupState": "Public", "Member": 160, "isJoin": 2},
+            {"id": 6, "GroupName": "GameDevJobs", "GroupState": "Private", "Member": 30, "isJoin": 3}
         ]
     },
     {
@@ -385,12 +385,12 @@
         "Comment": 1543,
         "Mess": 82,
         "groups": [
-            {"id": 1, "GroupName": "BlockchainJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "CryptoJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "SmartContractJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "NFTJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "DeFiJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "Web3Jobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "BlockchainJobs", "GroupState": "Public", "Member": 120, "isJoin": 2},
+            {"id": 2, "GroupName": "CryptoJobs", "GroupState": "Private", "Member": 35, "isJoin": 3},
+            {"id": 3, "GroupName": "SmartContractJobs", "GroupState": "Public", "Member": 90, "isJoin": 1},
+            {"id": 4, "GroupName": "NFTJobs", "GroupState": "Private", "Member": 25, "isJoin": 2},
+            {"id": 5, "GroupName": "DeFiJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 6, "GroupName": "Web3Jobs", "GroupState": "Private", "Member": 20, "isJoin": 1}
         ]
     },
     {
@@ -403,12 +403,12 @@
         "Comment": 1209,
         "Mess": 61,
         "groups": [
-            {"id": 1, "GroupName": "ARVRJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "MetaverseJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "IoTJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "RoboticsJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "AutomationJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "DroneJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "ARVRJobs", "GroupState": "Public", "Member": 70, "isJoin": 3},
+            {"id": 2, "GroupName": "MetaverseJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 3, "GroupName": "IoTJobs", "GroupState": "Public", "Member": 100, "isJoin": 2},
+            {"id": 4, "GroupName": "RoboticsJobs", "GroupState": "Private", "Member": 30, "isJoin": 3},
+            {"id": 5, "GroupName": "AutomationJobs", "GroupState": "Public", "Member": 90, "isJoin": 1},
+            {"id": 6, "GroupName": "DroneJobs", "GroupState": "Private", "Member": 15, "isJoin": 2}
         ]
     },
     {
@@ -422,12 +422,12 @@
         "Mess": 89,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "QuantumComputingJobs", "GroupState": "Public", "Member": 50, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "BioTechJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "NanotechJobs", "GroupState": "Public", "Member": 40, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "SpaceJobs", "GroupState": "Private", "Member": 10, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "GreenTechJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "CleanEnergyJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "QuantumComputingJobs", "GroupState": "Public", "Member": 50, "isJoin": 1},
+            {"id": 2, "GroupName": "BioTechJobs", "GroupState": "Private", "Member": 15, "isJoin": 3},
+            {"id": 3, "GroupName": "NanotechJobs", "GroupState": "Public", "Member": 40, "isJoin": 2},
+            {"id": 4, "GroupName": "SpaceJobs", "GroupState": "Private", "Member": 10, "isJoin": 1},
+            {"id": 5, "GroupName": "GreenTechJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 6, "GroupName": "CleanEnergyJobs", "GroupState": "Private", "Member": 20, "isJoin": 2}
         ]
     },
     {
@@ -440,12 +440,12 @@
         "Comment": 1356,
         "Mess": 68,
         "groups": [
-            {"id": 1, "GroupName": "PharmaJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "MedicalDeviceJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "BiotechJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "ClinicalResearchJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "HealthcareITJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "NursingJobs", "GroupState": "Private", "Member": 35, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "PharmaJobs", "GroupState": "Public", "Member": 120, "isJoin": 2},
+            {"id": 2, "GroupName": "MedicalDeviceJobs", "GroupState": "Private", "Member": 30, "isJoin": 1},
+            {"id": 3, "GroupName": "BiotechJobs", "GroupState": "Public", "Member": 100, "isJoin": 3},
+            {"id": 4, "GroupName": "ClinicalResearchJobs", "GroupState": "Private", "Member": 25, "isJoin": 2},
+            {"id": 5, "GroupName": "HealthcareITJobs", "GroupState": "Public", "Member": 90, "isJoin": 1},
+            {"id": 6, "GroupName": "NursingJobs", "GroupState": "Private", "Member": 35, "isJoin": 3}
         ]
     },
     {
@@ -459,12 +459,12 @@
         "Mess": 95,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "FitnessJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "WellnessJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "YogaJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "NutritionJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "HealthCoachJobs", "GroupState": "Public", "Member": 60, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "TherapyJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "FitnessJobs", "GroupState": "Public", "Member": 100, "isJoin": 1},
+            {"id": 2, "GroupName": "WellnessJobs", "GroupState": "Private", "Member": 25, "isJoin": 2},
+            {"id": 3, "GroupName": "YogaJobs", "GroupState": "Public", "Member": 70, "isJoin": 3},
+            {"id": 4, "GroupName": "NutritionJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 5, "GroupName": "HealthCoachJobs", "GroupState": "Public", "Member": 60, "isJoin": 2},
+            {"id": 6, "GroupName": "TherapyJobs", "GroupState": "Private", "Member": 15, "isJoin": 3}
         ]
     },
     {
@@ -477,12 +477,12 @@
         "Comment": 1543,
         "Mess": 72,
         "groups": [
-            {"id": 1, "GroupName": "EducationTechJobs", "GroupState": "Public", "Member": 150, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "ElearningJobs", "GroupState": "Private", "Member": 40, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "TutoringJobs", "GroupState": "Public", "Member": 120, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "LanguageSchoolJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "UniversityJobs", "GroupState": "Public", "Member": 200, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "ResearchJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "EducationTechJobs", "GroupState": "Public", "Member": 150, "isJoin": 2},
+            {"id": 2, "GroupName": "ElearningJobs", "GroupState": "Private", "Member": 40, "isJoin": 1},
+            {"id": 3, "GroupName": "TutoringJobs", "GroupState": "Public", "Member": 120, "isJoin": 3},
+            {"id": 4, "GroupName": "LanguageSchoolJobs", "GroupState": "Private", "Member": 30, "isJoin": 2},
+            {"id": 5, "GroupName": "UniversityJobs", "GroupState": "Public", "Member": 200, "isJoin": 1},
+            {"id": 6, "GroupName": "ResearchJobs", "GroupState": "Private", "Member": 25, "isJoin": 3}
         ]
     },
     {
@@ -496,12 +496,12 @@
         "Mess": 102,
         "Active": true,
         "groups": [
-            {"id": 1, "GroupName": "LegalTechJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "LawJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "ComplianceJobs", "GroupState": "Public", "Member": 60, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "RegulatoryJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "ParalegalJobs", "GroupState": "Public", "Member": 50, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "ContractJobs", "GroupState": "Private", "Member": 10, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "LegalTechJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 2, "GroupName": "LawJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 3, "GroupName": "ComplianceJobs", "GroupState": "Public", "Member": 60, "isJoin": 2},
+            {"id": 4, "GroupName": "RegulatoryJobs", "GroupState": "Private", "Member": 15, "isJoin": 3},
+            {"id": 5, "GroupName": "ParalegalJobs", "GroupState": "Public", "Member": 50, "isJoin": 1},
+            {"id": 6, "GroupName": "ContractJobs", "GroupState": "Private", "Member": 10, "isJoin": 2}
         ]
     },
     {
@@ -514,12 +514,12 @@
         "Comment": 1765,
         "Mess": 79,
         "groups": [
-            {"id": 1, "GroupName": "RealEstateTechJobs", "GroupState": "Public", "Member": 90, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "PropertyJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "ConstructionTechJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "ArchitectureJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "InteriorDesignJobs", "GroupState": "Public", "Member": 60, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "UrbanPlanningJobs", "GroupState": "Private", "Member": 15, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "RealEstateTechJobs", "GroupState": "Public", "Member": 90, "isJoin": 1},
+            {"id": 2, "GroupName": "PropertyJobs", "GroupState": "Private", "Member": 25, "isJoin": 3},
+            {"id": 3, "GroupName": "ConstructionTechJobs", "GroupState": "Public", "Member": 70, "isJoin": 2},
+            {"id": 4, "GroupName": "ArchitectureJobs", "GroupState": "Private", "Member": 20, "isJoin": 1},
+            {"id": 5, "GroupName": "InteriorDesignJobs", "GroupState": "Public", "Member": 60, "isJoin": 3},
+            {"id": 6, "GroupName": "UrbanPlanningJobs", "GroupState": "Private", "Member": 15, "isJoin": 2}
         ]
     },
     {
@@ -532,12 +532,12 @@
         "Comment": 2432,
         "Mess": 108,
         "groups": [
-            {"id": 1, "GroupName": "LogisticsTechJobs", "GroupState": "Public", "Member": 100, "State": "Đã tham gia", "isJoin": true},
-            {"id": 2, "GroupName": "SupplyChainJobs", "GroupState": "Private", "Member": 30, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 3, "GroupName": "TransportationJobs", "GroupState": "Public", "Member": 80, "State": "Đã tham gia", "isJoin": true},
-            {"id": 4, "GroupName": "WarehouseJobs", "GroupState": "Private", "Member": 25, "State": "Chưa tham gia", "isJoin": false},
-            {"id": 5, "GroupName": "ShippingJobs", "GroupState": "Public", "Member": 70, "State": "Đã tham gia", "isJoin": true},
-            {"id": 6, "GroupName": "DeliveryJobs", "GroupState": "Private", "Member": 20, "State": "Chưa tham gia", "isJoin": false}
+            {"id": 1, "GroupName": "LogisticsTechJobs", "GroupState": "Public", "Member": 100, "isJoin": 2},
+            {"id": 2, "GroupName": "SupplyChainJobs", "GroupState": "Private", "Member": 30, "isJoin": 1},
+            {"id": 3, "GroupName": "TransportationJobs", "GroupState": "Public", "Member": 80, "isJoin": 3},
+            {"id": 4, "GroupName": "WarehouseJobs", "GroupState": "Private", "Member": 25, "isJoin": 2},
+            {"id": 5, "GroupName": "ShippingJobs", "GroupState": "Public", "Member": 70, "isJoin": 1},
+            {"id": 6, "GroupName": "DeliveryJobs", "GroupState": "Private", "Member": 20, "isJoin": 3}
         ]
     }
 ]

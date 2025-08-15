@@ -6,10 +6,14 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
+import { HiMiniQueueList } from "react-icons/hi2";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
 import OutGrFs from "../popup/OutGrFS";
+import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
+import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
+import { Question } from "../popup/PrivateGrQues/types";
 import style from '../styles.module.css';
 
 interface Group {
@@ -17,7 +21,7 @@ interface Group {
     GroupName: string;
     GroupState: string;
     Member: number;
-    isJoin: boolean;
+    isJoin: number;
 }
 
 interface Account {
@@ -37,15 +41,17 @@ export default function Detail() {
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 3;
+    const itemsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(1);
+    // Phân trang
     const [search, setSearch] = useState('');
     const [filterPublic, setFilterPublic] = useState(false);
     const [filterPrivate, setFilterPrivate] = useState(false);
     const [filterJoined, setFilterJoined] = useState(false);
     const [filterNotJoin, setFilterNotJoin] = useState(false);
-    const [Sent, setSent] = useState(true);
+    const [Sent, setSent] = useState(false);
     const { id } = router.query;
+    // Lấy thông tin tài khoản
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
     //loading ten
@@ -53,6 +59,12 @@ export default function Detail() {
 
     //tham gia nhóm
     const [pendingGr, setpendingGr] = useState<number | null>(null);
+    // id gr rời nhóm
+    const [isOutGr, setIsOutGr] = useState<number | null>(null);
+    //tham gia nhóm kín
+    const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
+    const [privateGrSelected, setPrivateGrSelected] = useState<number | null>(null);
+    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false)
 
     //Popup rời nhóm
     const [showPopup, setShowPopup] = useState(false);
@@ -77,6 +89,39 @@ export default function Detail() {
     // }, []);
     //
 
+    // Danh sách câu hỏi mẫu
+    const approvalQuestions: Question[] = [
+    {
+        id: 1,
+        type: 'textarea', // Kiểu nhập text
+        question: "Giới thiệu ngắn về bản thân?",
+        required: true,
+        maxLength: 250
+    },
+    {
+        id: 2,
+        type: 'radio', // Chọn 1 lựa chọn
+        question: "Bạn có đồng ý với nội quy nhóm?",
+        options: ["Có", "Không"],
+        required: true
+    },
+    {
+        id: 3,
+        type: 'checkbox', // Chọn nhiều lựa chọn
+        question: "Bạn quan tâm đến chủ đề nào?",
+        options: ["Mua bán", "Kỹ thuật", "Du lịch"],
+        required: false
+    },
+    {
+        id: 4,
+        type: 'radio', // Chọn nhiều lựa chọn
+        question: "Con gà có mấy chân?",
+        options: ["2", "4", "6", "8", "10"],
+        required: true
+    }
+    ];
+    //
+    
     useEffect(() => { //xu li su kien moi khi tim dung account
         if (!id) return;
         const timer = setTimeout(() => {
@@ -144,8 +189,8 @@ export default function Detail() {
         // 3. Lọc tham gia (nếu có chọn)
         const joinMatch = 
         (!filterJoined && !filterNotJoin) || // Không chọn trạng thái tham gia nào
-        (filterJoined && group.isJoin === true) ||
-        (filterNotJoin && group.isJoin === false);
+        (filterJoined && group.isJoin === 1) ||
+        (filterNotJoin && group.isJoin === 2);
         
         const result = nameMatch && statusMatch && joinMatch;
         // Phải thỏa mãn cả 3 điều kiện
@@ -185,9 +230,50 @@ export default function Detail() {
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
-    const handleLeavePopup = () => { 
+    const handleLeavePopup = (id) => { 
         setShowPopup(false);
+        //request rời nhóm
     };
+
+    //xu li request hang doi
+    const UpdateGrState = (id) => {
+        // Gọi API gửi request đến tool tham gia nhóm
+        // API cập nhật trường isJoin
+        hardReload();
+    }
+
+    const hardReload = () => {
+        window.location.reload();
+    }
+
+    // Kiểm tra trường rỗng
+    const validateRequiredFields = (questions: Question[], answers: Record<number, any>): 
+                                { isValid: boolean; errors: Record<number, string> } => {
+    const errors: Record<number, string> = {};
+    let isValid = true;
+
+    questions.forEach((question) => {
+        if (question.required) {
+        const answer = answers[question.id];
+        
+        // Kiểm tra theo từng loại câu hỏi
+        if (question.type === 'textarea' || question.type === 'radio') {
+            if (!answer || answer.toString().trim() === '') {
+            errors[question.id] = 'Vui lòng điền trường này';
+            isValid = false;
+            }
+        } 
+        else if (question.type === 'checkbox') {
+            if (!answer || answer.length === 0) {
+            errors[question.id] = 'Vui lòng chọn ít nhất một lựa chọn';
+            isValid = false;
+            }
+        }
+        }
+    });
+    return { isValid, errors };
+    };
+//
 
     return (
     <>
@@ -217,8 +303,8 @@ export default function Detail() {
                                     <p className={style.nameDetail}>{uname}</p>
                                 </div>
                                 <div style={{display: 'flex', flexDirection: 'column', marginLeft: 'auto'}}>
-                                    <div>Số nhóm đã tham gia: {groups.filter(group => group.isJoin === true).length} </div>
-                                    <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === false).length}</div>
+                                    <div>Số nhóm đã tham gia: {groups.filter(group => group.isJoin === 1).length} </div>
+                                    <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === 2 || group.isJoin === 3).length}</div>
                                 </div>
                             </div>
 
@@ -286,31 +372,65 @@ export default function Detail() {
                             {/* List Nhóm */}
                             <div>
                                 <OutGrFs isOpen={showPopup} onClose={() => setShowPopup(false)}>
-                                        <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
-                                        <h2 className={style.PopupOutGrHeader}> 
-                                            Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
-                                        </h2>
-                                        <p className={style.PopupOutGrContent}>
-                                            Hành động này sẽ không thể hoàn tác.
-                                        </p>
-                                        <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
-                                            <button onClick={() => setShowPopup(false)} className={style.PopupOutGrCancelButton}>
-                                                Hủy
-                                            </button>
-                                            <button 
-                                                onClick={() => {handleLeavePopup()}}
-                                                className={style.PopupOutGrConfirmButton}>
-                                                Xác nhận
-                                            </button>
-                                        </div>
+                                    <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
+                                    <h2 className={style.PopupOutGrHeader}> 
+                                        Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                    </h2>
+                                    <p className={style.PopupOutGrContent}>
+                                        Hành động này sẽ không thể hoàn tác.
+                                    </p>
+                                    <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
+                                        <button onClick={() => setShowPopup(false)} className={style.PopupOutGrCancelButton}>
+                                            Hủy
+                                        </button>
+                                        <button 
+                                            onClick={() => {handleLeavePopup(isOutGr)}}
+                                            className={style.PopupOutGrConfirmButton}>
+                                            Xác nhận
+                                        </button>
+                                    </div>
                                 </OutGrFs>
+                                <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
+                                    <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
+                                    <h2 className={style.PopupOutGrHeader}> 
+                                        Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                    </h2>
+                                    <p className={style.PopupOutGrContent}>
+                                        Bạn sẽ phải trả lời lại câu hỏi nếu đây là nhóm kín
+                                    </p>
+                                    <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
+                                        <button onClick={() => setShowCancelQueuePopUp(false)} className={style.PopupOutGrCancelButton}>
+                                            Hủy
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                handleLeavePopup(isOutGr)
+                                            }}
+                                            className={style.PopupOutGrConfirmButton}>
+                                            Xác nhận
+                                        </button>
+                                    </div>
+                                </CancelQueuePopup>
+                                <QuestionPopup
+                                    isOpen={showPrivateGrQues}
+                                    onClose={() => {setShowPrivateGrQues(false)}}
+                                    questions={approvalQuestions}
+                                    onSubmit={(answers) => {
+                                        setSent(true);
+                                        // Xử lý dữ liệu ở đây
+                                        setTimeout(() => UpdateGrState(privateGrSelected), 300);
+                                        if (privateGrSelected) {
+                                        console.log(id, privateGrSelected, answers);
+                                        }
+                                    }}
+                                />
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
                                     {filteredPage.map(group => (
-                                        <div key={group.id} className={`${style.Block} ${style.BlockColumn}`}>
+                                        <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
                                                 <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
-                                                    {group.isJoin ? (
+                                                    {group.isJoin == 1 ? (
                                                         <p>Đã tham gia</p>
                                                     ) : (
                                                         <p>Chưa tham gia</p>
@@ -330,21 +450,50 @@ export default function Detail() {
                                                     <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
                                                     <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Member}</h2>
                                                 </div>
-                                                {group.isJoin ? (
+                                                {/* đã tham gia */}
+                                                {group.isJoin == 1 ? (
                                                     <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
                                                         <button className={style.buttonBack} onClick={PostClick}>Đăng bài</button>
-                                                        <button className={style.buttonOutGr} onClick={() => {SetGrOutSelected(group.id); setShowPopup(true);}}>Rời nhóm</button> {/* onclick */}
+                                                        <button className={style.buttonOutGr}
+                                                                onClick={() => {
+                                                                    SetGrOutSelected(group.id); 
+                                                                    setShowPopup(true);}
+                                                                }>
+                                                                Rời nhóm
+                                                        </button> {/* onclick */}
+                                                    </div>
+                                                // chưa tham gia
+                                                ) : group.isJoin == 2 ? (
+                                                    <div className={`${style.BlockRow} ${style.buttonBack}`}
+                                                        onClick={() => {
+                                                            {if (group.GroupState === "Private") {
+                                                                setPrivateGrSelected(group.id);
+                                                                setShowPrivateGrQues(true);
+                                                            } else {UpdateGrState(group.id)}
+                                                            }}}>
+                                                        <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
+                                                        <p style={{paddingTop: '2px'}}>tham gia nhóm</p>
+                                                    </div>
+                                                // hàng đợi
+                                                ) : group.isJoin == 3 ? (
+                                                    <div className={`${style.BlockRow}`} style={{marginLeft: 'auto'}}>
+                                                        {/* them list danh sách các nhóm trong queue thay phan compare */}
+                                                        <div className={style.BlockRow}>
+                                                            <button className={style.buttonOutGr} 
+                                                                    style={{marginRight: '10px'}}
+                                                                    onClick={() => {setShowCancelQueuePopUp(true); SetGrOutSelected(group.id)}}>
+                                                                        Huỷ bỏ
+                                                            </button>
+                                                            <div className={style.BlockRow}>
+                                                                <div className={`${style.BlockRow} ${style.onQueue}`}>
+                                                                    <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
+                                                                    <p style={{paddingTop: '2px'}}>Đang chờ duyệt</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 ) : (
-                                                    <button className={`${style.buttonBack} ${style.BlockRow}`}
-                                                            onClick={() => {
-                                                                (group.GroupState == "Private") ? 
-                                                                (console.log('popupprivate')) : (console.log('confirmpublic'));
-                                                                }}>
-                                                            <MdGroupAdd className={style.ic}></MdGroupAdd>
-                                                            <p>tham gia nhóm</p>
-                                                            {/* {() ? style.onQueue : style.buttonBack} */}
-                                                    </button>
+                                                    <p>Không xác định</p>
                                                 )}
                                             </div>
                                         </div>

@@ -17,8 +17,8 @@ interface Users {
   id: number;
   name: string;
   friend: number;
-  GrIn: number;
-  GrOut: number;
+  GrIn?: number;
+  GrOut?: number;
   Post: number;
   Comment: number;
   isJoin: boolean;
@@ -32,7 +32,7 @@ interface Group {
   GroupName: string;
   GroupState: string;
   Member: number;
-  isJoin: boolean;
+  isJoin: number;
 }
 
 export default function DangBai() {
@@ -232,7 +232,7 @@ export default function DangBai() {
                             </div>
                             <div id="User_GrIn" className={`${style.Block_Content} ${style.BlockRow}`}>
                               <div><FaUserGroup className={style.ic}></FaUserGroup></div>
-                              <p className={style.user_text}>{item.groups.filter(g => g.isJoin).length}</p>
+                              <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 1).length}</p>
                             </div>
                             <div id="Comment" className={style.BlockRow}>
                               <div style={{paddingTop: '2px'}}><FaCommentAlt style={{width: '17px', height: '17px'}}></FaCommentAlt></div>
@@ -240,7 +240,7 @@ export default function DangBai() {
                             </div>
                             <div id="User_GrOut" className={`${style.Block_Content} ${style.BlockRow}`}>
                               <div><MdGroupOff className={style.ic}></MdGroupOff></div>
-                              <p className={style.user_text}>{item.groups.filter(g => !g.isJoin).length}</p>
+                              <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 2 || g.isJoin == 3).length}</p>
                             </div>
                             <div className={`${style.button} ${style.actbut}`} onClick={PostClick}>Đăng Bài Cá Nhân</div>
                             <div className={`${style.button} ${style.actbut}`} style={{marginLeft: '20px'}} 
