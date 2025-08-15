@@ -68,7 +68,9 @@ export interface WebSocketData {
     | "comment_result"
     | "reply_comment_result"
     | "reply_reply_comment_result"
-    | "crawl_comment";
+    | "crawl_comment"
+    | "online"
+    | "client_disconnected";
   postId?: string;
   URL?: string;
   authorName?: string;
@@ -88,6 +90,9 @@ export interface WebSocketData {
   currentPost?: number;
   facebookId?: string;
   from?: string | null;
+
+  // Fields cho online/offline status
+  clientId?: string;
 
   metadata?: {
     source?: string;

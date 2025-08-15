@@ -87,6 +87,14 @@ function DangBaiPost() {
     [facebookId: string]: number;
   }>({});
 
+  // State để track online/offline status cho từng Facebook account
+  const [onlineStatus, setOnlineStatus] = useState<{
+    [facebookId: string]: {
+      isOnline: boolean;
+      lastSeen?: string;
+    };
+  }>({});
+
   // Use custom hooks
   const postManagement = usePostManagement(selectedFacebookAccount);
   const modalManagement = useModalManagement();
@@ -159,7 +167,8 @@ function DangBaiPost() {
     postManagement.posts,
     postManagement.setPosts,
     postManagement.refreshCommentsForPost,
-    setCrawlingStatus
+    setCrawlingStatus,
+    setOnlineStatus
   );
 
   // Kiểm tra quyền truy cập và fetch posts
@@ -346,7 +355,7 @@ function DangBaiPost() {
         content: modalManagement.commentContent,
         author: userName,
         authorId: userID,
-        timestamp: new Date().toLocaleString("vi-VN"),
+        timestamp: new Date().toISOString(),
         replies: [],
       };
 
@@ -396,7 +405,7 @@ function DangBaiPost() {
         userLinkFb: selectedFacebookAccount.userLinkFb,
         author: userName,
         authorId: userID,
-        timestamp: new Date().toLocaleString("vi-VN"),
+        timestamp: new Date().toISOString(),
         replyToAuthor: modalManagement.showReplyModal.replyToAuthor,
       };
 
@@ -488,7 +497,7 @@ function DangBaiPost() {
         to: selectedFacebookAccount.facebookId,
         author: userName,
         authorId: userID,
-        timestamp: new Date().toLocaleString("vi-VN"),
+        timestamp: new Date().toISOString(),
         replyToAuthor: modalManagement.showReplyModal.replyToAuthor,
       };
 
@@ -577,7 +586,7 @@ function DangBaiPost() {
         content: modalManagement.postContent,
         author: userName,
         authorId: userID,
-        timestamp: new Date().toLocaleString("vi-VN"),
+        timestamp: new Date().toISOString(),
         images: modalManagement.uploadedImages.map((img) => ({
           name: img.name || img.filename || "image",
           url: img.link || img.url,
@@ -712,6 +721,7 @@ function DangBaiPost() {
                 selectedFacebookAccount={selectedFacebookAccount}
                 facebookAccounts={facebookAccounts}
                 crawlingStatus={crawlingStatus}
+                onlineStatus={onlineStatus}
                 isCurrentAccountCrawling={isCurrentAccountCrawling}
                 getCurrentCrawlingMessage={getCurrentCrawlingMessage}
                 onAccountChange={handleFacebookAccountChange}

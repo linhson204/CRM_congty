@@ -67,8 +67,8 @@ export const usePostManagement = (
         author: apiPost.userNameFacebook || "Người dùng",
         authorId: apiPost.userId,
         timestamp: apiPost.createdAt
-          ? new Date(apiPost.createdAt * 1000).toLocaleString("vi-VN")
-          : new Date().toLocaleString("vi-VN"),
+          ? new Date(apiPost.createdAt * 1000).toISOString()
+          : new Date().toISOString(),
         images: convertedImages,
         comments: [],
         facebookUrl: apiPost.facebookPostUrl,
@@ -89,8 +89,8 @@ export const usePostManagement = (
         author: apiReply.userNameFacebook || "Facebook User",
         authorId: apiReply.userId || "facebook_user",
         timestamp: apiReply.createdAt
-          ? new Date(apiReply.createdAt).toLocaleString("vi-VN")
-          : new Date().toLocaleString("vi-VN"),
+          ? new Date(apiReply.createdAt).toISOString()
+          : new Date().toISOString(),
         id_facebookReply: apiReply.id_facebookReply,
         facebookReplyUrl: apiReply.facebookReplyUrl || "",
         replyToAuthor: apiReply.replyToAuthor || "",
@@ -116,8 +116,8 @@ export const usePostManagement = (
         author: apiComment.userNameFacebook || "Facebook User",
         authorId: apiComment.userId || "facebook_user",
         timestamp: apiComment.createdAt
-          ? new Date(apiComment.createdAt * 1000).toLocaleString("vi-VN")
-          : new Date().toLocaleString("vi-VN"),
+          ? new Date(apiComment.createdAt * 1000).toISOString()
+          : new Date().toISOString(),
         replies: replies,
         id_facebookComment: apiComment.facebookCommentId,
         facebookCommentUrl: apiComment.facebookCommentUrl || "",

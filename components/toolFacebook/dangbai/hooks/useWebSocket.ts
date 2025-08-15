@@ -14,14 +14,22 @@ export const useWebSocket = (
         timestamp?: string;
       };
     }>
+  >,
+  setOnlineStatus?: React.Dispatch<
+    React.SetStateAction<{
+      [facebookId: string]: {
+        isOnline: boolean;
+        lastSeen?: string;
+      };
+    }>
   >
 ) => {
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   const connectWebSocket = () => {
     // const ws = new WebSocket("ws://123.24.206.25:4000");
-    // const ws = new WebSocket("wss://socket.hungha365.com:4000");
-    const ws = new WebSocket("ws://localhost:4000");
+    const ws = new WebSocket("wss://socket.hungha365.com:4000");
+    // const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
@@ -88,8 +96,8 @@ export const useWebSocket = (
           author: data.authorName || "Facebook User",
           authorId: data.authorId || "facebook_user",
           timestamp: data.timestamp
-            ? new Date(data.timestamp).toLocaleString("vi-VN")
-            : new Date().toLocaleString("vi-VN"),
+            ? new Date(data.timestamp).toISOString()
+            : new Date().toISOString(),
           replies: [],
           userLinkFb: data.linkUserComment,
           id_facebookComment: data.commentFbId,
@@ -155,8 +163,8 @@ export const useWebSocket = (
           author: data.authorName || "Facebook User",
           authorId: data.authorId || "facebook_user",
           timestamp: data.timestamp
-            ? new Date(data.timestamp).toLocaleString("vi-VN")
-            : new Date().toLocaleString("vi-VN"),
+            ? new Date(data.timestamp).toISOString()
+            : new Date().toISOString(),
           id_facebookReply: data.replyId?.toString(),
           facebookReplyUrl: data.URL,
           to: data.to,
@@ -417,6 +425,36 @@ export const useWebSocket = (
             setCrawlingStatus: !!setCrawlingStatus,
             facebookId: data.facebookId,
           });
+        }
+      } else if (data.type === "online") {
+        // Xử lý message khi Facebook account online
+        console.log("🟢 Facebook account online:", data);
+
+        if (setOnlineStatus && data.facebookId) {
+          setOnlineStatus((prev) => ({
+            ...prev,
+            [data.facebookId!]: {
+              isOnline: true,
+              lastSeen: data.timestamp,
+            },
+          }));
+
+          console.log(`📊 Online status for ${data.facebookId}: online`);
+        }
+      } else if (data.type === "client_disconnected") {
+        // Xử lý message khi Facebook account offline
+        console.log("🔴 Facebook account disconnected:", data);
+
+        if (setOnlineStatus && data.clientId) {
+          setOnlineStatus((prev) => ({
+            ...prev,
+            [data.clientId!]: {
+              isOnline: false,
+              lastSeen: data.timestamp,
+            },
+          }));
+
+          console.log(`📊 Offline status for ${data.clientId}: offline`);
         }
       } else {
         console.log("Dữ liệu nghe từ websocket", data);

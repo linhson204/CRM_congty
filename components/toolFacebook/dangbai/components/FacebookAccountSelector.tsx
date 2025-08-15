@@ -11,6 +11,12 @@ interface FacebookAccountSelectorProps {
       timestamp?: string;
     };
   };
+  onlineStatus: {
+    [facebookId: string]: {
+      isOnline: boolean;
+      lastSeen?: string;
+    };
+  };
   isCurrentAccountCrawling: () => boolean;
   getCurrentCrawlingMessage: () => string;
   onAccountChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -22,10 +28,25 @@ export const FacebookAccountSelector: React.FC<
   selectedFacebookAccount,
   facebookAccounts,
   crawlingStatus,
+  onlineStatus,
   isCurrentAccountCrawling,
   getCurrentCrawlingMessage,
   onAccountChange,
 }) => {
+  // Helper function để get online status icon và text
+  const getOnlineStatusDisplay = (facebookId: string) => {
+    const status = onlineStatus[facebookId];
+    if (!status) {
+      return { icon: "", text: "Chưa xác định" };
+    }
+
+    if (status.isOnline) {
+      return { icon: "🟢", text: "Online" };
+    } else {
+      return { icon: "🔴", text: "Offline" };
+    }
+  };
+
   return (
     <div
       style={{
@@ -59,14 +80,17 @@ export const FacebookAccountSelector: React.FC<
           cursor: "pointer",
         }}
       >
-        {facebookAccounts.map((account) => (
-          <option key={account.facebookId} value={account.facebookId}>
-            {account.userNameFb} ({account.facebookId})
-            {crawlingStatus[account.facebookId]?.isActive
-              ? " - 🔄 Đang cào..."
-              : ""}
-          </option>
-        ))}
+        {facebookAccounts.map((account) => {
+          const onlineDisplay = getOnlineStatusDisplay(account.facebookId);
+          return (
+            <option key={account.facebookId} value={account.facebookId}>
+              {onlineDisplay.icon} {account.userNameFb} ({account.facebookId})
+              {crawlingStatus[account.facebookId]?.isActive
+                ? " - 🔄 Đang cào..."
+                : ""}
+            </option>
+          );
+        })}
       </select>
 
       {/* Hiển thị crawling status */}
@@ -110,6 +134,32 @@ export const FacebookAccountSelector: React.FC<
         </div>
         <div>
           <strong>ID:</strong> {selectedFacebookAccount.facebookId}
+        </div>
+        <div>
+          <strong>Trạng thái:</strong>{" "}
+          <span
+            style={{
+              color:
+                getOnlineStatusDisplay(selectedFacebookAccount.facebookId)
+                  .icon === "🟢"
+                  ? "#28a745"
+                  : "#dc3545",
+            }}
+          >
+            {getOnlineStatusDisplay(selectedFacebookAccount.facebookId).icon}{" "}
+            {getOnlineStatusDisplay(selectedFacebookAccount.facebookId).text}
+          </span>
+          {onlineStatus[selectedFacebookAccount.facebookId]?.lastSeen && (
+            <span
+              style={{ marginLeft: "8px", fontSize: "11px", color: "#999" }}
+            >
+              (Lần cuối:{" "}
+              {new Date(
+                onlineStatus[selectedFacebookAccount.facebookId].lastSeen!
+              ).toLocaleTimeString("vi-VN")}
+              )
+            </span>
+          )}
         </div>
       </div>
     </div>

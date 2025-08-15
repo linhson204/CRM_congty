@@ -1,8 +1,8 @@
 // components/PostForm.tsx hoặc pages/post.tsx
 import axios from "axios";
 
-// const URL_API = "https://socket.hungha365.com:4000/api";
-const URL_API = "http://localhost:4000/api";
+const URL_API = "https://socket.hungha365.com:4000/api";
+// const URL_API = "http://localhost:4000/api";
 // const URL_API = "https://backend-crm-skmr.onrender.com/api";
 
 export const createComment = async (commentData) => {
