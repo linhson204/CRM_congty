@@ -56,7 +56,11 @@ export const PostItem: React.FC<PostItemProps> = ({
           {post.images.map((image, index) => (
             <img
               key={index}
-              src={typeof image === "string" ? image : image.url}
+              src={
+                typeof image === "string"
+                  ? image
+                  : `http://192.168.0.116:4000${image.url}`
+              }
               alt={
                 typeof image === "string"
                   ? `Ảnh ${index + 1}`

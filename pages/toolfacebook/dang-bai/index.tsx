@@ -605,8 +605,8 @@ function DangBaiPost() {
           authorName: userName,
           authorId: userID,
           to: selectedFacebookAccount.facebookId,
-          attachments: modalManagement.uploadedImages.map((img) => ({
-            name: img.name || img.filename || "image",
+          attachments: modalManagement.uploadedImages.map((img, index) => ({
+            name: img.name || img.filename || `image${index}`,
             url: img.link || img.url,
             type: "image",
           })), // Đưa images vào attachments thay vì images
