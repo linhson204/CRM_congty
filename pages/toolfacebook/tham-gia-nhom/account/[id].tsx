@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
 import { HiMiniQueueList } from "react-icons/hi2";
+import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
@@ -459,6 +460,7 @@ export default function Detail() {
                                         setSent(true);
                                         // Xử lý dữ liệu ở đây
                                         setTimeout(() => UpdateGrState(privateGrSelected), 300);
+                                        // validateRequiredFields(approvalQuestions, answers);
                                         if (privateGrSelected) {
                                         console.log(id, privateGrSelected, answers);
                                         }
@@ -467,10 +469,13 @@ export default function Detail() {
                                             <div className={style.PQHGrName}>{popupHeader[0]}</div>
                                             <div className={style.BlockRow}>
                                                 <div className={style.BlockRow}>
-                                                    <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
-                                                    <p style={{textAlign: 'center', padding: '0 auto'}}>{popupHeader[1]}</p>
+                                                    <div><FaLock className={style.ic}></FaLock></div>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[1]}</p>
                                                 </div>
-                                                <p>{popupHeader[2]} thành viên</p>
+                                                <div className={style.BlockRow}>
+                                                    <div><IoPerson className={style.ic}></IoPerson></div>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[2]} Thành viên</p>
+                                                </div>
                                             </div>
                                         </div>
                                 </QuestionPopup>
