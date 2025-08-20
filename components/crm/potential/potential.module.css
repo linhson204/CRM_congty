@@ -1186,3 +1186,9 @@ span.select2.potential_select2_container_step__HpQYa {
     padding: 0;
   }
 }
+
+#User_Friend {
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+}
