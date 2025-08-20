@@ -4,20 +4,16 @@ import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { BiLike, BiShare } from "react-icons/bi";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaRegComment, FaUserCircle, FaUserTag } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { IoImages, IoPerson } from "react-icons/io5";
-import { PiWarningCircleLight } from "react-icons/pi";
+import { IoMdRefresh } from "react-icons/io";
+import { IoImages } from "react-icons/io5";
 import { TfiFaceSmile } from "react-icons/tfi";
-import data from '../../../public/data/account.json';
-import OutGrFs from "./popup/OutGrFS";
-import CancelQueuePopup from "./popup/PrivateGrQues/CancelQueue";
-import QuestionPopup from "./popup/PrivateGrQues/QuestionPopup";
-import { Question } from "./popup/PrivateGrQues/types";
-import style from './styles.module.css';
+import data from '../../../../../public/data/account.json';
+import style from '../../styles.module.css';
 
 interface Group {
     id: number;
@@ -30,12 +26,6 @@ interface Group {
 interface Account {
     id: number;
     name: string;
-    friend: number;
-    GrIn: number;
-    GrOut: number;
-    Post: number;
-    Comment: number;
-    Mess?: number;
     groups: Group[];
 }
 
@@ -44,12 +34,19 @@ interface Post {
     userName: string;
     time: string;
     content: string;
-    imageUrl?: string;
+    imageUrls?: string[];
     likes: number;
     comments: number;
     shares: number;
 }
 
+interface Comment {
+    id: number;
+    userName: string;
+    time: string;
+    content: string;
+    likes: number;
+}
 export default function Detail() {
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
@@ -62,73 +59,35 @@ export default function Detail() {
     const [filterPrivate, setFilterPrivate] = useState(false);
     const [filterJoined, setFilterJoined] = useState(false);
     const [filterNotJoin, setFilterNotJoin] = useState(false);
-    const [Sent, setSent] = useState(false);
-    const { id } = router.query;
+    const { accountId, Grid } = router.query;
     const [account, setAccount] = useState<Account | null>(null);
-    const [groups, setGroups] = useState<Group[]>([]);
+    const [groups, setGroups] = useState<Group>();
     const [uname, setUname] = useState('');
-    const [pendingGr, setpendingGr] = useState<number | null>(null);
-    const [isOutGr, setIsOutGr] = useState<number | null>(null);
-    const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
-    const [privateGrSelected, setPrivateGrSelected] = useState<number | null>(null);
-    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
-    const [popupHeader, setpopupHeader] = useState<any[]>([]);
-    const [showPopup, setShowPopup] = useState(false);
-    const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     
     // State mới cho bài đăng
     const [viewMode, setViewMode] = useState<'groups' | 'posts'>('groups');
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
-
-    const approvalQuestions: Question[] = [
-        {
-            id: 1,
-            type: 'textarea',
-            question: "Giới thiệu ngắn về bản thân?",
-            required: true,
-            maxLength: 250
-        },
-        {
-            id: 2,
-            type: 'radio',
-            question: "Bạn có đồng ý với nội quy nhóm?",
-            options: ["Có", "Không"],
-            required: true
-        },
-        {
-            id: 3,
-            type: 'checkbox',
-            question: "Bạn quan tâm đến chủ đề nào?",
-            options: ["Mua bán", "Kỹ thuật", "Du lịch"],
-            required: false
-        },
-        {
-            id: 4,
-            type: 'radio',
-            question: "Con gà có mấy chân?",
-            options: ["2", "4", "6", "8", "10"],
-            required: true
-        }
-    ];
+    const [newPostImages, setNewPostImages] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // lay data cho page
-
     useEffect(() => {
-        if (!id) return;
+        if (!accountId) return;
         const timer = setTimeout(() => {
-            const foundAccount = data.find(acc => acc.id === Number(id));
+            //test voi data mock, neu server kha nang user va group se tach rieng
+            const foundAccount = data.find(acc => acc.id === Number(accountId));
             setAccount(foundAccount || null);
-            setGroups(foundAccount?.groups || []);
+            setGroups(foundAccount.groups.find(gr => gr.id === Number(Grid)))
         }, 100);
         return () => clearTimeout(timer);
-    }, [id]);
+    }, [Grid, accountId]);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
-        setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/[accountId]/${accountId}`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -147,30 +106,24 @@ export default function Detail() {
         }
     }, [account]);
 
-    useEffect(() => {
-        if(pendingGr) {
-            PendingHandleData(pendingGr);
-        }
-    }, [pendingGr]);
+    // const filteredGroups = useMemo(() => {
+    //     return groups.filter(group => {
+    //         const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
+    //         if (!nameMatch) return false;
 
-    const filteredGroups = useMemo(() => {
-        return groups.filter(group => {
-            const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
-            if (!nameMatch) return false;
+    //         const statusMatch = 
+    //             (!filterPublic && !filterPrivate) ||
+    //             (filterPublic && group.GroupState === 'Public') || 
+    //             (filterPrivate && group.GroupState === 'Private');
 
-            const statusMatch = 
-                (!filterPublic && !filterPrivate) ||
-                (filterPublic && group.GroupState === 'Public') || 
-                (filterPrivate && group.GroupState === 'Private');
-
-            const joinMatch = 
-                (!filterJoined && !filterNotJoin) ||
-                (filterJoined && group.isJoin === 1) ||
-                (filterNotJoin && group.isJoin === 2);
+    //         const joinMatch = 
+    //             (!filterJoined && !filterNotJoin) ||
+    //             (filterJoined && group.isJoin === 1) ||
+    //             (filterNotJoin && group.isJoin === 2);
             
-            return nameMatch && statusMatch && joinMatch;
-        });
-    }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
+    //         return nameMatch && statusMatch && joinMatch;
+    //     });
+    // }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
 
     // phan trang
     const totalPages = Math.ceil(posts.length / itemsPerPage);
@@ -182,10 +135,7 @@ export default function Detail() {
         currentPage * itemsPerPage
     );
 
-    const handleViewPosts = (group: Group) => {
-        setSelectedGroup(group);
-        setViewMode('posts');
-        
+    const handleViewPosts = () => {
         // Mock data cho bài đăng
         setPosts([
             {
@@ -202,7 +152,6 @@ export default function Detail() {
                 userName: 'Trần Thị B',
                 time: '5 giờ trước',
                 content: 'Chào mừng mọi người đến với nhóm!',
-                imageUrl: 'https://via.placeholder.com/500x300',
                 likes: 25,
                 comments: 5,
                 shares: 3
@@ -211,40 +160,45 @@ export default function Detail() {
     };
 
     const handlePostSubmit = () => {
-        if (!newPostContent.trim()) return;
-        
+        if (!newPostContent.trim() && newPostImages.length === 0) return;
         const newPost: Post = {
-            id: posts.length + 1,
+            id: Date.now(),
             userName: uname,
             time: `Vừa xong`,
             content: newPostContent,
+            imageUrls: newPostImages.length > 0 ? newPostImages : undefined,
             likes: 0,
             comments: 0,
             shares: 0
         };
-        
         setPosts([newPost, ...posts]);
         setNewPostContent('');
-        // setTimeout(() => {hardReload()}, 500);
+        setNewPostImages([]);
     };
 
-    const PostClick = () => {
-        router.push('/toolfacebook/dang-bai');
+    const handleImageIconClick = () => {
+        fileInputRef.current?.click();
     };
 
-    const PendingHandleData = (GrId: number) => {
-        // Xử lý tham gia nhóm
-    }
-
-    const handleLeavePopup = (id) => { 
-        setShowPopup(false);
-        // Xử lý rời nhóm
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const readers: Promise<string>[] = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                readers.push(new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        resolve(reader.result as string);
+                    };
+                    reader.readAsDataURL(file);
+                }));
+            }
+            Promise.all(readers).then((images) => {
+                setNewPostImages(images);
+            });
+        }
     };
-
-    const UpdateGrState = (idGr: number) => {
-        // Xử lý cập nhật trạng thái nhóm
-        hardReload();
-    }
 
     const hardReload = () => {
         showLoadingDialog();
@@ -307,96 +261,21 @@ export default function Detail() {
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
                             <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                <div>
-                                    <OutGrFs isOpen={showPopup} onClose={() => setShowPopup(false)}>
-                                        <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
-                                        <h2 className={style.PopupOutGrHeader}> 
-                                            Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
-                                        </h2>
-                                        <p className={style.PopupOutGrContent}>
-                                            Hành động này sẽ không thể hoàn tác.
-                                        </p>
-                                        <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
-                                            <button onClick={() => setShowPopup(false)} className={style.PopupOutGrCancelButton}>
-                                                Hủy
-                                            </button>
-                                            <button 
-                                                onClick={() => {handleLeavePopup(isOutGr)}}
-                                                className={style.PopupOutGrConfirmButton}>
-                                                Xác nhận
-                                            </button>
-                                        </div>
-                                    </OutGrFs>
-                                    
-                                    <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
-                                        <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
-                                        <h2 className={style.PopupOutGrHeader}> 
-                                            Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
-                                        </h2>
-                                        <p className={style.PopupOutGrContent}>
-                                            Bạn sẽ phải trả lời lại câu hỏi nếu đây là nhóm kín
-                                        </p>
-                                        <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
-                                            <button onClick={() => setShowCancelQueuePopUp(false)} className={style.PopupOutGrCancelButton}>
-                                                Hủy
-                                            </button>
-                                            <button 
-                                                onClick={() => {handleLeavePopup(isOutGr)}}
-                                                className={style.PopupOutGrConfirmButton}>
-                                                Xác nhận
-                                            </button>
-                                        </div>
-                                    </CancelQueuePopup>
-                                    
-                                    <QuestionPopup
-                                        isOpen={showPrivateGrQues}
-                                        onClose={() => {setShowPrivateGrQues(false)}}
-                                        questions={approvalQuestions}
-                                        onSubmit={(answers) => {
-                                            setSent(true);
-                                            setTimeout(() => UpdateGrState(privateGrSelected), 300);
-                                            if (privateGrSelected) {
-                                                console.log(id, privateGrSelected, answers);
-                                            }
-                                        }}>
-                                            <div className={`${style.BlockColumn} ${style.PopupQuesHeader}`}>
-                                                <div className={style.PQHGrName}>{popupHeader[0]}</div>
-                                                <div className={style.BlockRow}>
-                                                    <div className={style.BlockRow}>
-                                                        <div><FaLock className={style.ic}></FaLock></div>
-                                                        <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[1]}</p>
-                                                    </div>
-                                                    <div className={style.BlockRow}>
-                                                        <div><IoPerson className={style.ic}></IoPerson></div>
-                                                        <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[2]} Thành viên</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                    </QuestionPopup>
-                                </div>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
-                                        <button 
-                                            className={style.backButton}
-                                            onClick={() => setViewMode('groups')}
-                                        >
-                                            <FaArrowAltCircleLeft className={style.backIcon} />
-                                            Quay lại
-                                        </button>
                                         <h2 className={style.groupTitle}>
-                                            Bài đăng trong nhóm: {selectedGroup?.GroupName}
+                                            Đăng bài trong nhóm {groups?.GroupName || 'Chưa có data'}
                                         </h2>
                                     </div>
-                                    
                                     <div className={style.createPostContainer}>
                                         <div className={`${style.postInputContainer} ${style.BlockColumn}`}>
                                             <div className={`${style.BlockRow}`}>
                                                 <div><FaUserCircle className={style.userAvatar} /></div>
                                                 <div className={`${style.BlockColumn}`}>
-                                                    <div className={style.postGrName}>AA</div>
+                                                    <div className={style.postGrName}>{account?.name || 'Chưa có data'}</div>
                                                     <div className={`${style.BlockRow} ${style.postGrState}`}>
                                                         <div className={style.postGrStateIc}><FaLock style={{color: 'rgb(0, 0, 0, 0.6)'}}></FaLock></div>
-                                                        <p>Nhóm riêng tư</p>
+                                                        <p>{groups?.GroupState || 'Chưa có data'}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -406,10 +285,25 @@ export default function Detail() {
                                                 value={newPostContent}
                                                 onChange={(e) => setNewPostContent(e.target.value)}
                                             />
-                                            <div id="fileInput" className={`${style.BlockRow} ${style.postFileInput}`}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                multiple
+                                                style={{ display: 'none' }}
+                                                ref={fileInputRef}
+                                                onChange={handleImageChange}
+                                            />
+                                            {newPostImages.length > 0 && (
+                                                <div style={{marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px'}}>
+                                                    {newPostImages.map((img, idx) => (
+                                                        <img key={idx} src={img} alt={`Preview ${idx+1}`} style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <div id="fileInput" className={`${style.BlockRow} ${style.postFileInput}`}> 
                                                 <p>Thêm vào bài viết của bạn</p>
-                                                <div className={`${style.BlockRow} ${style.postInputIcContainer}`}>
-                                                    <IoImages style={{color: 'green'}} className={style.postInputIc}></IoImages>
+                                                <div className={`${style.BlockRow} ${style.postInputIcContainer}`}> 
+                                                    <IoImages style={{color: 'green'}} className={style.postInputIc} onClick={handleImageIconClick} />
                                                     <FaUserTag style={{color: 'blue'}} className={style.postInputIc}></FaUserTag>
                                                     <FaLocationDot style={{color: 'red'}} className={style.postInputIc}></FaLocationDot>
                                                     <TfiFaceSmile style={{color: 'yellow'}} className={style.postInputIc}></TfiFaceSmile>
@@ -421,16 +315,22 @@ export default function Detail() {
                                             <button 
                                                 className={style.postButton}
                                                 onClick={handlePostSubmit}
-                                                disabled={!newPostContent.trim()}
+                                                disabled={!newPostContent.trim() && newPostImages.length === 0}
                                             >
                                                 Đăng
                                             </button>
                                         </div>
                                     </div>
-                                    <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                        <p style={{fontSize: '30px', float: 'left', width: 'fit-content', marginBottom: '10px'}}>
-                                            DANH SÁCH CÁC BÀI ĐÃ ĐĂNG
-                                        </p>
+                                    <div className={`${style.postsHeader} ${style.BlockRow}`}>
+                                        <h2 className={style.groupTitle}>
+                                            DANH SÁCH CÁC BÀI ĐÃ ĐĂNG:
+                                        </h2>
+                                        <button 
+                                            className={style.backButton}
+                                            onClick={() => handleViewPosts()}
+                                        >
+                                            <IoMdRefresh></IoMdRefresh>
+                                        </button>
                                     </div>
                                     <div className={style.postsList}>
                                         {filteredPage.map((post) => (
@@ -442,15 +342,13 @@ export default function Detail() {
                                                         <div className={style.postTime}>{post.time}</div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div className={style.postContent}>{post.content}</div>
-                                                
-                                                {post.imageUrl && (
-                                                    <img 
-                                                        src={post.imageUrl} 
-                                                        alt="Post" 
-                                                        className={style.postImage}
-                                                    />
+                                                {post.imageUrls && post.imageUrls.length > 0 && (
+                                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                        {post.imageUrls.map((img, idx) => (
+                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} className={style.postImage} style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                        ))}
+                                                    </div>
                                                 )}
                                                 
                                                 <div className={style.postStats}>
@@ -461,15 +359,15 @@ export default function Detail() {
                                                 
                                                 <div className={style.postActions}>
                                                     <button className={style.postActionButton}>
-                                                        <BiLike></BiLike>
+                                                        <BiLike style={{marginRight: '5px'}}></BiLike>
                                                         Thích
                                                     </button>
                                                     <button className={style.postActionButton}>
-                                                        <FaRegComment></FaRegComment>
+                                                        <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
                                                         Bình luận
                                                     </button>
                                                     <button className={style.postActionButton}>
-                                                        <BiShare></BiShare>
+                                                        <BiShare style={{marginRight: '5px'}}></BiShare>
                                                         Chia sẻ
                                                     </button>
                                                 </div>

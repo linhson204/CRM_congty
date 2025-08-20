@@ -137,7 +137,7 @@ export default function Detail() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
         setShowBackButton(true);
-        setCurrentPath(`/toolfacebook/tham-gia-nhom/account/${id}`);
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -227,8 +227,8 @@ export default function Detail() {
         //call API tra id user id nhom vao day
     }
 
-    const HandlePostGroup = (id: number) => {
-        router.push(`../${id}`);
+    const HandlePostGroup = (idgr: number) => {
+        router.push(`../${id}/dangbainhom/${idgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom

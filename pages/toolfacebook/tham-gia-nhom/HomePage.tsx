@@ -244,7 +244,7 @@ export default function DangBai() {
                             </div>
                             <div className={`${style.button} ${style.actbut}`} onClick={PostClick}>Đăng Bài Cá Nhân</div>
                             <div className={`${style.button} ${style.actbut}`} style={{marginLeft: '20px'}} 
-                                onClick={() => {setTimeout(() => {router.push(`./account/${item.id}`)}, 300)}}>
+                                onClick={() => {setTimeout(() => {router.push(`./[accountId]/${item.id}`)}, 300)}}>
                                   Xem chi tiết
                             </div>
                           </div>

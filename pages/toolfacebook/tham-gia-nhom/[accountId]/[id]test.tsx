@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
 import { HiMiniQueueList } from "react-icons/hi2";
+import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from '../../../../public/data/account.json';
@@ -64,9 +65,10 @@ export default function Detail() {
     //tham gia nhóm kín
     const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
     const [privateGrSelected, setPrivateGrSelected] = useState<number | null>(null);
-    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false)
+    const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
+    const [popupHeader, setpopupHeader] = useState<any[]>([]);
 
-    //Popup rời nhóm
+    //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
     const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
@@ -135,7 +137,7 @@ export default function Detail() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
         setShowBackButton(true);
-        setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -206,13 +208,10 @@ export default function Detail() {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     )
-    // DANG BAI - SET BUTTON BACK
+    // DANG BAI
     const PostClick = () => {
         router.push('/toolfacebook/dang-bai');
-    };
-
-    const BackPageClick = () => {
-        router.push('/toolfacebook/tham-gia-nhom/HomePage');
+        //xu li su kien dang bai
     };
 
     const PendingHandle = (id: number) => {
@@ -226,7 +225,10 @@ export default function Detail() {
         //     setpendingGr([...pendingGr, group.id]);
         // }
         //call API tra id user id nhom vao day
-        console.log(id, GrId);
+    }
+
+    const HandlePostGroup = (idgr: number) => {
+        router.push(`./dangbainhom/${idgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
@@ -236,15 +238,59 @@ export default function Detail() {
     };
 
     //xu li request hang doi
-    const UpdateGrState = (id) => {
+    const UpdateGrState = (idGr: number) => {
         // Gọi API gửi request đến tool tham gia nhóm
         // API cập nhật trường isJoin
+        console.log(id, idGr);
         hardReload();
     }
 
     const hardReload = () => {
-        window.location.reload();
+        showLoadingDialog();
+        setTimeout(() => window.location.reload(), 1000);
     }
+
+    const showLoadingDialog = () => {
+        const loadingHTML = `
+            <div id="loading-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            ">
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    text-align: center;
+                ">
+                    <div style="
+                        border: 4px solid #f3f3f3;
+                        border-top: 4px solid #3498db;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        animation: spin 1s linear infinite;
+                        margin: 0 auto 20px;
+                    "></div>
+                    <p>Đang gửi yêu cầu...</p>
+                </div>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        document.body.insertAdjacentHTML('beforeend', loadingHTML);
+    };
 
     // Kiểm tra trường rỗng
     const validateRequiredFields = (questions: Question[], answers: Record<number, any>): 
@@ -419,22 +465,32 @@ export default function Detail() {
                                         setSent(true);
                                         // Xử lý dữ liệu ở đây
                                         setTimeout(() => UpdateGrState(privateGrSelected), 300);
+                                        // validateRequiredFields(approvalQuestions, answers);
                                         if (privateGrSelected) {
                                         console.log(id, privateGrSelected, answers);
                                         }
-                                    }}
-                                />
+                                    }}>
+                                        <div className={`${style.BlockColumn} ${style.PopupQuesHeader}`}>
+                                            <div className={style.PQHGrName}>{popupHeader[0]}</div>
+                                            <div className={style.BlockRow}>
+                                                <div className={style.BlockRow}>
+                                                    <div><FaLock className={style.ic}></FaLock></div>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[1]}</p>
+                                                </div>
+                                                <div className={style.BlockRow}>
+                                                    <div><IoPerson className={style.ic}></IoPerson></div>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[2]} Thành viên</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </QuestionPopup>
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
                                     {filteredPage.map(group => (
                                         <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
                                                 <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
-                                                    {group.isJoin == 1 ? (
-                                                        <p>Đã tham gia</p>
-                                                    ) : (
-                                                        <p>Chưa tham gia</p>
-                                                    )}
+                                                    {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
                                                 </h2>
                                             </div>
                                             <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
@@ -453,7 +509,9 @@ export default function Detail() {
                                                 {/* đã tham gia */}
                                                 {group.isJoin == 1 ? (
                                                     <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
-                                                        <button className={style.buttonBack} onClick={PostClick}>Đăng bài</button>
+                                                        <button className={style.buttonBack} 
+                                                                onClick={() => {
+                                                                    HandlePostGroup(group.id)}}>Đăng bài</button>
                                                         <button className={style.buttonOutGr}
                                                                 onClick={() => {
                                                                     SetGrOutSelected(group.id); 
@@ -469,6 +527,7 @@ export default function Detail() {
                                                             {if (group.GroupState === "Private") {
                                                                 setPrivateGrSelected(group.id);
                                                                 setShowPrivateGrQues(true);
+                                                                setpopupHeader([group.GroupName, group.GroupState, group.Member]);
                                                             } else {UpdateGrState(group.id)}
                                                             }}}>
                                                         <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
@@ -493,7 +552,7 @@ export default function Detail() {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <p>Không xác định</p>
+                                                    <p>Đã hết hạn</p>
                                                 )}
                                             </div>
                                         </div>

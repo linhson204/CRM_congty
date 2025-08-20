@@ -858,12 +858,13 @@
     padding: 2px;
     border-radius: 10px;
     background-color: rgb(0, 0, 0, 0.1);
+    width: fit-content;
   }
 
   .postGrState > p {
     color: rgb(0, 0, 0, 0.5);
     font-weight: bold;
-    padding: 2px;
+    padding: 4px 4px 2px 2px;
   }
 
   .postGrStateIc {
@@ -1055,7 +1056,7 @@
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s;
 }
 
 .postActionButton:hover {
@@ -1077,7 +1078,7 @@
   padding: 8px 12px;
   border-radius: 4px;
   transition: background-color 0.3s;
-  display: none;
+  /* display: none; */
 }
 
 .backButton:hover {
