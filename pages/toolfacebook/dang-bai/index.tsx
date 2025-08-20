@@ -131,7 +131,7 @@ function DangBaiPost() {
 
     const currentTime = Date.now();
     const timeDiff = currentTime - lastTime;
-    const thirtyMinutes = 30 * 60 * 1000; // 30 phút = 30 * 60 * 1000 milliseconds
+    const thirtyMinutes = 0 * 60 * 1000; // 30 phút = 30 * 60 * 1000 milliseconds
 
     return timeDiff >= thirtyMinutes;
   }, [selectedFacebookAccount, lastPostTime]);
@@ -559,6 +559,7 @@ function DangBaiPost() {
           commentId: facebookCommentId, // Có thể để trống vì có replyId rồi
           replyId: facebookReplyId, // ID của reply được phản hồi
           URL: facebookReplyURL,
+          replyToAuthor: modalManagement.showReplyModal.replyToAuthor,
           authorName: userName,
           authorId: userID,
         };
