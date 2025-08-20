@@ -192,7 +192,8 @@
   border-bottom: 1px solid rgba(145, 145, 145, 0.5);
   padding-top: 10px;
   padding-bottom: 10px;
-  gap: 10px;
+  padding-left: 35px;
+  gap: 30px;
 }
 
 .AttributeContent {
@@ -813,14 +814,12 @@
 
 /* dang bai nhom */
 
-/* Giao diện bài đăng */
+/* container + header */
 .postsContainer {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
   padding: 20px;
   background-color: #f0f2f5;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .postsHeader {
@@ -831,100 +830,156 @@
   border-bottom: 1px solid #ddd;
 }
 
-.backButton {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  color: #1877f2;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.backButton:hover {
-  background-color: #e4e6eb;
-}
-
-.backIcon {
-  margin-right: 8px;
-  font-size: 20px;
-}
-
 .groupTitle {
-  margin-left: 20px;
   font-size: 24px;
   color: #333;
 }
+
+/* postinput */
+.postInputContainer {
+  display: flex;
+  margin-bottom: 12px;
+}
+  /* avatar - state - name */
+  .userAvatar {
+  width: 50px;
+  height: 50px;
+  color: #ddd;
+  margin-right: 12px;
+  flex-shrink: 0;
+  }
+
+  .postGrName {
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .postGrState {
+    padding: 2px;
+    border-radius: 10px;
+    background-color: rgb(0, 0, 0, 0.1);
+  }
+
+  .postGrState > p {
+    color: rgb(0, 0, 0, 0.5);
+    font-weight: bold;
+    padding: 2px;
+  }
+
+  .postGrStateIc {
+    padding: 5px;
+    border-radius: 50%;
+    color: rgb(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* textarea */
+  .postInput {
+  flex: 1;
+  min-height: 200px;
+  font-size: 40px;
+  padding-top: 12px;
+  padding-right: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  resize: none;
+  border: none;
+  }
+
+  .postInput:focus {
+    outline: none;
+  }
+
+  .postInput::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .postInput::-webkit-scrollbar-track {
+    background: #cdcdcd; /* Màu nền track */
+    border-radius: 10px;
+  }
+
+  .postInput::-webkit-scrollbar-thumb {
+    background: #888; /* Màu thumb */
+    border-radius: 5px;
+  }
+
+  .postInput::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Màu thumb khi hover */
+  }
+
+  /* inputFileBar */
+  .postFileInput {
+    border: 3px solid rgba(2, 2, 2, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .postInputIc {
+    width: 35px;
+    height: 35px;
+    transition: background-color 0.2s;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+
+  .postInputIc:hover {
+    background-color: rgb(0, 0, 0, 0.3);
+  }
+
+  .postInputIcContainer {
+    margin-left: auto;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  /* nut dang bai */
+  .postActions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .postButton {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+  }
+
+  .postButton:disabled {
+  background-color: #e4e6eb;
+  cursor: not-allowed;
+  }
+
+  .postButton:hover:not(:disabled) {
+    background-color: #166fe5;
+  }
+
+/* postlist */
+.postsList {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
 
 .createPostContainer {
   background-color: white;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.postInputContainer {
-  display: flex;
-  margin-bottom: 12px;
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  color: #ddd;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.postInput {
-  flex: 1;
-  min-height: 80px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  resize: vertical;
-  font-size: 16px;
-}
-
-.postInput:focus {
-  outline: none;
-  border-color: #1877f2;
-}
-
-.postActions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.postButton {
-  background-color: #1877f2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.postButton:disabled {
-  background-color: #e4e6eb;
-  cursor: not-allowed;
-}
-
-.postButton:hover:not(:disabled) {
-  background-color: #166fe5;
-}
-
-.postsList {
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -1005,4 +1060,30 @@
 
 .postActionButton:hover {
   background-color: #f0f2f5;
+}
+
+.postlistPageIndex {
+  margin-top: 15px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #1877f2;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  display: none;
+}
+
+.backButton:hover {
+  background-color: #e4e6eb;
+}
+.backIcon {
+  margin-right: 8px;
+  font-size: 20px;
 }

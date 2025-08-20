@@ -137,7 +137,7 @@ export default function Detail() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
         setShowBackButton(true);
-        setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/account/${id}`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -227,6 +227,10 @@ export default function Detail() {
         //call API tra id user id nhom vao day
     }
 
+    const HandlePostGroup = (id: number) => {
+        router.push(`../${id}`);
+    }
+
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
     const handleLeavePopup = (id) => { 
         setShowPopup(false);
@@ -237,6 +241,7 @@ export default function Detail() {
     const UpdateGrState = (idGr: number) => {
         // Gọi API gửi request đến tool tham gia nhóm
         // API cập nhật trường isJoin
+        console.log(id, idGr);
         hardReload();
     }
 
@@ -504,7 +509,9 @@ export default function Detail() {
                                                 {/* đã tham gia */}
                                                 {group.isJoin == 1 ? (
                                                     <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
-                                                        <button className={style.buttonBack} onClick={PostClick}>Đăng bài</button>
+                                                        <button className={style.buttonBack} 
+                                                                onClick={() => {
+                                                                    HandlePostGroup(group.id)}}>Đăng bài</button>
                                                         <button className={style.buttonOutGr}
                                                                 onClick={() => {
                                                                     SetGrOutSelected(group.id); 

@@ -10,6 +10,7 @@ import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaSearch } from 'react-ico
 import { FiMessageCircle } from "react-icons/fi";
 import { GoTriangleDown } from "react-icons/go";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { IoPerson } from "react-icons/io5";
 import style from './styles.module.css';
 
 interface Users {
@@ -210,6 +211,16 @@ export default function DangBai() {
                               <GoTriangleDown className={style.Row}></GoTriangleDown>
                             {/* Name */}
                                 <p id="User_Name" className={style.UserListName}>{item.name}</p>
+                            {/* Email */}
+                                <div id="User_Friend" className={`${style.Block_Content} ${style.BlockRow}`}>
+                                  <div><IoPerson className={style.ic}></IoPerson></div>
+                                  <p className={style.user_text}>{item.friend}</p>
+                                </div>
+                            {/* Phone */}
+                                {/* <div id="Post" className={style.BlockRow}>
+                                  <div><BsFileEarmarkPost className={style.ic}></BsFileEarmarkPost></div>
+                                  <p className={style.user_text}>{item.Post}</p>
+                                </div> */}
                             {/* State */}
                                 {item.Active ? (
                                   <div className={`${style.BlockOnline}`}>
@@ -220,16 +231,6 @@ export default function DangBai() {
                                     Offline
                                   </div>
                                 )}
-                            {/* Email */}
-                                {/* <div id="User_Friend" className={`${style.Block_Content} ${style.BlockRow}`}>
-                                  <div><IoPerson className={style.ic}></IoPerson></div>
-                                  <p className={style.user_text}>{item.friend}</p>
-                                </div> */}
-                            {/* Phone */}
-                                {/* <div id="Post" className={style.BlockRow}>
-                                  <div><BsFileEarmarkPost className={style.ic}></BsFileEarmarkPost></div>
-                                  <p className={style.user_text}>{item.Post}</p>
-                                </div> */}
                             {/* Edit */}
                               <div id="edit" className={style.BlockRow} style={{gap: '20px', marginTop: '10px'}}>
                                 {/* <div id="User_GrIn" className={`${style.Block_Content} ${style.BlockRow}`}>
