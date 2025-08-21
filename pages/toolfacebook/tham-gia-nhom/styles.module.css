@@ -174,8 +174,8 @@
 /*  USERLIST */
 .UserListBlock {
   border-bottom: 1px solid rgba(145, 145, 145, 0.5);
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 12px;
   padding-left: 10px;
 }
 
@@ -190,18 +190,12 @@
   flex: 1;
   text-align: center;
   width: fit-content;
+  word-break: break-all;
 }
 
-.UserListEditBlock {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
 .UserListBlockState {
   padding: 0px;
 }
-
 
 .UserListContainer * {
   font-family: Arial, Helvetica, sans-serif;
