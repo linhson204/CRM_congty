@@ -40,7 +40,7 @@ export default function DangBai() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
 
   // Lay data
