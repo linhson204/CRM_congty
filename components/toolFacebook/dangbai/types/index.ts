@@ -70,7 +70,8 @@ export interface WebSocketData {
     | "reply_reply_comment_result"
     | "crawl_comment"
     | "online"
-    | "client_disconnected";
+    | "client_disconnected"
+    | "error";
   postId?: string;
   URL?: string;
   authorName?: string;
