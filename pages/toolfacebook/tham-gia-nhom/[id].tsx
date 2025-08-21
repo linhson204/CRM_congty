@@ -127,8 +127,6 @@ export default function Detail() {
     },
   ];
 
-  // lay data cho page
-
   useEffect(() => {
     if (!id) return;
     const timer = setTimeout(() => {
@@ -263,7 +261,12 @@ export default function Detail() {
       websocket.send(JSON.stringify(postData));
     }
     const params = `{"group_link": "groups/1569887551087354", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
-    await createPostGroup("post_to_group", "123", params, "123");
+    await createPostGroup(
+      "post_to_group",
+      "gianvu17607@gmail.com",
+      params,
+      "123"
+    );
     // setTimeout(() => {hardReload()}, 500);
   };
 
