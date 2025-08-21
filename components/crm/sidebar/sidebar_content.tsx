@@ -1111,7 +1111,11 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
             label: "Nhắn tin",
             link: "/toolfacebook/nhan-tin",
           },
-          
+          {
+            blank: "",
+            label: "Tham gia nhóm",
+            link: "/toolfacebook/tham-gia-nhom/HomePage",
+          },
         ],
         content: "Tool facebook",
       },
