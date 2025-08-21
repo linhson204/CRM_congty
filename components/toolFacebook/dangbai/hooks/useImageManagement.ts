@@ -16,6 +16,13 @@ export const useImageManagement = (
   ) => {
     const files = event.target.files;
     if (files && files.length > 0) {
+      // Kiểm tra số lượng ảnh trước khi upload
+      const totalImagesAfterUpload = uploadedImages.length + files.length;
+      if (totalImagesAfterUpload > 4) {
+        alert("Chỉ được phép tải tối đa 4 ảnh!");
+        return;
+      }
+
       setIsUploadingImages(true);
 
       try {

@@ -56,13 +56,30 @@ export const PostModal: React.FC<PostModalProps> = ({
             <label className={styles.formLabel}>Nội dung bài đăng</label>
             <textarea
               value={postContent}
-              onChange={(e) => setPostContent(e.target.value)}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                if (newValue.length <= 3000) {
+                  setPostContent(newValue);
+                } else {
+                  alert("Nội dung bài đăng không được vượt quá 3000 ký tự!");
+                }
+              }}
               placeholder="Chia sẻ cơ hội việc làm, thông tin tuyển dụng hoặc tin tức về công ty..."
               rows={10}
               className={styles.textarea}
             />
-            <div className={styles.charCount}>
-              {postContent.length}/1000 ký tự
+            <div
+              className={styles.charCount}
+              style={{
+                color:
+                  postContent.length > 2800
+                    ? postContent.length >= 3000
+                      ? "#dc3545"
+                      : "#ffc107"
+                    : "#666",
+              }}
+            >
+              {postContent.length}/3000 ký tự
             </div>
           </div>
 
