@@ -118,7 +118,6 @@
 }
 
 .Message {
-    margin-left: 180px;
     cursor: pointer;
 }
 
@@ -177,62 +176,73 @@
   border-bottom: 1px solid rgba(145, 145, 145, 0.5);
   padding-top: 10px;
   padding-bottom: 10px;
+  padding-left: 10px;
 }
 
 .UserListBlock:hover {
   box-shadow: 2px 1px 3px 5px rgba(0,0,0,0.1);
 }
 
+.UserListBlock > div:first-child {
+  width: 65px;
+}
+.UserListBlock > div:nth-child(n+2) {
+  flex: 1;
+  text-align: center;
+  width: fit-content;
+}
+
+.UserListEditBlock {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.UserListBlockState {
+  padding: 0px;
+}
+
+
 .UserListContainer * {
   font-family: Arial, Helvetica, sans-serif;
 }
   /* indexContent */
 .UserListAttribute {
-  font-size: 20px;
+  font-size: 18px;
   border-bottom: 1px solid rgba(145, 145, 145, 0.5);
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 35px;
-  gap: 30px;
+  padding-left: 10px;
+}
+
+.UserListAttribute > div:first-child {
+  width: 65px;
+}
+
+.UserListAttribute > div:nth-child(n+2) {
+  flex: 1;
+  text-align: center;
+  border-left: 1px solid rgb(0, 0, 0, 0.2);
 }
 
 .AttributeContent {
   color: rgba(142, 142, 142, 0.5);
 }
 
-.Row {
-  cursor: pointer;
-  color: rgb(0 0 0 50%);
-  width: 30px;
-  height: 30px;
-}
-
   /* activeBlock */
 .BlockOnline {
-  margin-left: auto;
   color: green;
-  padding: 5px 10px 5px 10px;
-  border: 4px solid green;
-  background-color: #4CAF50;
   font-size: 18px;
-  border-radius: 10px;
 }
 
 .BlockOffline {
-  margin-left: auto;
-  color: gray;
-  padding: 5px 10px 5px 10px;
-  border: 4px solid gray;
-  background-color: #646464;
+  color: rgb(255, 7, 7);
   font-size: 18px;
-  border-radius: 10px;
 }
 
 .UserListName {
   color: black;
-  padding: 5px;
-  width: fit-content;
-  font-size: 20px;
+  font-size: 18px;
 }
 
   /* Edit */
@@ -910,6 +920,17 @@
     background: #555; /* Màu thumb khi hover */
   }
 
+  .postImagePreview {
+    display: flex;
+    padding: 10px;
+  }
+  .cancelImage {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+  }
   /* inputFileBar */
   .postFileInput {
     border: 3px solid rgba(2, 2, 2, 0.1);
@@ -1016,6 +1037,7 @@
   margin-bottom: 12px;
   font-size: 16px;
   line-height: 1.4;
+  white-space: pre-line;
 }
 
 .postImage {

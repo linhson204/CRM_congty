@@ -5,12 +5,10 @@ import styles from "@/components/crm/potential/potential.module.css";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { BsFileEarmarkPost } from "react-icons/bs";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaCommentAlt, FaSearch } from 'react-icons/fa';
-import { FaComments, FaUserGroup } from 'react-icons/fa6';
-import { GoDotFill } from "react-icons/go";
-import { IoPerson } from "react-icons/io5";
-import { MdGroupOff } from "react-icons/md";
+import { CiBoxList } from "react-icons/ci";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaSearch } from 'react-icons/fa';
+import { FiMessageCircle } from "react-icons/fi";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 import style from './styles.module.css';
 
 interface Users {
@@ -89,6 +87,7 @@ export default function DangBai() {
   //     return normalizedName.includes(normalizedSearch);
   // });
 
+  //Search tai khoan theo ten
   const filteredUser = users.filter((user) => {
     const activeMatch = activeFilter === null || user.Active === activeFilter;
 
@@ -108,7 +107,8 @@ export default function DangBai() {
   const totalPages = Math.ceil(filteredUser.length / itemsPerPage);
   const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
-  //
+
+  //Trang nhan tin
   const handleUserClick = () => {
     const timeout = 500;
     setTimeout(() => {
@@ -116,11 +116,12 @@ export default function DangBai() {
     }, timeout);
   };
 
+  //handle/router dang bai ca nhan
   const PostClick = () => {
     router.push('/toolfacebook/dang-bai');
   };
     
-  // 
+  //
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Danh Sách Tài Khoản");
     setShowBackButton(false);
@@ -196,61 +197,56 @@ export default function DangBai() {
                       </div>
                     </div>
                     {/* goi list danh sach tai khoan */}
-                    {filteredPage.map(item => (
-                      <div key={item.id} className={style.Blocktest}>
-                        <div id="User_Info" style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-                          <div id="TopRow" className={style.BlockRow}>
-                            <p id="User_Name" style={{fontSize: '30px', fontStyle: 'bold'}} className={style.user_name}>{item.name}</p>
-                            {item.Active ? (
-                              <div className={`${style.BlockRow} ${style.BlockActive}`}>
-                                <GoDotFill className={style.ic} style={{color: 'green'}}></GoDotFill>
-                                <p>Online</p>
-                              </div>
-                            ) : (
-                              <div className={`${style.BlockRow} ${style.BlockActive}`}>
-                                <GoDotFill className={style.ic} style={{color: 'gray'}}></GoDotFill>
-                                <p>Offline</p>
-                              </div>
-                            )}
-                            {item.Mess > 0 ? (
-                                <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
-                                  <div><FaComments style={{width: '40px', height: '40px'}}></FaComments></div>
-                                  <div id="redDot" className={style.dot}>{item.Mess}</div>
-                                </div>
-                              ) : (
-                                <div onClick={handleUserClick} className={style.Message}><FaComments style={{width: '40px', height: '40px'}}></FaComments></div>
-                              )}
-                          </div>
-                          <div id="test" className={style.BlockRow} style={{gap: '20px', marginTop: '10px'}}>
-                            <div id="User_Friend" className={`${style.Block_Content} ${style.BlockRow}`}>
-                              <div><IoPerson className={style.ic}></IoPerson></div>
-                              <p className={style.user_text}>{item.friend}</p>
-                            </div>
-                            <div id="Post" className={style.BlockRow}>
-                              <div><BsFileEarmarkPost className={style.ic}></BsFileEarmarkPost></div>
-                              <p className={style.user_text}>{item.Post}</p>
-                            </div>
-                            <div id="User_GrIn" className={`${style.Block_Content} ${style.BlockRow}`}>
-                              <div><FaUserGroup className={style.ic}></FaUserGroup></div>
-                              <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 1).length}</p>
-                            </div>
-                            <div id="Comment" className={style.BlockRow}>
-                              <div style={{paddingTop: '2px'}}><FaCommentAlt style={{width: '17px', height: '17px'}}></FaCommentAlt></div>
-                              <p className={style.user_text}>{item.Comment}</p>
-                            </div>
-                            <div id="User_GrOut" className={`${style.Block_Content} ${style.BlockRow}`}>
-                              <div><MdGroupOff className={style.ic}></MdGroupOff></div>
-                              <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 2 || g.isJoin == 3).length}</p>
-                            </div>
-                            <div className={`${style.button} ${style.actbut}`} onClick={PostClick}>Đăng Bài Cá Nhân</div>
-                            <div className={`${style.button} ${style.actbut}`} style={{marginLeft: '20px'}} 
-                                onClick={() => {setTimeout(() => {router.push(`./[accountId]/${item.id}`)}, 300)}}>
-                                  Xem chi tiết
-                            </div>
-                          </div>
-                        </div>
+                    <div className={style.UserListContainer}>
+                      <div className={`${style.UserListAttribute} ${style.BlockRow}`}>
+                        <div className={style.AttributeContent}>STT</div>
+                        <div className={style.AttributeContent}>Tên tài khoản</div>
+                        <div className={style.AttributeContent}>Email</div>
+                        <div className={style.AttributeContent}>Điện thoại</div>
+                        <div className={style.AttributeContent}>Trạng thái</div>
+                        <div className={style.AttributeContent}>Hành động</div>
                       </div>
-                    ))}
+                      <div className={`${style.UserListContent} ${style.BlockColumn}`}>
+                        {filteredPage.map(item => (
+                          <div key={item.id} className={`${style.UserListBlock} ${style.BlockRow}`}>
+                            {/* Row */}
+                              <div>123</div>
+                            {/* Name */}
+                                <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
+                            {/* Email */}
+                                <div id="Email">{item.friend}</div>
+                            {/* Phone */}
+                                <div id="Phone">{item.Post}</div>
+                            {/* State */}
+                              <div className={style.UserListBlockState}>
+                                {item.Active ? (
+                                  <div className={`${style.BlockOnline}`}>
+                                    Online
+                                  </div>
+                                ) : (
+                                  <div className={`${style.BlockOffline}`}>
+                                    Offline
+                                  </div>
+                                )}
+                              </div>
+                            {/* Edit */}
+                              <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`} style={{gap: '20px'}}>
+                                <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
+                                  <FiMessageCircle className={style.ic}/>
+                                  {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
+                                </div>
+                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic} onClick={PostClick} />
+                                <CiBoxList className={style.ic} 
+                                          style={{cursor: 'pointer'}}
+                                          onClick={() => {
+                                            setTimeout(() => {router.push(`./account/${item.id}`)}, 300)
+                                            }}>
+                                </CiBoxList>
+                              </div>
+                            </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                   <div id="PageIndexBar" className={style.BlockRow} style={{marginLeft: 'auto', marginRight: '20px', marginTop: '10px'}}>
                     <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>

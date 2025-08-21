@@ -31,6 +31,8 @@ interface Account {
 
 interface Post {
     id: number;
+    userId?: number;
+    groupId?: number;
     userName: string;
     time: string;
     content: string;
@@ -163,7 +165,9 @@ export default function Detail() {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
         const newPost: Post = {
             id: Date.now(),
+            userId: account?.id,
             userName: uname,
+            groupId: groups?.id,
             time: `Vừa xong`,
             content: newPostContent,
             imageUrls: newPostImages.length > 0 ? newPostImages : undefined,
@@ -174,6 +178,7 @@ export default function Detail() {
         setPosts([newPost, ...posts]);
         setNewPostContent('');
         setNewPostImages([]);
+        console.log('Bài đăng đã được gửi:', newPost);
     };
 
     const handleImageIconClick = () => {
@@ -294,10 +299,11 @@ export default function Detail() {
                                                 onChange={handleImageChange}
                                             />
                                             {newPostImages.length > 0 && (
-                                                <div style={{marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px'}}>
+                                                <div style={{marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px'}} className={style.postImagePreview}>
                                                     {newPostImages.map((img, idx) => (
                                                         <img key={idx} src={img} alt={`Preview ${idx+1}`} style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
                                                     ))}
+                                                    <button className={style.cancelImage}>aa</button>
                                                 </div>
                                             )}
                                             <div id="fileInput" className={`${style.BlockRow} ${style.postFileInput}`}> 
