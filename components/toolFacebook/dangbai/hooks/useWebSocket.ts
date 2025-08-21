@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Post, Comment, Reply, WebSocketData } from "../types";
 import Cookies from "js-cookie";
 import { USER_FACEBOOK_MAPPING } from "../constants/facebookAccountsMapping";
 
 export const useWebSocket = (
-  posts: Post[],
-  setPosts: React.Dispatch<React.SetStateAction<Post[]>>,
+  posts?: Post[],
+  setPosts?: React.Dispatch<React.SetStateAction<Post[]>>,
   refreshCommentsForPost?: (postId: string | number) => Promise<void>,
   setCrawlingStatus?: React.Dispatch<
     React.SetStateAction<{
@@ -96,23 +96,29 @@ export const useWebSocket = (
           data.URL
         );
 
-        setPosts((prev) => {
-          const updatedPosts = prev.map((post) => {
-            if (post.id.toString() === data.postId) {
-              console.log(" Found and updating post:", post.id, "→", data.URL);
-              return {
-                ...post,
-                facebookUrl: data.URL,
-                isPosted: true,
-                // Cập nhật tên tác giả nếu có thông tin từ B
-                ...(data.authorName && { author: data.authorName }),
-              };
-            }
-            return post;
-          });
+        setPosts &&
+          setPosts((prev) => {
+            const updatedPosts = prev.map((post) => {
+              if (post.id.toString() === data.postId) {
+                console.log(
+                  " Found and updating post:",
+                  post.id,
+                  "→",
+                  data.URL
+                );
+                return {
+                  ...post,
+                  facebookUrl: data.URL,
+                  isPosted: true,
+                  // Cập nhật tên tác giả nếu có thông tin từ B
+                  ...(data.authorName && { author: data.authorName }),
+                };
+              }
+              return post;
+            });
 
-          return updatedPosts;
-        });
+            return updatedPosts;
+          });
       } else if (data.type === "comment_byB") {
         // Xử lý comment mới từ B
         console.log("📨 Received new comment from B:", data);
@@ -148,37 +154,38 @@ export const useWebSocket = (
 
         console.log("💭 Created comment object:", newCommentFromB);
 
-        setPosts((prev) => {
-          const targetPost = prev.find(
-            (post) => post.id.toString() === data.postId.toString()
-          );
-          console.log(targetPost);
-          if (!targetPost) {
-            console.error("❌ No post found with ID:", data.postId);
-            console.log(
-              "Available post IDs:",
-              prev.map((p) => p.id.toString())
+        setPosts &&
+          setPosts((prev) => {
+            const targetPost = prev.find(
+              (post) => post.id.toString() === data.postId.toString()
             );
-            return prev;
-          }
-
-          return prev.map((post) => {
-            if (post.id.toString() === data.postId.toString()) {
-              console.log(" Adding new comment from B to post:", post.id);
-              const updatedPost = {
-                ...post,
-                comments: [...(post.comments || []), newCommentFromB],
-              };
-
+            console.log(targetPost);
+            if (!targetPost) {
+              console.error("❌ No post found with ID:", data.postId);
               console.log(
-                "Updated post comments count:",
-                updatedPost.comments.length
+                "Available post IDs:",
+                prev.map((p) => p.id.toString())
               );
-              return updatedPost;
+              return prev;
             }
-            return post;
+
+            return prev.map((post) => {
+              if (post.id.toString() === data.postId.toString()) {
+                console.log(" Adding new comment from B to post:", post.id);
+                const updatedPost = {
+                  ...post,
+                  comments: [...(post.comments || []), newCommentFromB],
+                };
+
+                console.log(
+                  "Updated post comments count:",
+                  updatedPost.comments.length
+                );
+                return updatedPost;
+              }
+              return post;
+            });
           });
-        });
       } else if (data.type === "reply_comment_byB") {
         // Xử lý reply comment mới từ B
         console.log("📨 Received new reply comment from B:", data);
@@ -213,50 +220,52 @@ export const useWebSocket = (
 
         console.log("💭 Created reply object:", newReplyFromB);
 
-        setPosts((prev) => {
-          const targetPost = prev.find(
-            (post) => post.id.toString() === data.postId?.toString()
-          );
-          if (!targetPost) {
-            console.error("❌ No post found with ID:", data.postId);
-            console.log(
-              "Available post IDs:",
-              prev.map((p) => p.id.toString())
+        setPosts &&
+          setPosts((prev) => {
+            const targetPost = prev.find(
+              (post) => post.id.toString() === data.postId?.toString()
             );
-            return prev;
-          }
-
-          return prev.map((post) => {
-            if (post.id.toString() === data.postId?.toString()) {
-              return {
-                ...post,
-                comments:
-                  post.comments?.map((comment) => {
-                    // Tìm comment dựa trên Facebook comment ID
-                    if (
-                      comment.id_facebookComment === data.commentId?.toString()
-                    ) {
-                      console.log(
-                        " Adding new reply from B to comment:",
-                        comment.id
-                      );
-                      const updatedComment = {
-                        ...comment,
-                        replies: [...(comment.replies || []), newReplyFromB],
-                      };
-                      console.log(
-                        "Updated comment replies count:",
-                        updatedComment.replies.length
-                      );
-                      return updatedComment;
-                    }
-                    return comment;
-                  }) || [],
-              };
+            if (!targetPost) {
+              console.error("❌ No post found with ID:", data.postId);
+              console.log(
+                "Available post IDs:",
+                prev.map((p) => p.id.toString())
+              );
+              return prev;
             }
-            return post;
+
+            return prev.map((post) => {
+              if (post.id.toString() === data.postId?.toString()) {
+                return {
+                  ...post,
+                  comments:
+                    post.comments?.map((comment) => {
+                      // Tìm comment dựa trên Facebook comment ID
+                      if (
+                        comment.id_facebookComment ===
+                        data.commentId?.toString()
+                      ) {
+                        console.log(
+                          " Adding new reply from B to comment:",
+                          comment.id
+                        );
+                        const updatedComment = {
+                          ...comment,
+                          replies: [...(comment.replies || []), newReplyFromB],
+                        };
+                        console.log(
+                          "Updated comment replies count:",
+                          updatedComment.replies.length
+                        );
+                        return updatedComment;
+                      }
+                      return comment;
+                    }) || [],
+                };
+              }
+              return post;
+            });
           });
-        });
       } else if (data.type === "comment_result") {
         console.log(
           "💬 Updating comment with Facebook ID:",
@@ -270,43 +279,44 @@ export const useWebSocket = (
           return;
         }
 
-        setPosts((prev) => {
-          const updatedPosts = prev.map((post) => {
-            if (post.id.toString() === data.postId.toString()) {
-              const updatedComments =
-                post.comments?.map((comment) => {
-                  if (
-                    comment.content === data.content &&
-                    !comment.id_facebookComment
-                  ) {
-                    console.log(
-                      " Found and updating comment:",
-                      comment.id,
-                      "→",
-                      data.comment_id
-                    );
+        setPosts &&
+          setPosts((prev) => {
+            const updatedPosts = prev.map((post) => {
+              if (post.id.toString() === data.postId.toString()) {
+                const updatedComments =
+                  post.comments?.map((comment) => {
+                    if (
+                      comment.content === data.content &&
+                      !comment.id_facebookComment
+                    ) {
+                      console.log(
+                        " Found and updating comment:",
+                        comment.id,
+                        "→",
+                        data.comment_id
+                      );
 
-                    return {
-                      ...comment,
-                      id_facebookComment: data.comment_id,
-                      facebookCommentUrl: data.URL,
-                      // Cập nhật tên tác giả nếu có thông tin từ B
-                      ...(data.authorName && { author: data.authorName }),
-                    };
-                  }
-                  return comment;
-                }) || [];
+                      return {
+                        ...comment,
+                        id_facebookComment: data.comment_id,
+                        facebookCommentUrl: data.URL,
+                        // Cập nhật tên tác giả nếu có thông tin từ B
+                        ...(data.authorName && { author: data.authorName }),
+                      };
+                    }
+                    return comment;
+                  }) || [];
 
-              return {
-                ...post,
-                comments: updatedComments,
-              };
-            }
-            return post;
+                return {
+                  ...post,
+                  comments: updatedComments,
+                };
+              }
+              return post;
+            });
+
+            return updatedPosts;
           });
-
-          return updatedPosts;
-        });
       } else if (data.type === "reply_comment_result") {
         console.log(
           "💭 Updating reply with Facebook ID:",
@@ -322,49 +332,51 @@ export const useWebSocket = (
           return;
         }
 
-        setPosts((prev) => {
-          return prev.map((post) => {
-            if (post.id.toString() === data.postId.toString()) {
-              return {
-                ...post,
-                comments:
-                  post.comments?.map((comment) => {
-                    if (
-                      comment.id_facebookComment?.toString() === data.commentId
-                    ) {
-                      return {
-                        ...comment,
-                        replies:
-                          comment.replies?.map((reply) => {
-                            if (!reply.id_facebookReply) {
-                              console.log(
-                                " Found and updating reply:",
-                                reply.id,
-                                "→",
-                                data.replyId
-                              );
+        setPosts &&
+          setPosts((prev) => {
+            return prev.map((post) => {
+              if (post.id.toString() === data.postId.toString()) {
+                return {
+                  ...post,
+                  comments:
+                    post.comments?.map((comment) => {
+                      if (
+                        comment.id_facebookComment?.toString() ===
+                        data.commentId
+                      ) {
+                        return {
+                          ...comment,
+                          replies:
+                            comment.replies?.map((reply) => {
+                              if (!reply.id_facebookReply) {
+                                console.log(
+                                  " Found and updating reply:",
+                                  reply.id,
+                                  "→",
+                                  data.replyId
+                                );
 
-                              return {
-                                ...reply,
-                                id_facebookReply: data.replyId?.toString(),
-                                facebookReplyUrl: data.URL || "",
-                                // Cập nhật tên tác giả nếu có thông tin từ B
-                                ...(data.authorName && {
-                                  author: data.authorName,
-                                }),
-                              };
-                            }
-                            return reply;
-                          }) || [],
-                      };
-                    }
-                    return comment;
-                  }) || [],
-              };
-            }
-            return post;
+                                return {
+                                  ...reply,
+                                  id_facebookReply: data.replyId?.toString(),
+                                  facebookReplyUrl: data.URL || "",
+                                  // Cập nhật tên tác giả nếu có thông tin từ B
+                                  ...(data.authorName && {
+                                    author: data.authorName,
+                                  }),
+                                };
+                              }
+                              return reply;
+                            }) || [],
+                        };
+                      }
+                      return comment;
+                    }) || [],
+                };
+              }
+              return post;
+            });
           });
-        });
       } else if (data.type === "reply_reply_comment_result") {
         console.log(
           "💭 Updating reply to reply with Facebook ID:",
@@ -380,49 +392,51 @@ export const useWebSocket = (
           return;
         }
 
-        setPosts((prev) => {
-          return prev.map((post) => {
-            if (post.id.toString() === data.postId.toString()) {
-              return {
-                ...post,
-                comments:
-                  post.comments?.map((comment) => {
-                    if (
-                      comment.id_facebookComment?.toString() === data.commentId
-                    ) {
-                      return {
-                        ...comment,
-                        replies:
-                          comment.replies?.map((reply) => {
-                            if (!reply.id_facebookReply) {
-                              console.log(
-                                " Found and updating reply:",
-                                reply.id,
-                                "→",
-                                data.replyId
-                              );
+        setPosts &&
+          setPosts((prev) => {
+            return prev.map((post) => {
+              if (post.id.toString() === data.postId.toString()) {
+                return {
+                  ...post,
+                  comments:
+                    post.comments?.map((comment) => {
+                      if (
+                        comment.id_facebookComment?.toString() ===
+                        data.commentId
+                      ) {
+                        return {
+                          ...comment,
+                          replies:
+                            comment.replies?.map((reply) => {
+                              if (!reply.id_facebookReply) {
+                                console.log(
+                                  " Found and updating reply:",
+                                  reply.id,
+                                  "→",
+                                  data.replyId
+                                );
 
-                              return {
-                                ...reply,
-                                id_facebookReply: data.replyId?.toString(),
-                                facebookReplyUrl: data.URL || "",
-                                // Cập nhật tên tác giả nếu có thông tin từ B
-                                ...(data.authorName && {
-                                  author: data.authorName,
-                                }),
-                              };
-                            }
-                            return reply;
-                          }) || [],
-                      };
-                    }
-                    return comment;
-                  }) || [],
-              };
-            }
-            return post;
+                                return {
+                                  ...reply,
+                                  id_facebookReply: data.replyId?.toString(),
+                                  facebookReplyUrl: data.URL || "",
+                                  // Cập nhật tên tác giả nếu có thông tin từ B
+                                  ...(data.authorName && {
+                                    author: data.authorName,
+                                  }),
+                                };
+                              }
+                              return reply;
+                            }) || [],
+                        };
+                      }
+                      return comment;
+                    }) || [],
+                };
+              }
+              return post;
+            });
           });
-        });
       } else if (data.type === "crawl_comment") {
         // Xử lý message crawl_comment
         console.log("🔄 Crawl comment status update:", data);

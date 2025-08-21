@@ -103,7 +103,23 @@ export const USER_FACEBOOK_MAPPING: { [key: string]: FacebookAccount[] } = {
       facebookId: "B22636101",
       username: "0382785319",
       password: "hhp123988",
-    }
+    },
+  ],
+  "22858640": [
+    {
+      userNameFb: "Giản Vũ",
+      userLinkFb: "https://www.facebook.com/gian.vu.792551",
+      facebookId: "B22623688",
+      username: "gianvu17607@gmail.com",
+      password: "lvqh1234",
+    },
+    {
+      userNameFb: "Tiến Thành",
+      userLinkFb: "",
+      facebookId: "B22789191",
+      username: "",
+      password: "",
+    },
   ],
 };
 
