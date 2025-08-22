@@ -44,6 +44,7 @@ export default function Detail() {
     const router = useRouter();
     const itemsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(1);
+    const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
     // Phân trang
     const [search, setSearch] = useState('');
     const [filterPublic, setFilterPublic] = useState(false);
@@ -319,6 +320,7 @@ export default function Detail() {
     });
     return { isValid, errors };
     };
+
 //
 
     return (
@@ -333,15 +335,8 @@ export default function Detail() {
             <div className={styles.main_importfile}>
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
-                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
+                        <div className={styles.main__title}>DANH SÁCH NHÓM CỦA TÀI KHOẢN: {uname}</div>
                         <div style={{padding: '10px'}} className={styles.form_add_potential}>
-                            {/* Title + BackButton */}
-                            <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}>CHI TIẾT TÀI KHOẢN</p>
-                                {/* <button className={style.buttonBack} onClick={BackPageClick}>
-                                    Quay lại
-                                </button> */}
-                            </div>
                             {/* Name + GroupIn/NotIn */}
                             <div style={{marginTop: '20px'}} className={style.BlockRow}>
                                 <div id="UserName" className={style.BlockRow}>
@@ -353,7 +348,6 @@ export default function Detail() {
                                     <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === 2 || group.isJoin === 3).length}</div>
                                 </div>
                             </div>
-
                             {/* thanh checkbox + ten */}
                             <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
                                 <input
@@ -366,53 +360,46 @@ export default function Detail() {
                                         setCurrentPage(1);
                                     }}
                                 />
-                                <div className={style.BlockRow} style={{marginLeft: 'auto', paddingTop: '10px'}}>
-                                    <input 
-                                        type="checkbox"
-                                        className={style.checkbox}
-                                        checked={filterPublic}
+                                <div className={style.filterContainer}> 
+                                    <div className={style.BlockRow} style={{marginLeft: '50px'}}>
+                                    <label className={style.filterLabel}>Trạng thái nhóm</label>
+                                    <select
+                                        className={style.filterSelect}
                                         onChange={(e) => {
-                                            setCurrentPage(1);
-                                            setFilterPublic(e.target.checked)
+                                        const value = e.target.value;
+                                        {value == "private" ? (setFilterPrivate(true), setFilterPublic(false)) : 
+                                        value == "public" ? (setFilterPublic(true), setFilterPrivate(false)) :
+                                        value == "all" ? (setFilterPrivate(true), setFilterPublic(true)) : 
+                                        (setFilterPrivate(true), setFilterPublic(true))}
+                                        setCurrentPage(1);
                                         }}
-                                        />
-                                    <p style={{width: 'fit-content'}}>Nhóm công khai</p>
+                                    >
+                                        <option value="all">Tất cả</option>
+                                        <option value="private">Riêng tư</option>
+                                        <option value="public">Công khai</option>
+                                    </select>
+                                    </div>
                                 </div>
-                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                    <input 
-                                        type="checkbox" 
-                                        className={style.checkbox}
-                                        checked={filterPrivate}
+                                <div className={style.filterContainer}> 
+                                    <div className={style.BlockRow} style={{marginLeft: '50px'}}>
+                                    <label className={style.filterLabel}>Tham gia</label>
+                                    <select
+                                        className={style.filterSelect}
                                         onChange={(e) => {
-                                            setCurrentPage(1);
-                                            setFilterPrivate(e.target.checked)
+                                        const value1 = e.target.value;
+                                        {value1 == "not" ? (setFilterNotJoin(true), setFilterJoined(false)) : 
+                                        value1 == "join" ? (setFilterJoined(true), setFilterNotJoin(false)) :
+                                        value1 == "all" ? (setFilterJoined(true), setFilterNotJoin(true)) : 
+                                        (setFilterNotJoin(true), setFilterJoined(true))}
+                                        console.log(filterJoined, filterNotJoin, value1);
+                                        setCurrentPage(1);
                                         }}
-                                        />
-                                    <p style={{width: 'fit-content'}}>Nhóm riêng tư</p>
-                                </div>
-                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                    <input 
-                                        type="checkbox" 
-                                        className={style.checkbox}
-                                        checked={filterJoined}
-                                        onChange={(e) => {
-                                            setCurrentPage(1);
-                                            setFilterJoined(e.target.checked)
-                                        }}
-                                        />
-                                    <p style={{width: 'fit-content'}}>Đã tham gia</p>
-                                </div>
-                                <div className={style.BlockRow} style={{marginLeft: '30px', paddingTop: '10px'}}>
-                                    <input 
-                                        type="checkbox" 
-                                        className={style.checkbox}
-                                        checked={filterNotJoin}
-                                        onChange={(e) => {
-                                            setCurrentPage(1);
-                                            setFilterNotJoin(e.target.checked)
-                                        }}
-                                        />
-                                    <p style={{width: 'fit-content'}}>Chưa tham gia</p>
+                                    >
+                                        <option value="all">Tất cả</option>
+                                        <option value="not">Chưa tham gia</option>
+                                        <option value="join">Tham gia</option>
+                                    </select>
+                                    </div>
                                 </div>
                             </div>
                             {/* List Nhóm */}

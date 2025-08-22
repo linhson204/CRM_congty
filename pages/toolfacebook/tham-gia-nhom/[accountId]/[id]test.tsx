@@ -228,7 +228,7 @@ export default function Detail() {
     }
 
     const HandlePostGroup = (idgr: number) => {
-        router.push(`./dangbainhom/${idgr}`);
+        router.push(`../${id}/dangbainhom/${idgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom

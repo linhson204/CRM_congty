@@ -2,15 +2,15 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
+import { getFacebookAccountsByUserID } from "@/components/toolFacebook/dangbai/constants/facebookAccountsMapping";
+import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CiBoxList } from "react-icons/ci";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaSearch } from 'react-icons/fa';
 import { FiMessageCircle } from "react-icons/fi";
-import { GoTriangleDown } from "react-icons/go";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoPerson } from "react-icons/io5";
 import style from './styles.module.css';
 
 interface Users {
@@ -42,9 +42,13 @@ export default function DangBai() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
+  const crmID = Cookies.get("userID");
+  const ui = "gianvu17607@gmail.com";
 
+  //get tk crm dang quan li
+  const data = getFacebookAccountsByUserID("22773024"); // Example call to get accounts
   // Lay data
   const [users, setUsers] = useState<Users[]>([]);
 
@@ -89,6 +93,7 @@ export default function DangBai() {
   //     return normalizedName.includes(normalizedSearch);
   // });
 
+  //Search tai khoan theo ten
   const filteredUser = users.filter((user) => {
     const activeMatch = activeFilter === null || user.Active === activeFilter;
 
@@ -108,7 +113,8 @@ export default function DangBai() {
   const totalPages = Math.ceil(filteredUser.length / itemsPerPage);
   const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
-  //
+
+  //Trang nhan tin
   const handleUserClick = () => {
     const timeout = 500;
     setTimeout(() => {
@@ -116,11 +122,12 @@ export default function DangBai() {
     }, timeout);
   };
 
+  //handle/router dang bai ca nhan
   const PostClick = () => {
     router.push('/toolfacebook/dang-bai');
   };
     
-  // 
+  //
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Danh Sách Tài Khoản");
     setShowBackButton(false);
@@ -198,30 +205,26 @@ export default function DangBai() {
                     {/* goi list danh sach tai khoan */}
                     <div className={style.UserListContainer}>
                       <div className={`${style.UserListAttribute} ${style.BlockRow}`}>
-                        <div className={style.AttributeContent}>UserName</div>
+                        <div className={style.AttributeContent}>STT</div>
+                        <div className={style.AttributeContent}>Tên tài khoản</div>
                         <div className={style.AttributeContent}>Email</div>
-                        <div className={style.AttributeContent}>Phone</div>
-                        <div className={style.AttributeContent}>State</div>
-                        <div className={style.AttributeContent}>Edit</div>
+                        <div className={style.AttributeContent}>Điện thoại</div>
+                        <div className={style.AttributeContent}>Trạng thái</div>
+                        <div className={style.AttributeContent}>Hành động</div>
                       </div>
                       <div className={`${style.UserListContent} ${style.BlockColumn}`}>
                         {filteredPage.map(item => (
                           <div key={item.id} className={`${style.UserListBlock} ${style.BlockRow}`}>
                             {/* Row */}
-                              <GoTriangleDown className={style.Row}></GoTriangleDown>
+                              <div>123</div>
                             {/* Name */}
-                                <p id="User_Name" className={style.UserListName}>{item.name}</p>
+                                <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
                             {/* Email */}
-                                <div id="User_Friend" className={`${style.Block_Content} ${style.BlockRow}`}>
-                                  <div><IoPerson className={style.ic}></IoPerson></div>
-                                  <p className={style.user_text}>{item.friend}</p>
-                                </div>
+                                <div id="Email">{item.friend}</div>
                             {/* Phone */}
-                                {/* <div id="Post" className={style.BlockRow}>
-                                  <div><BsFileEarmarkPost className={style.ic}></BsFileEarmarkPost></div>
-                                  <p className={style.user_text}>{item.Post}</p>
-                                </div> */}
+                                <div id="Phone">{item.Post}</div>
                             {/* State */}
+                              <div className={style.UserListBlockState}>
                                 {item.Active ? (
                                   <div className={`${style.BlockOnline}`}>
                                     Online
@@ -231,22 +234,11 @@ export default function DangBai() {
                                     Offline
                                   </div>
                                 )}
+                              </div>
                             {/* Edit */}
-                              <div id="edit" className={style.BlockRow} style={{gap: '20px', marginTop: '10px'}}>
-                                {/* <div id="User_GrIn" className={`${style.Block_Content} ${style.BlockRow}`}>
-                                  <div><FaUserGroup className={style.ic}></FaUserGroup></div>
-                                  <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 1).length}</p>
-                                </div>
-                                <div id="Comment" className={style.BlockRow}>
-                                  <div style={{paddingTop: '2px'}}><FaCommentAlt style={{width: '17px', height: '17px'}}></FaCommentAlt></div>
-                                  <p className={style.user_text}>{item.Comment}</p>
-                                </div>
-                                <div id="User_GrOut" className={`${style.Block_Content} ${style.BlockRow}`}>
-                                  <div><MdGroupOff className={style.ic}></MdGroupOff></div>
-                                  <p className={style.user_text}>{item.groups.filter(g => g.isJoin == 2 || g.isJoin == 3).length}</p>
-                                </div> */}
+                              <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`} style={{gap: '20px'}}>
                                 <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
-                                  <FiMessageCircle className={style.ic}></FiMessageCircle>
+                                  <FiMessageCircle className={style.ic}/>
                                   {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
                                 </div>
                                 <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic} onClick={PostClick} />

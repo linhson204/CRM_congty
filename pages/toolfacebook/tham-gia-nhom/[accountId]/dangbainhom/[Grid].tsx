@@ -2,6 +2,9 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
+import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
+import { uploadImage } from "@/pages/api/toolFacebook/dang-bai/upload";
+import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -13,6 +16,7 @@ import { IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { TfiFaceSmile } from "react-icons/tfi";
 import data from '../../../../../public/data/account.json';
+import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
 import style from '../../styles.module.css';
 
 interface Group {
@@ -31,7 +35,7 @@ interface Account {
 
 interface Post {
     id: number;
-    userId?: number;
+    userId?: string;
     groupId?: number;
     userName: string;
     time: string;
@@ -71,9 +75,10 @@ export default function Detail() {
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
-    const [newPostImages, setNewPostImages] = useState<string[]>([]);
+    const [newPostImages, setNewPostImages] = useState<any[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const websocket = useWebSocket();
     // lay data cho page
     useEffect(() => {
         if (!accountId) return;
@@ -161,11 +166,11 @@ export default function Detail() {
         ]);
     };
 
-    const handlePostSubmit = () => {
+    const handlePostSubmit = async () => {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
         const newPost: Post = {
-            id: Date.now(),
-            userId: account?.id,
+            id: 123,
+            userId: "gianvu17607@gmail.com",
             userName: uname,
             groupId: groups?.id,
             time: `Vừa xong`,
@@ -175,10 +180,35 @@ export default function Detail() {
             comments: 0,
             shares: 0
         };
+
         setPosts([newPost, ...posts]);
         setNewPostContent('');
         setNewPostImages([]);
-        console.log('Bài đăng đã được gửi:', newPost);
+        const crmID = Cookies.get("userID");
+        const ui = "gianvu17607@gmail.com"
+
+        const image = uploadImage(newPostImages);
+        console.log("Cookie value:", crmID, newPostImages, image);
+        // if (websocket && websocket.readyState === WebSocket.OPEN) {
+        // const postData = {
+        //     type: "post_to_group",
+        //     postId: newPost.id.toString(),
+        //     content: newPostContent,
+        //     //   authorName: userName,
+        //     //   authorId: userID,
+        //     to: "B22623688",
+        //     attachments: [], // Đưa images vào attachments thay vì images
+        // };
+
+        // websocket.send(JSON.stringify(postData));
+        // }
+        const params = `{"group_link": "groups/1569887551087354", "content": "${newPostContent}", "files": ${image}}`;
+        await createPostGroup(
+        "post_to_group",
+        "gianvu17607@gmail.com",
+        params,
+        crmID
+        );
     };
 
     const handleImageIconClick = () => {
@@ -188,22 +218,27 @@ export default function Detail() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-            const readers: Promise<string>[] = [];
+            // const readers: Promise<string>[] = [];
+            // for (let i = 0; i < files.length; i++) {
+            //     const file = files[i];
+            //     readers.push(new Promise((resolve) => {
+            //         const reader = new FileReader();
+            //         reader.onloadend = () => {
+            //             resolve(reader.result as string);
+            //         };
+            //         reader.readAsDataURL(file);
+            //     }));
+            // }
+            // Promise.all(readers).then((images) => {
+            //     setNewPostImages(images);
+            // });
             for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                readers.push(new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        resolve(reader.result as string);
-                    };
-                    reader.readAsDataURL(file);
-                }));
+                const myArray: any[] = [];
+                myArray.push(files[i]);
             }
-            Promise.all(readers).then((images) => {
-                setNewPostImages(images);
-            });
         }
     };
+
 
     const hardReload = () => {
         showLoadingDialog();

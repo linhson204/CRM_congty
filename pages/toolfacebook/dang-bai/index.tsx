@@ -1,48 +1,47 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  useCallback,
-} from "react";
+import { SidebarContext } from "@/components/crm/context/resizeContext";
+import stylesContract from "@/components/crm/contract/contract_action.module.css";
+import styleHome from "@/components/crm/home/home.module.css";
+import { useHeader } from "@/components/crm/hooks/useHeader";
+import styles from "@/components/crm/potential/potential.module.css";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import jwt_decode from "jwt-decode";
-import styleHome from "@/components/crm/home/home.module.css";
-import styles from "@/components/crm/potential/potential.module.css";
-import stylesContract from "@/components/crm/contract/contract_action.module.css";
-import { SidebarContext } from "@/components/crm/context/resizeContext";
-import { useHeader } from "@/components/crm/hooks/useHeader";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 // Import types and components
 import {
-  Post,
   Comment,
-  Reply,
   FacebookAccount,
+  Post,
+  Reply,
 } from "@/components/toolFacebook/dangbai/types";
 
 // Import Facebook accounts mapping
 import {
-  USER_FACEBOOK_MAPPING,
-  getFacebookAccountsByUserID,
+  getFacebookAccountsByUserID
 } from "@/components/toolFacebook/dangbai/constants/facebookAccountsMapping";
 
 // Import custom hooks
-import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
-import { usePostManagement } from "@/components/toolFacebook/dangbai/hooks/usePostManagement";
-import { useModalManagement } from "@/components/toolFacebook/dangbai/hooks/useModalManagement";
 import { useImageManagement } from "@/components/toolFacebook/dangbai/hooks/useImageManagement";
+import { useModalManagement } from "@/components/toolFacebook/dangbai/hooks/useModalManagement";
+import { usePostManagement } from "@/components/toolFacebook/dangbai/hooks/usePostManagement";
+import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 
 // Import components
-import { PostModal } from "@/components/toolFacebook/dangbai/components/PostModal";
-import { CommentModal } from "@/components/toolFacebook/dangbai/components/CommentModal";
-import { ReplyModal } from "@/components/toolFacebook/dangbai/components/ReplyModal";
-import { PostItem } from "@/components/toolFacebook/dangbai/components/PostItem";
-import { FacebookAccountSelector } from "@/components/toolFacebook/dangbai/components/FacebookAccountSelector";
 import { ActionButtons } from "@/components/toolFacebook/dangbai/components/ActionButtons";
+import { CommentModal } from "@/components/toolFacebook/dangbai/components/CommentModal";
+import { FacebookAccountSelector } from "@/components/toolFacebook/dangbai/components/FacebookAccountSelector";
+import { PostItem } from "@/components/toolFacebook/dangbai/components/PostItem";
+import { PostModal } from "@/components/toolFacebook/dangbai/components/PostModal";
 import { PostsHeader } from "@/components/toolFacebook/dangbai/components/PostsHeader";
+import { ReplyModal } from "@/components/toolFacebook/dangbai/components/ReplyModal";
 
 function DangBaiPost() {
   const router = useRouter();

@@ -1,3 +1,165 @@
+/* Homepage */
+  /* SEARCH BAR - STATISTIC */
+  .filterContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .filterLabel {
+    font-weight: 500;
+    margin-right: 10px;
+    padding-top: 4px;
+    margin-bottom: 0px;
+  }
+
+  .filterSelect {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #ddd
+  }
+
+  /*  USERLIST */
+  .UserListBlock {
+    border-bottom: 1px solid rgba(145, 145, 145, 0.5);
+    padding-top: 15px;
+    padding-bottom: 12px;
+    padding-left: 10px;
+  }
+
+  .UserListBlock:hover {
+    box-shadow: 2px 1px 3px 5px rgba(0,0,0,0.1);
+  }
+
+  .UserListBlock > div:first-child {
+    width: 45px;
+  }
+  .UserListBlock > div:nth-child(n+2) {
+    text-align: center;
+    width: fit-content;
+    word-break: break-all;
+  }
+
+  .UserListBlock > div:nth-child(2) { width: 20% }
+  .UserListBlock > div:nth-child(3) { width: 25% }
+  .UserListBlock > div:nth-child(4) { width: 20% }
+  .UserListBlock > div:nth-child(5) { width: 15% }
+  .UserListBlock > div:nth-child(6) { flex: 1 }
+
+  .UserListBlockState {
+    padding: 0px;
+  }
+
+  .UserListContainer * {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+    /* THANH INDEX */
+    .UserListAttribute {
+      font-size: 18px;
+      border-bottom: 1px solid rgba(145, 145, 145, 0.5);
+      padding: 10px 0px 10px 10px;
+      background-color: #4c5bd4;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .UserListName {
+      color: black;
+      font-size: 18px;
+    }
+
+    .UserListAttribute > div:first-child {
+      width: 45px;
+      color: white;
+    }
+
+    .UserListAttribute > div:nth-child(n+2) {
+      text-align: center;
+      border-left: 3px solid rgba(255, 255, 255, 0.6);
+      color: white;
+    }
+
+    .UserListAttribute > div:nth-child(2) { width: 20% }
+    .UserListAttribute > div:nth-child(3) { width: 25% }
+    .UserListAttribute > div:nth-child(4) { width: 20% }
+    .UserListAttribute > div:nth-child(5) { width: 15% }
+    .UserListAttribute > div:nth-child(6) { flex: 1 }
+
+    .AttributeContent {
+      color: rgba(142, 142, 142, 0.5);
+    }
+
+    .UserListContent {
+      border: 1px solid rgb(0, 0, 0, 0.3);
+    }
+
+    /* BLOCK TRANG THAI */
+    .BlockOnline {
+      color: green;
+      font-size: 18px;
+    }
+
+    .BlockOffline {
+      color: rgb(255, 7, 7);
+      font-size: 18px;
+    }
+
+    /* EDIT */
+    .UserListEditBlock {
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .Message {
+      cursor: pointer;
+    }
+
+    /* THANH PHAN TRANG */
+    .indexBar {
+      margin-left: auto;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+
+    .indexBar > span {
+      padding-top: 2px;
+    }
+
+/* DANH SACH NHOM */
+    /* DIALOG */
+    .dialogContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .dialogContent {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .dialogAnimation {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .dialog
 .user_name {
     border-radius: 5px;
     background-color: rgb(112, 156, 194);
@@ -117,10 +279,6 @@
   margin-left: 16px;
 }
 
-.Message {
-    cursor: pointer;
-}
-
 .Block {
     padding: 12px;
     border: 1px solid #ccc;
@@ -171,78 +329,6 @@
     border-radius: 10px;
 }
 
-/*  USERLIST */
-.UserListBlock {
-  border-bottom: 1px solid rgba(145, 145, 145, 0.5);
-  padding-top: 15px;
-  padding-bottom: 12px;
-  padding-left: 10px;
-}
-
-.UserListBlock:hover {
-  box-shadow: 2px 1px 3px 5px rgba(0,0,0,0.1);
-}
-
-.UserListBlock > div:first-child {
-  width: 65px;
-}
-.UserListBlock > div:nth-child(n+2) {
-  flex: 1;
-  text-align: center;
-  width: fit-content;
-  word-break: break-all;
-}
-
-.UserListBlockState {
-  padding: 0px;
-}
-
-.UserListContainer * {
-  font-family: Arial, Helvetica, sans-serif;
-}
-  /* indexContent */
-.UserListAttribute {
-  font-size: 18px;
-  border-bottom: 1px solid rgba(145, 145, 145, 0.5);
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-}
-
-.UserListAttribute > div:first-child {
-  width: 65px;
-}
-
-.UserListAttribute > div:nth-child(n+2) {
-  flex: 1;
-  text-align: center;
-  border-left: 1px solid rgb(0, 0, 0, 0.2);
-}
-
-.AttributeContent {
-  color: rgba(142, 142, 142, 0.5);
-}
-
-  /* activeBlock */
-.BlockOnline {
-  color: green;
-  font-size: 18px;
-}
-
-.BlockOffline {
-  color: rgb(255, 7, 7);
-  font-size: 18px;
-}
-
-.UserListName {
-  color: black;
-  font-size: 18px;
-}
-
-  /* Edit */
-.Message:hover {
-  box-shadow: 2px 3px rgb(0 0 0 50%);
-}
 /* CSS NHAN TIN */
 
 /* Layout */
