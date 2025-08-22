@@ -45,7 +45,6 @@ export default function DangBai() {
   const itemsPerPage = 10;
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
   const crmID = Cookies.get("userID");
-  const ui = "gianvu17607@gmail.com";
 
   //get tk crm dang quan li
   const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
@@ -251,7 +250,7 @@ export default function DangBai() {
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {router.push(`./account/${item.username}`)}, 300)
+                                            setTimeout(() => {router.push(`./[accountId]/123`)}, 300)
                                             }}>
                                 </CiBoxList>
                               </div>

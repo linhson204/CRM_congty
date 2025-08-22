@@ -4,6 +4,7 @@ import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 import { uploadImage } from "@/pages/api/toolFacebook/dang-bai/upload";
+import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -77,8 +78,29 @@ export default function Detail() {
     const [newPostContent, setNewPostContent] = useState('');
     const [newPostImages, setNewPostImages] = useState<any[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const ui = "gianvu17607@gmail.com";
 
     const websocket = useWebSocket();
+    const [groupData, setGroupData] = useState<any[]>([]);
+
+    useEffect(() => {
+    async function fetchData() {
+        const res = await getGroupData("", "15", "", "123");
+        setGroupData(res); // lưu vào state
+    }
+    fetchData();
+    }, []);
+
+    console.log(groupData);
+    //  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
+    //   const data = mapdata.map((item, index) => ({
+    //     ...item,
+    //     Active: true,
+    //     Mess: 1,
+    //     STT: index + 1,
+    //   }))
+
+    //   console.log(data)
     // lay data cho page
     useEffect(() => {
         if (!accountId) return;
@@ -185,10 +207,9 @@ export default function Detail() {
         setNewPostContent('');
         setNewPostImages([]);
         const crmID = Cookies.get("userID");
-        const ui = "gianvu17607@gmail.com"
 
         const image = uploadImage(newPostImages);
-        console.log("Cookie value:", crmID, newPostImages, image);
+        console.log("Cookie value:", crmID, newPostImages);
         // if (websocket && websocket.readyState === WebSocket.OPEN) {
         // const postData = {
         //     type: "post_to_group",
@@ -202,7 +223,7 @@ export default function Detail() {
 
         // websocket.send(JSON.stringify(postData));
         // }
-        const params = `{"group_link": "groups/1569887551087354", "content": "${newPostContent}", "files": ${image}}`;
+        const params = `{"group_link": "groups/1569887551087354", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
         await createPostGroup(
         "post_to_group",
         "gianvu17607@gmail.com",
@@ -215,27 +236,44 @@ export default function Detail() {
         fileInputRef.current?.click();
     };
 
+    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const files = e.target.files;
+    //     if (files && files.length > 0) {
+    //         const readers: Promise<string>[] = [];
+    //         for (let i = 0; i < files.length; i++) {
+    //             const file = files[i];
+    //             readers.push(new Promise((resolve) => {
+    //                 const reader = new FileReader();
+    //                 reader.onloadend = () => {
+    //                     resolve(reader.result as string);
+    //                 };
+    //                 reader.readAsDataURL(file);
+    //             }));
+    //         }
+    //         Promise.all(readers).then((images) => {
+    //             setNewPostImages(images);
+    //         });
+    //     }
+    // };
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-            // const readers: Promise<string>[] = [];
-            // for (let i = 0; i < files.length; i++) {
-            //     const file = files[i];
-            //     readers.push(new Promise((resolve) => {
-            //         const reader = new FileReader();
-            //         reader.onloadend = () => {
-            //             resolve(reader.result as string);
-            //         };
-            //         reader.readAsDataURL(file);
-            //     }));
-            // }
-            // Promise.all(readers).then((images) => {
-            //     setNewPostImages(images);
-            // });
+            const imageFiles: string[] = [];
+
             for (let i = 0; i < files.length; i++) {
-                const myArray: any[] = [];
-                myArray.push(files[i]);
+                const file = files[i];
+
+                // Tạo URL blob thay vì base64
+                const objectUrl = URL.createObjectURL(file);
+
+                // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
+                if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
+                    imageFiles.push(objectUrl);
+                }
             }
+
+            setNewPostImages((prev) => [...prev, ...imageFiles]);
         }
     };
 

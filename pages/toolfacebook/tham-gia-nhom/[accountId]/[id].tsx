@@ -2,6 +2,7 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
+import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -10,7 +11,6 @@ import { HiMiniQueueList } from "react-icons/hi2";
 import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
-import data from '../../../../public/data/account.json';
 import OutGrFs from "../popup/OutGrFS";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
@@ -92,6 +92,20 @@ export default function Detail() {
     // }, []);
     //
 
+    const [groupData, setGroupData] = useState(Object);
+
+    useEffect(() => {
+    async function fetchData() {
+        const res = await getGroupData("", "15", "", id);
+        setGroupData(res); // lưu vào state
+    }
+    fetchData();
+    }, []);
+
+    // const filterNameGr = changeDT[2].find((item: any) => item.data.Name === "Hội");
+    // const test = groupData.data.filter((item) => item.user_status == "Đã tham gia")
+    console.log(groupData)
+
     // Danh sách câu hỏi mẫu
     const approvalQuestions: Question[] = [
     {
@@ -125,15 +139,15 @@ export default function Detail() {
     ];
     //
     
-    useEffect(() => { //xu li su kien moi khi tim dung account
-        if (!id) return;
-        const timer = setTimeout(() => {
-        const foundAccount = data.find(acc => acc.id === Number(id));
-        setAccount(foundAccount || null);
-        setGroups(foundAccount.groups);
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [id]);
+    // useEffect(() => { //xu li su kien moi khi tim dung account
+    //     if (!id) return;
+    //     const timer = setTimeout(() => {
+    //     const foundAccount = data.find(acc => acc.id === Number(id));
+    //     setAccount(foundAccount || null);
+    //     setGroups(foundAccount.groups);
+    //     }, 100);
+    //     return () => clearTimeout(timer);
+    // }, [id]);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
@@ -228,7 +242,7 @@ export default function Detail() {
         //call API tra id user id nhom vao day
     }
 
-    const HandlePostGroup = (idgr: number) => {
+    const HandlePostGroup = (idgr: string) => {
         router.push(`../${id}/dangbainhom/${idgr}`);
     }
 
@@ -472,12 +486,12 @@ export default function Detail() {
                                         </div>
                                 </QuestionPopup>
                                 <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
-                                    {filteredPage.map(group => (
+                                    {groupData?.data?.map(group => (
                                         <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
-                                                <h3 style={{fontSize: '30px'}}>{group.GroupName}</h3>
+                                                <h3 style={{fontSize: '30px'}}>{group.Name}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
-                                                    {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
+                                                    {group.user_status === "Đã tham gia" ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
                                                 </h2>
                                             </div>
                                             <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
@@ -487,14 +501,16 @@ export default function Detail() {
                                                     ) : (
                                                         <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
                                                     )}
-                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.GroupState}</h2>
+                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>
+                                                        {group.Status === "Hoạt động" ? ('Công Khai') : ('Riêng Tư')}
+                                                    </h2>
                                                 </div>
                                                 <div id="member" style={{marginLeft: '20px'}} className={style.BlockRow}>
                                                     <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
-                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Member}</h2>
+                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Number_Of_Posts}</h2>
                                                 </div>
                                                 {/* đã tham gia */}
-                                                {group.isJoin == 1 ? (
+                                                {group.user_status == "Đã tham gia" ? (
                                                     <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
                                                         <button className={style.buttonBack} 
                                                                 onClick={() => {
