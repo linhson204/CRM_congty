@@ -20,7 +20,7 @@ export default function FilterPopup({
         onClick={(e) => e.stopPropagation()}
         >
         <div
-            className={style.fullscreenPopupContent}
+            className={style.PopupFilterContent}
             onClick={(e) => e.stopPropagation()} // chặn click ra ngoài đóng
         >
             {children}

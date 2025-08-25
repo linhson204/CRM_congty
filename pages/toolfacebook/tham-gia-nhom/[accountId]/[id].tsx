@@ -6,11 +6,12 @@ import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaFilter, FaLock, FaUserCircle } from "react-icons/fa";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
+import Filter from "../popup/Filter";
 import OutGrFs from "../popup/OutGrFS";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
@@ -55,6 +56,7 @@ export default function Detail() {
     const [filterJoined, setFilterJoined] = useState(false);
     const [filterNotJoin, setFilterNotJoin] = useState(false);
     const [Sent, setSent] = useState(false);
+    const [showFilter, setshowFilterPopup] = useState(false);
     // Lấy thông tin tài khoản
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
@@ -76,6 +78,11 @@ export default function Detail() {
     const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     const [LinkGrSelected, SetlinkGrSelected] = useState<string | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
+
+    const [grStateTemp, setGrStateTemp] = useState('all');
+    const [joinTemp, setJoinTemp] = useState('all');
+    const [grState, setGrState] = useState('all');
+    const [joinState, setJoinState] = useState('all');
     // console.log(groups)
 
     // useEffect(() => {
@@ -196,27 +203,27 @@ export default function Detail() {
 
     const filteredGroups = useMemo(() => {
         return groups.filter(group => {
-        // 1. Lọc theo tên (luôn áp dụng)
-        const nameMatch = groupData.data.Name.toLowerCase().includes(search.toLowerCase());
-        if (!nameMatch) return false;
+            // 1. Lọc theo tên (luôn áp dụng)
+            const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
+            if (!nameMatch) return false;
 
-        // 2. Lọc trạng thái (nếu có chọn)
-        const statusMatch = 
-        (!filterPublic && !filterPrivate) || // Không chọn trạng thái nào
-        (filterPublic && group.GroupState === 'Public') || 
-        (filterPrivate && group.GroupState === 'Private');
+            // 2. Lọc trạng thái
+            let statusMatch = true;
+            if (grState !== 'all' && grState !== '') {
+                if (grState === 'public') statusMatch = group.GroupState === 'Public';
+                else if (grState === 'private') statusMatch = group.GroupState === 'Private';
+            }
 
-        // 3. Lọc tham gia (nếu có chọn)
-        const joinMatch = 
-        (!filterJoined && !filterNotJoin) || // Không chọn trạng thái tham gia nào
-        (filterJoined && group.isJoin === 1) ||
-        (filterNotJoin && group.isJoin === 2);
-        
-        const result = nameMatch && statusMatch && joinMatch;
-        // Phải thỏa mãn cả 3 điều kiện
-        return result;
-    });
-    }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
+            // 3. Lọc tham gia
+            let joinMatch = true;
+            if (joinState !== 'all' && joinState !== '') {
+                if (joinState === 'join') joinMatch = group.isJoin === 1;
+                else if (joinState === 'not') joinMatch = group.isJoin === 2 || group.isJoin === 3;
+            }
+
+            return nameMatch && statusMatch && joinMatch;
+        });
+    }, [groups, grState, joinState, search]);
 
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
@@ -235,6 +242,12 @@ export default function Detail() {
     const PendingHandle = (id: number) => {
         setpendingGr(id);
     };
+
+    const HandleFilter = () => {
+        setGrState(grStateTemp);
+        setJoinState(joinTemp);
+        console.log(grStateTemp, joinTemp);
+    }
 
     const PendingHandleData = (GrId: number) => {
         // if (pendingGr.includes(group.id)) {
@@ -378,46 +391,14 @@ export default function Detail() {
                                         setCurrentPage(1);
                                     }}
                                 />
-                                <div className={style.filterContainer}> 
-                                    <div className={style.BlockRow} style={{marginLeft: '50px'}}>
-                                    <label className={style.filterLabel}>Trạng thái nhóm</label>
-                                    <select
-                                        className={style.filterSelect}
-                                        onChange={(e) => {
-                                        const value = e.target.value;
-                                        {value == "private" ? (setFilterPrivate(true), setFilterPublic(false)) : 
-                                        value == "public" ? (setFilterPublic(true), setFilterPrivate(false)) :
-                                        value == "all" ? (setFilterPrivate(true), setFilterPublic(true)) : 
-                                        (setFilterPrivate(true), setFilterPublic(true))}
-                                        setCurrentPage(1);
-                                        }}
-                                    >
-                                        <option value="all">Tất cả</option>
-                                        <option value="private">Riêng tư</option>
-                                        <option value="public">Công khai</option>
-                                    </select>
-                                    </div>
-                                </div>
-                                <div className={style.filterContainer}> 
-                                    <div className={style.BlockRow} style={{marginLeft: '50px'}}>
-                                    <label className={style.filterLabel}>Tham gia</label>
-                                    <select
-                                        className={style.filterSelect}
-                                        onChange={(e) => {
-                                        const value1 = e.target.value;
-                                        {value1 == "not" ? (setFilterNotJoin(true), setFilterJoined(false)) : 
-                                        value1 == "join" ? (setFilterJoined(true), setFilterNotJoin(false)) :
-                                        value1 == "all" ? (setFilterJoined(true), setFilterNotJoin(true)) : 
-                                        (setFilterNotJoin(true), setFilterJoined(true))}
-                                        console.log(filterJoined, filterNotJoin, value1);
-                                        setCurrentPage(1);
-                                        }}
-                                    >
-                                        <option value="all">Tất cả</option>
-                                        <option value="not">Chưa tham gia</option>
-                                        <option value="join">Tham gia</option>
-                                    </select>
-                                    </div>
+                                <div className={`${style.filterBlock} ${style.BlockRow}`}
+                                    onClick={() => {
+                                        setshowFilterPopup(true)
+                                        setJoinTemp('all');
+                                        setGrStateTemp('all');
+                                    }}>
+                                    <FaFilter></FaFilter>
+                                    <p>Bộ lọc</p>
                                 </div>
                             </div>
                             {/* List Nhóm */}
@@ -441,6 +422,55 @@ export default function Detail() {
                                         </button>
                                     </div>
                                 </OutGrFs>
+                                <Filter isOpen={showFilter} onClose={() => setshowFilterPopup(false)}>
+                                    <div className={style.filterContainer}>
+                                        <div className={style.BlockColumn}>
+                                            <div className={style.selectBlockFilter}> 
+                                                <label className={style.filterLabel}>Trạng thái nhóm</label>
+                                                <select
+                                                    className={style.filterSelect}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        setGrStateTemp(value);
+                                                    }}
+                                                >
+                                                    <option value="all">Tất cả</option>
+                                                    <option value="private">Riêng tư</option>
+                                                    <option value="public">Công khai</option>
+                                                </select>
+                                            </div>
+                                            <div className={style.selectBlockFilter}> 
+                                                <label className={style.filterLabel}>Tham gia</label>
+                                                <select
+                                                    className={style.filterSelect}
+                                                    onChange={(e) => {
+                                                        const value1 = e.target.value;
+                                                        setJoinTemp(value1);
+                                                    }}
+                                                >
+                                                    <option value="all">Tất cả</option>
+                                                    <option value="not">Chưa tham gia</option>
+                                                    <option value="join">Đã tham gia</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className={style.BlockRow}>
+                                            <button 
+                                                className={style.PopupCancelFilter}
+                                                onClick={() => setshowFilterPopup(false)}>
+                                                huỷ
+                                            </button>
+                                            <button 
+                                                onClick={() => {
+                                                    setshowFilterPopup(false);
+                                                    HandleFilter();
+                                                }}
+                                                className={style.PopupConfirmFilter}>
+                                                Xác nhận
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Filter>
                                 <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
                                     <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
                                     <h2 className={style.PopupOutGrHeader}> 

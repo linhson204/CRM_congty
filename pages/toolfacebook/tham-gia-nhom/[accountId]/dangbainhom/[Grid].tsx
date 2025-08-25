@@ -258,20 +258,20 @@ export default function Detail() {
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-
+                
                 // Tạo URL blob thay vì base64
                 const objectUrl = URL.createObjectURL(file);
+                imageFiles.push(objectUrl);
 
-                // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
-                if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
-                    imageFiles.push(objectUrl);
-                }
+                // // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
+                // if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
+                //     imageFiles.push(objectUrl);
+                // }
             }
 
             setNewPostImages((prev) => [...prev, ...imageFiles]);
         }
     };
-
 
     const hardReload = () => {
         showLoadingDialog();

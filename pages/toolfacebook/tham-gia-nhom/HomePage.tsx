@@ -50,9 +50,9 @@ export default function DangBai() {
   const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
   const data = mapdata.map((item, index) => ({
     ...item,
-    Active: true,
     Mess: 1,
     STT: index + 1,
+    Active: (index % 2 === 1) ? true : false,
   }))
 
   console.log(data)
