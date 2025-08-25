@@ -4,6 +4,7 @@ export interface FacebookAccount {
   facebookId: string;
   username: string;
   password: string;
+  note?: string;
 }
 
 export interface Reply {
@@ -71,6 +72,7 @@ export interface WebSocketData {
     | "crawl_comment"
     | "online"
     | "client_disconnected"
+    | "registered"
     | "error";
   postId?: string;
   URL?: string;

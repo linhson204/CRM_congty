@@ -29,8 +29,8 @@ export const useWebSocket = (
 
   const connectWebSocket = () => {
     // const ws = new WebSocket("ws://123.24.206.25:4000");
-    const ws = new WebSocket("wss://socket.hungha365.com:4000");
-    // const ws = new WebSocket("ws://localhost:4000");
+    // const ws = new WebSocket("wss://socket.hungha365.com:4000");
+    const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");
     const userID = Cookies.get("userID");
 
@@ -49,8 +49,6 @@ export const useWebSocket = (
 
       // Xử lý data có connectedClients để cập nhật online/offline status
       if (data.connectedClients && setOnlineStatus) {
-        console.log("📊 Received connectedClients data:", data);
-
         const userID = Cookies.get("userID");
         if (userID && USER_FACEBOOK_MAPPING[userID]) {
           const userFacebookAccounts = USER_FACEBOOK_MAPPING[userID];
@@ -480,6 +478,8 @@ export const useWebSocket = (
             facebookId: data.facebookId,
           });
         }
+      } else if (data.type === "registered") {
+        console.log("Đăng ký websocket thành công");
       } else {
         console.log("Dữ liệu nghe từ websocket", data);
         // if (data.type === "error") {

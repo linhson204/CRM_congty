@@ -119,18 +119,10 @@ export const FacebookAccountSelector: React.FC<
       {/* Hiển thị thông tin account được chọn */}
       <div style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>
         <div>
-          <strong>Trang:</strong> {selectedFacebookAccount.userNameFb}
+          <strong>Tên Fb:</strong> {selectedFacebookAccount.userNameFb}
         </div>
         <div>
-          <strong>Link:</strong>{" "}
-          <a
-            href={selectedFacebookAccount.userLinkFb}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#007bff" }}
-          >
-            {selectedFacebookAccount.userLinkFb}
-          </a>
+          <strong>Fb ở máy:</strong> {selectedFacebookAccount.note}
         </div>
         <div>
           <strong>ID:</strong> {selectedFacebookAccount.facebookId}

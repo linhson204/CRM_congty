@@ -572,6 +572,15 @@ function DangBaiPost() {
   };
 
   const handleSubmit = async () => {
+    // Kiểm tra trạng thái online của Facebook account
+    if (
+      !onlineStatus[selectedFacebookAccount.facebookId] ||
+      !onlineStatus[selectedFacebookAccount.facebookId].isOnline
+    ) {
+      alert("Facebook này hiện không online nên không thể đăng bài!");
+      return;
+    }
+
     if (
       modalManagement.postContent.trim() &&
       !isCurrentAccountCrawling() &&
