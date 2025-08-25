@@ -15,6 +15,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
+import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
 import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
 import style from '../../styles.module.css';
@@ -61,10 +62,6 @@ export default function Detail() {
     const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
-    const [filterPublic, setFilterPublic] = useState(false);
-    const [filterPrivate, setFilterPrivate] = useState(false);
-    const [filterJoined, setFilterJoined] = useState(false);
-    const [filterNotJoin, setFilterNotJoin] = useState(false);
     const { accountId, Grid } = router.query;
     const [account, setAccount] = useState<Account | null>(null);
     const [groups, setGroups] = useState<Group>();
@@ -90,7 +87,6 @@ export default function Detail() {
     fetchData();
     }, []);
 
-    console.log(accountId, Grid);
     //  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
     //   const data = mapdata.map((item, index) => ({
     //     ...item,
@@ -208,7 +204,7 @@ export default function Detail() {
         const crmID = Cookies.get("userID");
 
         const image = uploadImage(newPostImages);
-        console.log("Cookie value:", crmID, newPostImages);
+        console.log(image, crmID, newPostImages);
         // if (websocket && websocket.readyState === WebSocket.OPEN) {
         // const postData = {
         //     type: "post_to_group",
@@ -280,6 +276,10 @@ export default function Detail() {
     const hardReload = () => {
         showLoadingDialog();
         setTimeout(() => window.location.reload(), 1000);
+    }
+
+    const handleCancelUpload = (index: number) => {
+        setNewPostImages((prev) => prev.filter((_, idx) => idx !== index));
     }
 
     const showLoadingDialog = () => {
@@ -371,11 +371,15 @@ export default function Detail() {
                                                 onChange={handleImageChange}
                                             />
                                             {newPostImages.length > 0 && (
-                                                <div style={{marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px'}} className={style.postImagePreview}>
+                                                <div className={style.postImagePreview}>
                                                     {newPostImages.map((img, idx) => (
-                                                        <img key={idx} src={img} alt={`Preview ${idx+1}`} style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                        <div key={idx} style={{padding: '10px', position: 'relative', display: 'inline-block'}}>
+                                                            <MdCancel className={style.cancelImage}
+                                                                onClick={() => handleCancelUpload(idx)} />
+                                                            <img src={img} alt={`Preview ${idx+1}`}
+                                                                style={{maxWidth: '350px', maxHeight: '350px', borderRadius: '8px'}} />
+                                                        </div>
                                                     ))}
-                                                    <button className={style.cancelImage}>aa</button>
                                                 </div>
                                             )}
                                             <div id="fileInput" className={`${style.BlockRow} ${style.postFileInput}`}> 
@@ -424,7 +428,9 @@ export default function Detail() {
                                                 {post.imageUrls && post.imageUrls.length > 0 && (
                                                     <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                                                         {post.imageUrls.map((img, idx) => (
-                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} className={style.postImage} style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} 
+                                                                className={style.postImage} 
+                                                                style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
                                                         ))}
                                                     </div>
                                                 )}

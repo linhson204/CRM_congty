@@ -1,3 +1,4 @@
+
 /* Homepage */
   /* SEARCH BAR - STATISTIC */
   .filterContainer {
@@ -128,6 +129,173 @@
     }
 
 /* DANH SACH NHOM */
+  /* SEARCH BAR */
+  .filterBlock {
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 8px;
+    padding: 7px;
+    cursor: pointer;
+  }
+
+  .PopupConfirmFilter {
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 8px;
+    padding: 7px;
+    cursor: pointer;
+  }
+
+  /* INDEX NHOM */
+  .GroupListAttribute {
+    border-bottom: 1px solid rgba(145, 145, 145, 0.5);
+    padding: 10px 0px 10px 10px;
+    background-color: #4c5bd4;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .GroupListContent {
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+  }
+
+  .GroupListAttribute > :nth-child(n+2) {
+    border-left: 3px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .GroupListAttribute > div:first-child { width: 25% }
+  .GroupListAttribute > div:nth-child(2) { width: 16% }
+  .GroupListAttribute > div:nth-child(3) { width: 16% }
+  /* .GroupListAttribute > div:nth-child(4) { width: 25% } */
+  .GroupListAttribute > div:last-child { flex: 1 }
+
+  /* GR LIST */
+  .GroupListContainer {
+      overflow-y: scroll;
+      padding: 10px;
+      border: 1px solid rgb(214, 214, 214);
+  }
+
+  .GroupBlock > div:first-child { width: 25% }
+  .GroupBlock > div:nth-child(2) { width: 16% }
+  .GroupBlock > div:nth-child(3) { width: 16% }
+  .GroupBlock > div:last-child { flex: 1 }
+
+  .GroupBlock {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+  }
+
+  .grlistName {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .grState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .grMember {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* trang thai tham gia nhom */
+  .joinStateBlock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+    .buttonPost:hover,
+    .joinGrButton:hover,
+    .buttonOutGr:hover,
+    .filterBlock:hover {
+        text-decoration-line: underline;
+        cursor: pointer;
+    }
+
+    /* joined */
+    .joinedBlock {
+      display: flex;
+      justify-content: center;
+    }
+
+    .buttonPost { 
+      background-color: #4c5bd4;
+      border-radius: 10px;
+      padding: 9px 21px;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 19px;
+      cursor: pointer;
+    }
+
+    .buttonOutGr {
+      background-color: #fcfcfc;
+      border-radius: 10px;
+      padding: 9px 21px;
+      color: #ff0000;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 19px;
+      margin-left: 20px;
+      border: 2px solid red;
+      cursor: pointer;
+    }
+
+    /* notjoin */
+    .joinGrButton {
+        background-color: #4c5bd4;
+        border-radius: 10px;
+        padding: 9px 21px;
+        color: #ffffff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        line-height: 19px;
+        column-gap: 5px;
+        cursor: pointer;
+    }
+    /* queue */
+    .onQueue {
+        background-color: rgba(234, 234, 24, 0.685);
+        border-radius: 10px;
+        padding: 9px 21px;
+        color: rgb(0, 0, 0);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        line-height: 19px;
+        column-gap: 5px;
+        margin-left: auto;
+    }
+
+    /* error */
+    .errorJoin {
+        background-color: rgba(138, 138, 138, 0.685);
+        border-radius: 10px;
+        padding: 9px 21px;
+        color: rgb(255, 255, 255);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        line-height: 19px;
+    }
     /* DIALOG */
     .dialogContainer {
       position: fixed;
@@ -160,12 +328,12 @@
     }
 
     .dialog
-.user_name {
-    border-radius: 5px;
-    background-color: rgb(112, 156, 194);
-    color: white;
-    padding: 5px;
-}
+    .user_name {
+        border-radius: 5px;
+        background-color: rgb(112, 156, 194);
+        color: white;
+        padding: 5px;
+    }
 
 .ic {
     width: 25px;
@@ -220,40 +388,8 @@
     font-weight: 500;
 }
 
-.buttonBack {
-    background-color: #4c5bd4;
-    box-shadow: 0px 0px 10px rgb(0 0 0 10%);
-    border-radius: 10px;
-    padding: 9px 21px;
-    color: #ffffff;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    line-height: 19px;
-    column-gap: 5px;
-    margin-left: auto;
-}
-
-.onQueue {
-    background-color: rgba(234, 234, 24, 0.685);
-    border-radius: 10px;
-    padding: 9px 21px;
-    color: rgb(0, 0, 0);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    line-height: 19px;
-    column-gap: 5px;
-    margin-left: auto;
-}
-
 .actbut {
     margin-left: auto;
-}
-
-.actbut:hover,
-.buttonBack:hover,
-.buttonOutGr:hover{
-    text-decoration-line: underline;
-    cursor: pointer;
 }
 
 .user_text {
@@ -279,15 +415,6 @@
   margin-left: 16px;
 }
 
-.Block {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 10px;
-    width: 100%;
-    height: 170px;
-}
-
 .Blocktest {
     padding: 12px;
     border: 1px solid #ccc;
@@ -303,30 +430,10 @@
     margin-right: 10px;
 }
 
-.buttonOutGr {
-    background-color: #fcfcfc;
-    border-radius: 10px;
-    padding: 9px 21px;
-    color: #ff0000;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    line-height: 19px;
-    column-gap: 5px;
-    margin-left: 20px;
-    border: 2px solid red;
-}
-
 .nameDetail {
     font-size: 25px;
     text-align: center;
     margin-left: 20px;
-}
-
-.BlockDetail {
-    overflow-y: scroll;
-    padding: 10px;
-    border: 1px solid rgb(214, 214, 214);
-    border-radius: 10px;
 }
 
 /* CSS NHAN TIN */
@@ -698,7 +805,8 @@
   margin-bottom: 20px;
 }
 
-.PopupOutGrCancelButton {
+.PopupOutGrCancelButton,
+.PopupCancelFilter {
   margin-left: auto;
   margin-right: 30px;
   border-radius: 20px;
@@ -902,7 +1010,7 @@
   margin-bottom: 10px;
 }
 
-/* dang bai nhom */
+/* DANGBAINHOM */
 
 /* container + header */
 .postsContainer {
@@ -925,45 +1033,53 @@
   color: #333;
 }
 
-/* postinput */
-.postInputContainer {
-  display: flex;
-  margin-bottom: 12px;
-}
-  /* avatar - state - name */
-  .userAvatar {
-  width: 50px;
-  height: 50px;
-  color: #ddd;
-  margin-right: 12px;
-  flex-shrink: 0;
+  /* postinput */
+  .createPostContainer {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
 
-  .postGrName {
-    font-size: 20px;
-    font-weight: 400;
-  }
-
-  .postGrState {
-    padding: 2px;
-    border-radius: 10px;
-    background-color: rgb(0, 0, 0, 0.1);
-    width: fit-content;
-  }
-
-  .postGrState > p {
-    color: rgb(0, 0, 0, 0.5);
-    font-weight: bold;
-    padding: 4px 4px 2px 2px;
-  }
-
-  .postGrStateIc {
-    padding: 5px;
-    border-radius: 50%;
-    color: rgb(0, 0, 0, 0.2);
+  .postInputContainer {
     display: flex;
-    justify-content: flex-end;
+    margin-bottom: 12px;
   }
+    /* avatar - state - name */
+    .userAvatar {
+    width: 50px;
+    height: 50px;
+    color: #ddd;
+    margin-right: 12px;
+    flex-shrink: 0;
+    }
+
+    .postGrName {
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .postGrState {
+      padding: 2px;
+      border-radius: 10px;
+      background-color: rgb(0, 0, 0, 0.1);
+      width: fit-content;
+    }
+
+    .postGrState > p {
+      color: rgb(0, 0, 0, 0.5);
+      font-weight: bold;
+      padding: 4px 4px 2px 2px;
+    }
+
+    .postGrStateIc {
+      padding: 5px;
+      border-radius: 50%;
+      color: rgb(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: flex-end;
+    }
 
   /* textarea */
   .postInput {
@@ -1003,13 +1119,19 @@
   .postImagePreview {
     display: flex;
     padding: 10px;
+    margin-top: 10px;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
   }
   .cancelImage {
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: red;
     position: absolute;
+    cursor: pointer;
+    top: -10px;
+    right: -5px;
   }
   /* inputFileBar */
   .postFileInput {
@@ -1077,14 +1199,6 @@
 }
 
 
-.createPostContainer {
-  background-color: white;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
 .postItem {
   padding: 16px;
   border-bottom: 1px solid #ddd;
@@ -1121,10 +1235,10 @@
 }
 
 .postImage {
-  width: 100%;
   border-radius: 8px;
   margin-bottom: 12px;
-  max-height: 500px;
+  max-height: 100px;
+  max-width: 100px;
   object-fit: cover;
 }
 

@@ -6,7 +6,7 @@ import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle, FaUsers } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaUserCircle } from "react-icons/fa";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
@@ -41,18 +41,20 @@ export default function Detail() {
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
+    // router
     const router = useRouter();
-    const itemsPerPage = 4;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
+    const { id } = router.query;
     // Phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+    // Bộ lọc
+    const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
     const [search, setSearch] = useState('');
     const [filterPublic, setFilterPublic] = useState(false);
     const [filterPrivate, setFilterPrivate] = useState(false);
     const [filterJoined, setFilterJoined] = useState(false);
     const [filterNotJoin, setFilterNotJoin] = useState(false);
     const [Sent, setSent] = useState(false);
-    const { id } = router.query;
     // Lấy thông tin tài khoản
     const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
@@ -487,78 +489,79 @@ export default function Detail() {
                                             </div>
                                         </div>
                                 </QuestionPopup>
-                                <div className={`${style.BlockColumn} ${style.BlockDetail}`}>
-                                    {groupData?.data?.map(group => (
-                                        <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
-                                            <div id="TopRow" className={style.BlockRow}>
-                                                <h3 style={{fontSize: '18px'}}>{group.Name}</h3>
-                                                <h2 style={{marginLeft: 'auto'}}>
-                                                    {group.user_status === "Đã tham gia" ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
-                                                </h2>
+                                <div className={style.GroupListAttribute}>
+                                    <div className={style.GroupListContent}>Tên nhóm</div>
+                                    <div className={style.GroupListContent}>Trạng thái nhóm</div>
+                                    <div className={style.GroupListContent}>Số thành viên</div>
+                                    <div className={style.GroupListContent}>Tham gia</div>
+                                </div>
+                                <div className={`${style.BlockColumn} ${style.GroupListContainer}`}>
+                                    {filteredPage.map(group => (
+                                        <div key={group.id} className={`${style.GroupBlock} ${style.BlockRow}`}>
+                                            <div className={style.grlistName}>{group.GroupName}</div>
+                                            <div id="GrState" className={style.grState}>
+                                                {group.GroupState == "Public" ? (
+                                                    <MdPublic className={style.ic}></MdPublic>
+                                                ) : (
+                                                    <FaLock className={style.ic}></FaLock>
+                                                )}
                                             </div>
-                                            <div id="BottomRow" className={style.BlockRow} style={{marginTop: 'auto'}}>
-                                                <div id="GrState" className={style.BlockRow}>
-                                                    {group.GroupState == "Public" ? (
-                                                        <div style={{paddingTop: '3px'}}><MdPublic className={style.ic}></MdPublic></div>
-                                                    ) : (
-                                                        <div style={{paddingTop: '3px'}}><FaLock className={style.ic}></FaLock></div>
-                                                    )}
-                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>
-                                                        {group.Status === "Hoạt động" ? ('Công Khai') : ('Riêng Tư')}
-                                                    </h2>
+                                            {/* <h2 style={{marginLeft: 'auto'}}>
+                                                {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
+                                            </h2> */}
+                                            <div id="member" className={style.grMember}>
+                                                {/* <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div> */}
+                                                <p>{group.Member}</p>
+                                            </div>
+                                            {/* đã tham gia */}
+                                            <div className={`${style.joinStateBlock}`}>
+                                            {group.isJoin == 1 ? (
+                                                <div className={style.joinedBlock}>
+                                                    <button className={style.buttonPost} 
+                                                            onClick={() => {
+                                                                HandlePostGroup(group.GroupName)}}>Đăng bài</button>
+                                                    <button className={style.buttonOutGr}
+                                                            onClick={() => {
+                                                                SetGrOutSelected(group.id); 
+                                                                setShowPopup(true);}
+                                                            }>
+                                                            Rời nhóm
+                                                    </button> {/* onclick */}
                                                 </div>
-                                                <div id="member" style={{marginLeft: '20px'}} className={style.BlockRow}>
-                                                    <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div>
-                                                    <h2 style={{marginLeft: '10px', fontSize: '22px'}}>{group.Number_Of_Posts}</h2>
+                                            // chưa tham gia
+                                            ) : group.isJoin == 2 ? (
+                                                <div className={`${style.BlockRow} ${style.joinGrButton}`}
+                                                    onClick={() => {
+                                                        {if (group.GroupState === "Private") {
+                                                            setPrivateGrSelected(group.id);
+                                                            setShowPrivateGrQues(true);
+                                                            setpopupHeader([group.GroupName, group.GroupState, group.Member]);
+                                                        } else {UpdateGrState(group.id)}
+                                                        }}}>
+                                                    <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
+                                                    <p style={{paddingTop: '2px'}}>tham gia nhóm</p>
                                                 </div>
-                                                {/* đã tham gia */}
-                                                {group.user_status == "Đã tham gia" ? (
-                                                    <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
-                                                        <button className={style.buttonBack} 
-                                                                onClick={() => {
-                                                                    HandlePostGroup(group.Link)}}>Đăng bài</button>
-                                                        <button className={style.buttonOutGr}
-                                                                onClick={() => {
-                                                                    SetlinkGrSelected(group.Link);
-                                                                    setShowPopup(true);}
-                                                                }>
-                                                                Rời nhóm
-                                                        </button> {/* onclick */}
-                                                    </div>
-                                                // chưa tham gia
-                                                ) : group.isJoin == 2 ? (
-                                                    <div className={`${style.BlockRow} ${style.buttonBack}`}
-                                                        onClick={() => {
-                                                            {if (group.GroupState === "Private") {
-                                                                setPrivateGrSelected(group.id);
-                                                                setShowPrivateGrQues(true);
-                                                                setpopupHeader([group.GroupName, group.GroupState, group.Member]);
-                                                            } else {UpdateGrState(group.id)}
-                                                            }}}>
-                                                        <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
-                                                        <p style={{paddingTop: '2px'}}>tham gia nhóm</p>
-                                                    </div>
-                                                // hàng đợi
-                                                ) : group.isJoin == 3 ? (
-                                                    <div className={`${style.BlockRow}`} style={{marginLeft: 'auto'}}>
-                                                        {/* them list danh sách các nhóm trong queue thay phan compare */}
+                                            // hàng đợi
+                                            ) : group.isJoin == 3 ? (
+                                                <div className={`${style.BlockRow}`}>
+                                                    {/* them list danh sách các nhóm trong queue thay phan compare */}
+                                                    <div className={style.BlockRow}>
+                                                        <button className={style.buttonOutGr} 
+                                                                style={{marginRight: '10px'}}
+                                                                onClick={() => {setShowCancelQueuePopUp(true); SetGrOutSelected(group.id)}}>
+                                                                    Huỷ bỏ
+                                                        </button>
                                                         <div className={style.BlockRow}>
-                                                            <button className={style.buttonOutGr} 
-                                                                    style={{marginRight: '10px'}}
-                                                                    onClick={() => {setShowCancelQueuePopUp(true); SetGrOutSelected(group.id)}}>
-                                                                        Huỷ bỏ
-                                                            </button>
-                                                            <div className={style.BlockRow}>
-                                                                <div className={`${style.BlockRow} ${style.onQueue}`}>
-                                                                    <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
-                                                                    <p style={{paddingTop: '2px'}}>Đang chờ duyệt</p>
-                                                                </div>
+                                                            <div className={`${style.BlockRow} ${style.onQueue}`}>
+                                                                <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
+                                                                <p style={{paddingTop: '2px'}}>Đang chờ duyệt</p>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                ) : (
-                                                    <p>Đã hết hạn</p>
-                                                )}
+                                                </div>
+                                            ) : (
+                                                <p className={style.errorJoin}>Đã hết hạn</p>
+                                            )}
                                             </div>
                                         </div>
                                     ))}
