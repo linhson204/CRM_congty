@@ -12,6 +12,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { BiLike, BiShare } from "react-icons/bi";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaRegComment, FaUserCircle, FaUserTag } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import { GrAttachment } from "react-icons/gr";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
@@ -261,18 +262,32 @@ export default function Detail() {
                 
                 // Tạo URL blob thay vì base64
                 const objectUrl = URL.createObjectURL(file);
-                imageFiles.push(objectUrl);
 
-                // // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
-                // if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
-                //     imageFiles.push(objectUrl);
-                // }
+                // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
+                if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
+                    imageFiles.push(objectUrl);
+                }
             }
 
             setNewPostImages((prev) => [...prev, ...imageFiles]);
         }
     };
 
+    const [videoPreview, setVideoPreview] = useState<string | null>(null);
+    const [videoFile, setVideoFile] = useState<File | null>(null);
+
+    const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]; // lấy 1 file đầu tiên
+        if (file) {
+        setVideoFile(file);
+
+        // tạo preview
+        const objectUrl = URL.createObjectURL(file);
+        setVideoPreview(objectUrl);
+        }
+    };
+
+    console.log(videoFile)
     const hardReload = () => {
         showLoadingDialog();
         setTimeout(() => window.location.reload(), 1000);
@@ -382,10 +397,14 @@ export default function Detail() {
                                                     ))}
                                                 </div>
                                             )}
+                                            {videoPreview && (
+                                                <video src={videoPreview} controls width={400}></video>
+                                            )}
                                             <div id="fileInput" className={`${style.BlockRow} ${style.postFileInput}`}> 
                                                 <p>Thêm vào bài viết của bạn</p>
                                                 <div className={`${style.BlockRow} ${style.postInputIcContainer}`}> 
                                                     <IoImages style={{color: 'green'}} className={style.postInputIc} onClick={handleImageIconClick} />
+                                                    <input type="file" accept="video/*" onChange={handleVideoChange}/><GrAttachment style={{color: 'orange'}} className={style.postInputIc}/>
                                                     <FaUserTag style={{color: 'blue'}} className={style.postInputIc}></FaUserTag>
                                                     <FaLocationDot style={{color: 'red'}} className={style.postInputIc}></FaLocationDot>
                                                     <TfiFaceSmile style={{color: 'yellow'}} className={style.postInputIc}></TfiFaceSmile>

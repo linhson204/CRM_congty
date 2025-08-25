@@ -188,19 +188,22 @@
   .GroupListAttribute > div:first-child { width: 25% }
   .GroupListAttribute > div:nth-child(2) { width: 16% }
   .GroupListAttribute > div:nth-child(3) { width: 16% }
-  /* .GroupListAttribute > div:nth-child(4) { width: 25% } */
+  .GroupListAttribute > div:nth-child(4) { width: 16% }
   .GroupListAttribute > div:last-child { flex: 1 }
 
   /* GR LIST */
   .GroupListContainer {
       overflow-y: scroll;
-      padding: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 10px;
       border: 1px solid rgb(214, 214, 214);
   }
 
   .GroupBlock > div:first-child { width: 25% }
   .GroupBlock > div:nth-child(2) { width: 16% }
   .GroupBlock > div:nth-child(3) { width: 16% }
+  .GroupBlock > div:nth-child(4) { width: 16% }
   .GroupBlock > div:last-child { flex: 1 }
 
   .GroupBlock {
@@ -215,6 +218,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    word-break: break-all;
+    padding: 5px;
   }
 
   .grState {
@@ -228,6 +233,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .grCategory {
+    border: 2px dashed #6ed972;
   }
 
   /* trang thai tham gia nhom */

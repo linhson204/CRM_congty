@@ -510,6 +510,8 @@ export default function Detail() {
                                                 {/* <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div> */}
                                                 <p>{group.Member}</p>
                                             </div>
+                                            {/*  */}
+                                            <div className={style.grCategory}></div>
                                             {/* đã tham gia */}
                                             <div className={`${style.joinStateBlock}`}>
                                             {group.isJoin == 1 ? (
