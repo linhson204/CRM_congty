@@ -16,7 +16,6 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { TfiFaceSmile } from "react-icons/tfi";
-import data from '../../../../../public/data/account.json';
 import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
 import style from '../../styles.module.css';
 
@@ -91,7 +90,7 @@ export default function Detail() {
     fetchData();
     }, []);
 
-    console.log(groupData);
+    console.log(accountId, Grid);
     //  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
     //   const data = mapdata.map((item, index) => ({
     //     ...item,
@@ -102,16 +101,16 @@ export default function Detail() {
 
     //   console.log(data)
     // lay data cho page
-    useEffect(() => {
-        if (!accountId) return;
-        const timer = setTimeout(() => {
-            //test voi data mock, neu server kha nang user va group se tach rieng
-            const foundAccount = data.find(acc => acc.id === Number(accountId));
-            setAccount(foundAccount || null);
-            setGroups(foundAccount.groups.find(gr => gr.id === Number(Grid)))
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [Grid, accountId]);
+    // useEffect(() => {
+    //     if (!accountId) return;
+    //     const timer = setTimeout(() => {
+    //         //test voi data mock, neu server kha nang user va group se tach rieng
+    //         const foundAccount = data.find(acc => acc.id === Number(accountId));
+    //         setAccount(foundAccount || null);
+    //         setGroups(foundAccount.groups.find(gr => gr.id === Number(Grid)))
+    //     }, 100);
+    //     return () => clearTimeout(timer);
+    // }, [Grid, accountId]);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
@@ -223,7 +222,7 @@ export default function Detail() {
 
         // websocket.send(JSON.stringify(postData));
         // }
-        const params = `{"group_link": "groups/1569887551087354", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
+        const params = `{"group_link": "groups/${Grid}", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
         await createPostGroup(
         "post_to_group",
         "gianvu17607@gmail.com",

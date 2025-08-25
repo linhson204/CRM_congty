@@ -72,6 +72,7 @@ export default function Detail() {
     //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
     const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
+    const [LinkGrSelected, SetlinkGrSelected] = useState<string | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
     // console.log(groups)
 
@@ -194,7 +195,7 @@ export default function Detail() {
     const filteredGroups = useMemo(() => {
         return groups.filter(group => {
         // 1. Lọc theo tên (luôn áp dụng)
-        const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
+        const nameMatch = groupData.data.Name.toLowerCase().includes(search.toLowerCase());
         if (!nameMatch) return false;
 
         // 2. Lọc trạng thái (nếu có chọn)
@@ -242,8 +243,9 @@ export default function Detail() {
         //call API tra id user id nhom vao day
     }
 
-    const HandlePostGroup = (idgr: string) => {
-        router.push(`../${id}/dangbainhom/${idgr}`);
+    const HandlePostGroup = (linkgr: string) => {
+        linkgr = linkgr.replace("groups/", '');
+        router.push(`../${id}/dangbainhom/${linkgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
@@ -489,7 +491,7 @@ export default function Detail() {
                                     {groupData?.data?.map(group => (
                                         <div key={group.id} style={{height: '125px'}} className={`${style.Block} ${style.BlockColumn}`}>
                                             <div id="TopRow" className={style.BlockRow}>
-                                                <h3 style={{fontSize: '30px'}}>{group.Name}</h3>
+                                                <h3 style={{fontSize: '18px'}}>{group.Name}</h3>
                                                 <h2 style={{marginLeft: 'auto'}}>
                                                     {group.user_status === "Đã tham gia" ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
                                                 </h2>
@@ -514,10 +516,10 @@ export default function Detail() {
                                                     <div className={style.BlockRow} style={{marginLeft: 'auto'}}>
                                                         <button className={style.buttonBack} 
                                                                 onClick={() => {
-                                                                    HandlePostGroup(group.id)}}>Đăng bài</button>
+                                                                    HandlePostGroup(group.Link)}}>Đăng bài</button>
                                                         <button className={style.buttonOutGr}
                                                                 onClick={() => {
-                                                                    SetGrOutSelected(group.id); 
+                                                                    SetlinkGrSelected(group.Link);
                                                                     setShowPopup(true);}
                                                                 }>
                                                                 Rời nhóm
