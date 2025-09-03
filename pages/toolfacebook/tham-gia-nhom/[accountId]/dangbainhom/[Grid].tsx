@@ -18,7 +18,7 @@ import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
 import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
-import style from '../../styles.module.css';
+import style from './post.module.css';
 
 interface Group {
     id: number;

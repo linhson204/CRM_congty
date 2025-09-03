@@ -1,5 +1,5 @@
 import React from "react";
-import style from "../styles.module.css";
+import style from "./popup.module.css";
 
 interface FullscreenPopupProps {
     isOpen: boolean;

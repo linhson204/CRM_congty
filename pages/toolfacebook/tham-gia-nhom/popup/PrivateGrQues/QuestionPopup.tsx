@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import style from '../../styles.module.css';
+import style from "../popup.module.css";
 import QuestionRenderer from './QuesRenderer';
 import { Question } from './types'; // Định nghĩa interface Question nếu cần
 
