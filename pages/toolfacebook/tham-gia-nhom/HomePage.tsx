@@ -52,7 +52,7 @@ export default function DangBai() {
     ...item,
     Mess: 1,
     STT: index + 1,
-    Active: (index % 2 === 1) ? true : false,
+    Active: (index % 3 === 1) ? true : false,
   }))
 
   console.log(data)
@@ -182,7 +182,7 @@ export default function DangBai() {
                             setCurrentPage(1);
                         }} />
                       </div>
-                      <div className={style.filterContainer}> 
+                      <div className={style.filterContainerHP}> 
                         <div className={style.BlockRow} style={{marginLeft: '50px'}}>
                           <label className={style.filterLabel}>Lọc trạng thái:</label>
                           <select
@@ -250,8 +250,8 @@ export default function DangBai() {
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {router.push(`./[accountId]/123`)}, 300)
-                                            }}>
+                                            setTimeout(() => {router.push(`./${item.facebookId}/[id]test`)}, 300)
+                                          }}>
                                 </CiBoxList>
                               </div>
                             </div>
@@ -259,14 +259,27 @@ export default function DangBai() {
                       </div>
                     </div>
                   </div>
-                  <div id="PageIndexBar" className={`${style.BlockRow} ${style.indexBar}`}>
-                    <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                      <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                    </button>
-                    <span>Trang {currentPage} / {totalPages}</span>
-                    <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                      <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                    </button>
+                  <div className={`${style.BlockRow} ${style.bottomBarList}`}>
+                    <div id="RecordCountBar" className={`${style.BlockRow} ${style.recordCountBar}`}>
+                        <p>Hiển thị</p>
+                        <select name="" id="" style={{marginLeft: '10px', marginRight: '10px'}}>
+                          <option value="1">10</option>
+                          <option value="2">20</option>
+                          <option value="3">30</option>
+                          <option value="4">40</option>
+                          <option value="5">50</option>
+                        </select>
+                        <p>bản ghi trên một trang</p>
+                    </div>
+                    <div id="PageIndexBar" className={`${style.BlockRow} ${style.indexBar}`}>
+                      <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
+                        <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
+                      </button>
+                      <span>Trang {currentPage} / {totalPages}</span>
+                      <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
+                        <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

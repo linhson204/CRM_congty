@@ -47,10 +47,11 @@ export default function Detail() {
     const [currentPage, setCurrentPage] = useState(1);
     const [accountFind, setAccountFind] = useState<Account | null>(null);
     const [showFilter, setshowFilterPopup] = useState(false);
+    const [selectedGrOut, setSelectedGrOut] = useState<string>('');
     // Phân trang
     const [search, setSearch] = useState('');
     const [Sent, setSent] = useState(false);
-    const { id } = router.query;
+    const { accountId } = router.query;
     // Lấy thông tin tài khoản
     const [account, setAccount] = useState<Account[] | null>(data); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
@@ -71,7 +72,6 @@ export default function Detail() {
     const [showPopup, setShowPopup] = useState(false);
     const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
-
 
     const [grStateTemp, setGrStateTemp] = useState('all');
     const [joinTemp, setJoinTemp] = useState('all');
@@ -118,7 +118,7 @@ export default function Detail() {
         setGroups(foundAccount.groups);
         }, 100);
         return () => clearTimeout(timer);
-    }, [id]);
+    }, [accountId]);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
@@ -220,7 +220,7 @@ export default function Detail() {
     }
 
     const HandlePostGroup = (idgr: string) => {
-        router.push(`../10/dangbainhom/${idgr}`);
+        router.push(`../${accountId}/dangbainhom/${idgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
@@ -233,7 +233,7 @@ export default function Detail() {
     const UpdateGrState = (idGr: number) => {
         // Gọi API gửi request đến tool tham gia nhóm
         // API cập nhật trường isJoin
-        console.log(id, idGr);
+        console.log(accountId, idGr);
         hardReload();
     }
 
@@ -372,7 +372,7 @@ export default function Detail() {
                                 <OutGrFs isOpen={showPopup} onClose={() => setShowPopup(false)}>
                                     <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
                                     <h2 className={style.PopupOutGrHeader}> 
-                                        Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                        Bạn chắc chắn muốn rời nhóm <strong>{selectedGrOut}</strong> không?
                                     </h2>
                                     <p className={style.PopupOutGrContent}>
                                         Hành động này sẽ không thể hoàn tác.
@@ -440,7 +440,7 @@ export default function Detail() {
                                 <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
                                     <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
                                     <h2 className={style.PopupOutGrHeader}> 
-                                        Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                        Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{selectedGrOut}</strong> không?
                                     </h2>
                                     <p className={style.PopupOutGrContent}>
                                         Bạn sẽ phải trả lời lại câu hỏi nếu đây là nhóm kín
@@ -468,7 +468,7 @@ export default function Detail() {
                                         setTimeout(() => UpdateGrState(privateGrSelected), 300);
                                         // validateRequiredFields(approvalQuestions, answers);
                                         if (privateGrSelected) {
-                                        console.log(id, privateGrSelected, answers);
+                                        console.log(accountId, privateGrSelected, answers);
                                         }
                                     }}>
                                         <div className={`${style.BlockColumn} ${style.PopupQuesHeader}`}>
@@ -521,7 +521,7 @@ export default function Detail() {
                                                                 HandlePostGroup(group.GroupName)}}>Đăng bài</button>
                                                     <button className={style.buttonOutGr}
                                                             onClick={() => {
-                                                                SetGrOutSelected(group.id); 
+                                                                setSelectedGrOut(group.GroupName); 
                                                                 setShowPopup(true);}
                                                             }>
                                                             Rời nhóm
@@ -547,7 +547,7 @@ export default function Detail() {
                                                     <div className={style.BlockRow}>
                                                         <button className={style.buttonOutGr} 
                                                                 style={{marginRight: '10px'}}
-                                                                onClick={() => {setShowCancelQueuePopUp(true); SetGrOutSelected(group.id)}}>
+                                                                onClick={() => {setShowCancelQueuePopUp(true); setSelectedGrOut(group.GroupName)}}>
                                                                     Huỷ bỏ
                                                         </button>
                                                         <div className={style.BlockRow}>

@@ -10,9 +10,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
 import { BiLike, BiShare } from "react-icons/bi";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaRegComment, FaUserCircle, FaUserTag } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import { GrAttachment } from "react-icons/gr";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
@@ -112,7 +111,7 @@ export default function Detail() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
-        setCurrentPath(`/toolfacebook/tham-gia-nhom/[accountId]/${accountId}`);
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/[id]test`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -377,6 +376,13 @@ export default function Detail() {
                                                 value={newPostContent}
                                                 onChange={(e) => setNewPostContent(e.target.value)}
                                             />
+                                            <input 
+                                                type="file" 
+                                                accept="video/*" 
+                                                multiple
+                                                style={{ display: 'none' }}
+                                                ref={fileInputRef}
+                                                onChange={handleVideoChange}/>
                                             <input
                                                 type="file"
                                                 accept="image/*"
@@ -404,7 +410,7 @@ export default function Detail() {
                                                 <p>Thêm vào bài viết của bạn</p>
                                                 <div className={`${style.BlockRow} ${style.postInputIcContainer}`}> 
                                                     <IoImages style={{color: 'green'}} className={style.postInputIc} onClick={handleImageIconClick} />
-                                                    <input type="file" accept="video/*" onChange={handleVideoChange}/><GrAttachment style={{color: 'orange'}} className={style.postInputIc}/>
+                                                    <FaVideo style={{color: 'orange'}} className={style.postInputIc} onClick={handleImageIconClick}/>
                                                     <FaUserTag style={{color: 'blue'}} className={style.postInputIc}></FaUserTag>
                                                     <FaLocationDot style={{color: 'red'}} className={style.postInputIc}></FaLocationDot>
                                                     <TfiFaceSmile style={{color: 'yellow'}} className={style.postInputIc}></TfiFaceSmile>
@@ -469,7 +475,7 @@ export default function Detail() {
                                                         <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
                                                         Bình luận
                                                     </button>
-                                                    <button className={style.postActionButton}>
+                                                    <button className={style.postActionButton} style={{display: 'none'}}>
                                                         <BiShare style={{marginRight: '5px'}}></BiShare>
                                                         Chia sẻ
                                                     </button>

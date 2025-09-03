@@ -60,7 +60,8 @@
   .UserListContainer * {
     font-family: Arial, Helvetica, sans-serif;
   }
-    /* THANH INDEX */
+
+    /* DS TAI KHOAN */
     .UserListAttribute {
       font-size: 18px;
       border-bottom: 1px solid rgba(145, 145, 145, 0.5);
@@ -122,6 +123,17 @@
       cursor: pointer;
     }
 
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: red;
+      position: absolute;
+      margin-top: -28px;
+      margin-left: 16px;
+    }
+
+    /* BOTTOMBAR */
     /* THANH PHAN TRANG */
     .indexBar {
       margin-left: auto;
@@ -131,6 +143,16 @@
 
     .indexBar > span {
       padding-top: 2px;
+    }
+
+    /* HIEN THI BAN GHI */
+    .bottomBarList {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      padding-right: 10px;
+      border-top: 1px solid #eee;
     }
 
 /* DANH SACH NHOM */
@@ -426,16 +448,6 @@
     margin-left: auto;
     border: 1px solid #828282;
     border-radius: 10px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: red;
-  position: absolute;
-  margin-top: -28px;
-  margin-left: 16px;
 }
 
 .Blocktest {
