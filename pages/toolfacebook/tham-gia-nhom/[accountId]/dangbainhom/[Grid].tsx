@@ -2,8 +2,10 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import { uploadImage } from "@/pages/api/toolFacebook/dang-bai/upload";
-import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
+import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
+import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom";
+import uploadAnh from '@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh';
+// import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -16,7 +18,6 @@ import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
-import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
 import CommentPostPopup from "../../popup/CommentPost";
 import style from './post.module.css';
 
@@ -75,43 +76,31 @@ export default function Detail() {
     const [test, setTest] = useState<any>([]);
     const [newPostContent, setNewPostContent] = useState('');
     const [newPostImages, setNewPostImages] = useState<any[]>([]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const videoInputRef = useRef<HTMLInputElement>(null);
     const ui = "gianvu17607@gmail.com";
+    const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
+    const [videoFiles, setVideoFiles] = useState<File[]>([]);
 
-    // const websocket = useWebSocket();
+    const websocket = useWebSocket();
     const [groupData, setGroupData] = useState<any[]>([]);
-
+    const [Sendposts, setSendPosts] = useState<Post[]>([]);
+    const [uploadImg, setUploadImg] = useState<any[]>([]);
     // popup comment
     const [showComment, setShowComment] = useState(false);
 
-    useEffect(() => {
-    async function fetchData() {
-        const res = await getGroupData("", "15", "", "123");
-        setGroupData(res); // lưu vào state
+    let crmID = Cookies.get("userID");
+    if (!crmID) {
+        console.warn('CRM userID cookie is missing!');
+        crmID = "defaultID"; // fallback value, replace with your logic
     }
-    fetchData();
-    }, []);
-
-    //  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
-    //   const data = mapdata.map((item, index) => ({
-    //     ...item,
-    //     Active: true,
-    //     Mess: 1,
-    //     STT: index + 1,
-    //   }))
-
-    //   console.log(data)
-    // lay data cho page
     // useEffect(() => {
-    //     if (!accountId) return;
-    //     const timer = setTimeout(() => {
-    //         //test voi data mock, neu server kha nang user va group se tach rieng
-    //         const foundAccount = data.find(acc => acc.id === Number(accountId));
-    //         setAccount(foundAccount || null);
-    //         setGroups(foundAccount.groups.find(gr => gr.id === Number(Grid)))
-    //     }, 100);
-    //     return () => clearTimeout(timer);
-    // }, [Grid, accountId]);
+    // async function fetchData() {
+    //     const res = await getGroupData("", "15", "", "123");
+    //     setGroupData(res); // lưu vào state
+    // }
+    // fetchData();
+    // }, []);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
@@ -134,25 +123,6 @@ export default function Detail() {
             setUname('Loading...');
         }
     }, [account]);
-
-    // const filteredGroups = useMemo(() => {
-    //     return groups.filter(group => {
-    //         const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
-    //         if (!nameMatch) return false;
-
-    //         const statusMatch = 
-    //             (!filterPublic && !filterPrivate) ||
-    //             (filterPublic && group.GroupState === 'Public') || 
-    //             (filterPrivate && group.GroupState === 'Private');
-
-    //         const joinMatch = 
-    //             (!filterJoined && !filterNotJoin) ||
-    //             (filterJoined && group.isJoin === 1) ||
-    //             (filterNotJoin && group.isJoin === 2);
-            
-    //         return nameMatch && statusMatch && joinMatch;
-    //     });
-    // }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
 
     // phan trang
     const totalPages = Math.ceil(posts?.length / itemsPerPage);
@@ -183,27 +153,6 @@ export default function Detail() {
     }, [test]); // ✅ Chạy khi test thay đổi
 
     const handleViewPosts = () => {
-        // Mock data cho bài đăng
-        // setPosts([
-        //     {
-        //         id: 1,
-        //         userName: 'Nguyễn Văn A',
-        //         time: '2 giờ trước',
-        //         content: 'Đây là bài đăng mẫu trong nhóm.',
-        //         likes: 10,
-        //         comments: 2,
-        //         shares: 1
-        //     },
-        //     {
-        //         id: 2,
-        //         userName: 'Trần Thị B',
-        //         time: '5 giờ trước',
-        //         content: 'Chào mừng mọi người đến với nhóm!',
-        //         likes: 25,
-        //         comments: 5,
-        //         shares: 3
-        //     }
-        // ]);
     };
 
     const handlePostSubmit = async () => {
@@ -221,92 +170,83 @@ export default function Detail() {
             shares: 0
         };
 
-        setPosts([newPost, ...posts]);
+        // api upload anh
+        const testUpload = await uploadAnh(uploadImg);
+        const fileMap = testUpload.map(img => img.savedName)
+
+        // send
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            const params = {"group_link": `groups/${Grid}`, "content": `${newPostContent}`, "files": fileMap};
+            const postData = {
+                type: "post_to_group",
+                user_id: "gianvu17607@gmail.com",
+                postId: newPost.id.toString(),
+                crm_id: crmID,
+                params: params,
+                to: "B22623688",
+                attachments: testUpload.map(img => img.savedName), // Đưa images vào attachments thay vì images
+            };
+            websocket.send(JSON.stringify(postData));
+        }
+
+        const params = {"group_link": `groups/${Grid}`, "content": `${newPostContent}`, "files": fileMap};
+        await createPostGroup(
+            "post_to_group",
+            "gianvu17607@gmail.com",
+            params,
+            crmID
+        );
+
+        // reset
         setNewPostContent('');
         setNewPostImages([]);
-        const crmID = Cookies.get("userID");
-
-        const image = uploadImage(newPostImages);
-        console.log(image, crmID, newPostImages);
-        // if (websocket && websocket.readyState === WebSocket.OPEN) {
-        // const postData = {
-        //     type: "post_to_group",
-        //     postId: newPost.id.toString(),
-        //     content: newPostContent,
-        //     //   authorName: userName,
-        //     //   authorId: userID,
-        //     to: "B22623688",
-        //     attachments: [], // Đưa images vào attachments thay vì images
-        // };
-
-        // websocket.send(JSON.stringify(postData));
-        // }
-        const params = `{"group_link": "groups/${Grid}", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
-        await createPostGroup(
-        "post_to_group",
-        "gianvu17607@gmail.com",
-        params,
-        crmID
-        );
+        setVideoPreviews([]);
+        setUploadImg([]);
+        if (imageInputRef.current) imageInputRef.current.value = '';
+        if (videoInputRef.current) videoInputRef.current.value = '';
     };
 
     const handleImageIconClick = () => {
-        fileInputRef.current?.click();
+        imageInputRef.current?.click();
     };
 
-    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const files = e.target.files;
-    //     if (files && files.length > 0) {
-    //         const readers: Promise<string>[] = [];
-    //         for (let i = 0; i < files.length; i++) {
-    //             const file = files[i];
-    //             readers.push(new Promise((resolve) => {
-    //                 const reader = new FileReader();
-    //                 reader.onloadend = () => {
-    //                     resolve(reader.result as string);
-    //                 };
-    //                 reader.readAsDataURL(file);
-    //             }));
-    //         }
-    //         Promise.all(readers).then((images) => {
-    //             setNewPostImages(images);
-    //         });
-    //     }
-    // };
+    const handleVideoIconClick = () => {
+        videoInputRef.current?.click();
+    };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files);
+        setUploadImg((prev) => {
+            const updated = [...prev, ...files];
+            // Also update preview images here
             const imageFiles: string[] = [];
-
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                
-                // Tạo URL blob thay vì base64
                 const objectUrl = URL.createObjectURL(file);
-
-                // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
                 if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
                     imageFiles.push(objectUrl);
                 }
             }
-
-            setNewPostImages((prev) => [...prev, ...imageFiles]);
-        }
+            setNewPostImages((prevImgs) => [...prevImgs, ...imageFiles]);
+            return updated;
+        });
     };
 
     const [videoPreview, setVideoPreview] = useState<string | null>(null);
-    const [videoFile, setVideoFile] = useState<File | null>(null);
 
     const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]; // lấy 1 file đầu tiên
-        if (file) {
-        setVideoFile(file);
-
-        // tạo preview
-        const objectUrl = URL.createObjectURL(file);
-        setVideoPreview(objectUrl);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        const previews: string[] = [];
+        const fileArr: File[] = [];
+        for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        fileArr.push(file);
+        previews.push(URL.createObjectURL(file));
         }
+        setVideoFiles(fileArr);
+        setVideoPreviews(previews);
+    }
     };
 
     const hardReload = () => {
@@ -374,79 +314,6 @@ export default function Detail() {
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
                             <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                {/* <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}>
-                                    <div id="commentContainer">
-                                        <div id="headBar" className={`${style.headBarComment} ${style.BlockRow}`}>
-                                            <p>Bài viết của bạn</p>
-                                            <button
-                                                id="closeButton"
-                                                className={style.closeButtonComment}
-                                                onClick={() => {setShowComment(false)}}
-                                            >
-                                            </button>
-                                        </div>
-                                        <div id="body" className={style.commentBoxBody}>
-                                            <div id="Name-..." className={style.BlockRow}>
-                                                <div id="user" className={`${style.BlockRow} ${style.userCommentBox}`}>
-                                                    <div id="avatar" className={style.userAvatarCommentBox}></div>
-                                                    <div>
-                                                        <p>Username</p>
-                                                        <div className={`${style.userCommentBoxTime} ${style.BlockRow}`}>
-                                                            <p>3 giờ trước</p>
-                                                            <div><MdPublic></MdPublic></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <BsThreeDots size={24}></BsThreeDots>
-                                            </div>
-                                            <div id="content">
-                                            </div>
-                                            <div id="reactBar" className={style.postStats}>
-                                                <div style={{position: 'relative'}} className={style.BlockRow}>
-                                                    <div id="like" className={style.likeIcon}></div>
-                                                    <div id="like" className={style.favorIcon}></div>
-                                                    <span>10</span>
-                                                </div>
-                                                <div className={style.BlockRow}>
-                                                    <p>11</p>
-                                                    <FaComment size={18}></FaComment>
-                                                </div>
-                                                <div className={style.BlockRow} style={{marginLeft: '10px'}}>
-                                                    <p>100</p>
-                                                    <IoIosShareAlt size={18}></IoIosShareAlt>
-                                                </div>
-                                            </div>
-                                            <div className={style.postActions}>
-                                                <button className={style.postActionButton}>
-                                                    <BiLike style={{marginRight: '5px'}}></BiLike>
-                                                    Thích
-                                                </button>
-                                                <button className={style.postActionButton} onClick={() => setShowComment(true)}>
-                                                    <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
-                                                    Bình luận
-                                                </button>
-                                                <button className={style.postActionButton} style={{display: 'none'}}>
-                                                    <BiShare style={{marginRight: '5px'}}></BiShare>
-                                                    Chia sẻ
-                                                </button>
-                                            </div>
-                                            <div id="comment">
-                                                <div>
-                                                    <div id="avatar"></div>
-                                                    <div id="content"></div>
-                                                    <div id="time-react"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="commentInput">
-                                            <div id="avatar"></div>
-                                            <div>
-                                                <input placeholder="Viết bình luận.." type="text"/>
-                                                <div id="icon"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CommentPostPopup> */}
                                 <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}></CommentPostPopup>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
@@ -472,19 +339,27 @@ export default function Detail() {
                                                 value={newPostContent}
                                                 onChange={(e) => setNewPostContent(e.target.value)}
                                             />
-                                            <input 
-                                                type="file" 
-                                                accept="video/*" 
+                                            <input
+                                                type="file"
+                                                accept="video/*"
                                                 multiple
                                                 style={{ display: 'none' }}
-                                                ref={fileInputRef}
-                                                onChange={handleVideoChange}/>
+                                                ref={videoInputRef}
+                                                onChange={handleVideoChange}
+                                            />
+                                            {videoPreviews.length > 0 && (
+                                            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                {videoPreviews.map((vid, idx) => (
+                                                <video key={idx} src={vid} controls width={400} style={{borderRadius: '8px'}} />
+                                                ))}
+                                            </div>
+                                            )}
                                             <input
                                                 type="file"
                                                 accept="image/*"
                                                 multiple
                                                 style={{ display: 'none' }}
-                                                ref={fileInputRef}
+                                                ref={imageInputRef}
                                                 onChange={handleImageChange}
                                             />
                                             {newPostImages.length > 0 && (
@@ -506,7 +381,7 @@ export default function Detail() {
                                                 <p>Thêm vào bài viết của bạn</p>
                                                 <div className={`${style.BlockRow} ${style.postInputIcContainer}`}> 
                                                     <IoImages style={{color: 'green'}} className={style.postInputIc} onClick={handleImageIconClick} />
-                                                    <FaVideo style={{color: 'orange'}} className={style.postInputIc} onClick={handleImageIconClick}/>
+                                                    <FaVideo style={{color: 'orange'}} className={style.postInputIc} onClick={handleVideoIconClick}/>
                                                     <FaUserTag style={{color: 'blue'}} className={style.postInputIc}></FaUserTag>
                                                     <FaLocationDot style={{color: 'red'}} className={style.postInputIc}></FaLocationDot>
                                                     <TfiFaceSmile style={{color: 'yellow'}} className={style.postInputIc}></TfiFaceSmile>

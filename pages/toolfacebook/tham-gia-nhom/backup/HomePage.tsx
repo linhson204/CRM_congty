@@ -250,7 +250,7 @@ export default function DangBai() {
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {router.push(`./${item.facebookId}/[id]test`)}, 300)
+                                            setTimeout(() => {router.push(`./${item.username}/[id]test`)}, 300)
                                           }}>
                                 </CiBoxList>
                               </div>

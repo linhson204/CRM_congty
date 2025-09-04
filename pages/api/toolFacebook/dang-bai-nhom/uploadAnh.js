@@ -1,25 +1,29 @@
 import axios from "axios";
 
 // const URL_API = "https://socket.hungha365.com:4000/api";
-// const URL_API = "http://192.168.0.123:5000";
-const URL_API = "https://socket.hungha365.com:4000/api/apiThanh";
-
-const axios = require('axios');
+const URL_API = "http://192.168.0.116:4000/api";
+// const URL_API = "https://socket.hungha365.com:4000/api";
 const FormData = require('form-data');
-const fs = require('fs');
+// const fs = require('fs');
 
-export const uploadFile = async (user_id, images) => {
-    const form = new FormData();
-    form.append('file', fs.createReadStream(images)); // đường dẫn tới file local
-    if (user_id) formData.append("user_id", user_id);
+export const uploadAnh = async (imageFiles) => {
+    const formData = new FormData();
+    imageFiles.forEach((file) => {
+        formData.append("media", file); // 'image' là key
+    });
+
     try {
-        const res = await axios.post(`${URL_API}/upload_file`, form, {
-        headers: form.getHeaders()
-        });
-        console.log(res.data);
-    } catch (err) {
-        console.error(err);
-    }
-}
+        const response = await axios.post(`${URL_API}/media`, formData);
 
-export default uploadFile;
+        if (response.status !== 200) {
+        throw new Error(response.statusText || "Upload failed");
+        }
+
+        return response.data;
+    } catch (err) {
+        console.error("API Error (uploadImage):", err.message);
+        throw err;
+    }
+    };
+
+export default uploadAnh;
