@@ -45,17 +45,10 @@ export default function DangBai() {
   const itemsPerPage = 10;
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
   const crmID = Cookies.get("userID");
+  const ui = "gianvu17607@gmail.com";
 
   //get tk crm dang quan li
-  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
-  const data = mapdata.map((item, index) => ({
-    ...item,
-    Mess: 1,
-    STT: index + 1,
-    Active: (index % 3 === 1) ? true : false,
-  }))
-
-  console.log(data)
+  const data = getFacebookAccountsByUserID("22773024"); // Example call to get accounts
   // Lay data
   const [users, setUsers] = useState<Users[]>([]);
 
@@ -101,11 +94,11 @@ export default function DangBai() {
   // });
 
   //Search tai khoan theo ten
-  const filteredUser = data.filter((user) => {
+  const filteredUser = users.filter((user) => {
     const activeMatch = activeFilter === null || user.Active === activeFilter;
 
     const nameMatch = search.trim() === '' || 
-    user.userNameFb.replace(/\s+/g, '').toLowerCase()
+    user.name.replace(/\s+/g, '').toLowerCase()
     .includes(search.replace(/\s+/g, '').toLowerCase());
   
     return activeMatch && nameMatch;
@@ -168,33 +161,29 @@ export default function DangBai() {
                 <div className={styles.main__body}>
                   <div className={style.headerList}>
                     <h2>Danh Sách Tài Khoản ToolFB đang sử dụng</h2>
-                    <span>Tổng số tài khoản: {data.length}</span>
+                    <span>Tổng số tài khoản: {users.length}</span>
                   </div>
                   {/* list tk */}
                   <div style={{overflowY: 'scroll'}} className={style.BlockColumn}>
-                    <div className={style.BlockRow} style={{marginBottom: '15px'}}>
-                      <div id="searchContainer" className={`${style.BlockRow} ${style.searchContainer}`}>
-                        <FaSearch className={style.searchIcon} />
-                        <input type="text" placeholder='Tìm kiếm tên tài khoản' className={style.searchInput}
-                          value={search}
-                          onChange={(e) => {
-                            setSearch(e.target.value);
-                            setCurrentPage(1);
-                        }} />
-                      </div>
-                      <div className={style.filterContainerHP}>
-                        <div className={style.BlockRow} style={{marginLeft: '50px', width: '300px'}}>
-                          <label className={style.filterLabel}>Lọc trạng thái:</label>
-                          <select
-                            className={style.filterSelect}
+                    <div className={style.BlockRow}>
+                      <p style={{padding: '5px'}}>Số tài khoản tìm được: {filteredUser.length}/{users.length}</p>
+                      <div style={{display: 'flex', gap: '10px', marginBottom: '16px', alignItems: 'center'}}> 
+                        <div className={style.BlockRow} style={{marginLeft: '50px'}}>
+                          <label style={{ fontWeight: '500', marginBottom: '0px', marginRight: '10px', paddingTop: '4px' }}>Lọc trạng thái:</label>
+                          <select 
                             value={activeFilter === null ? 'all' : activeFilter.toString()}
                             onChange={(e) => {
                               const value = e.target.value;
                               setActiveFilter(
-                                value === 'all' ? null :
+                                value === 'all' ? null : 
                                 value === 'true' ? true : false
                               );
                               setCurrentPage(1);
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '4px',
+                              border: '1px solid #ddd'
                             }}
                           >
                             <option value="all">Tất cả</option>
@@ -203,31 +192,37 @@ export default function DangBai() {
                           </select>
                         </div>
                       </div>
-                      <p style={{padding: '5px', marginLeft: "auto"}}>
-                        Số tài khoản tìm được: {filteredUser.length}/{data.length}
-                      </p>
+                      <div id="searchContainer" style={{marginLeft: 'auto'}} className={`${style.BlockRow} ${style.searchContainer}`}>
+                        <FaSearch className={style.searchIcon} />
+                        <input type="text" placeholder='Tìm kiếm tên tài khoản' className={style.searchInput}
+                          value={search}
+                          onChange={(e) => {
+                            setSearch(e.target.value);
+                            setCurrentPage(1);
+                        }} />
+                      </div>
                     </div>
                     {/* goi list danh sach tai khoan */}
                     <div className={style.UserListContainer}>
                       <div className={`${style.UserListAttribute} ${style.BlockRow}`}>
                         <div className={style.AttributeContent}>STT</div>
                         <div className={style.AttributeContent}>Tên tài khoản</div>
-                        <div className={style.AttributeContent}>Email/Số điện thoại</div>
-                        <div className={style.AttributeContent}>Mật khẩu</div>
+                        <div className={style.AttributeContent}>Email</div>
+                        <div className={style.AttributeContent}>Điện thoại</div>
                         <div className={style.AttributeContent}>Trạng thái</div>
                         <div className={style.AttributeContent}>Hành động</div>
                       </div>
                       <div className={`${style.UserListContent} ${style.BlockColumn}`}>
                         {filteredPage.map(item => (
-                          <div className={`${style.UserListBlock} ${style.BlockRow}`}>
+                          <div key={item.id} className={`${style.UserListBlock} ${style.BlockRow}`}>
                             {/* Row */}
-                              <div style={{paddingLeft: "10px"}}>{item.STT}</div>
+                              <div>123</div>
                             {/* Name */}
-                                <div id="User_Name" className={`${style.UserListName}`}>{item.userNameFb}</div>
+                                <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
                             {/* Email */}
-                                <div id="Email">{item.username}</div>
+                                <div id="Email">{item.friend}</div>
                             {/* Phone */}
-                                <div id="Phone">{item.password}</div>
+                                <div id="Phone">{item.Post}</div>
                             {/* State */}
                               <div className={style.UserListBlockState}>
                                 {item.Active ? (
@@ -241,7 +236,7 @@ export default function DangBai() {
                                 )}
                               </div>
                             {/* Edit */}
-                              <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`}>
+                              <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`} style={{gap: '20px'}}>
                                 <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
                                   <FiMessageCircle className={style.ic}/>
                                   {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
@@ -250,8 +245,8 @@ export default function DangBai() {
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {router.push(`./${item.facebookId}/[id]test`)}, 300)
-                                          }}>
+                                            setTimeout(() => {router.push(`./account/${item.id}`)}, 300)
+                                            }}>
                                 </CiBoxList>
                               </div>
                             </div>
@@ -259,27 +254,14 @@ export default function DangBai() {
                       </div>
                     </div>
                   </div>
-                  <div className={`${style.BlockRow} ${style.bottomBarList}`}>
-                    <div id="RecordCountBar" className={`${style.BlockRow} ${style.recordCountBar}`}>
-                        <p>Hiển thị</p>
-                        <select name="" id="" style={{marginLeft: '10px', marginRight: '10px'}}>
-                          <option value="1">10</option>
-                          <option value="2">20</option>
-                          <option value="3">30</option>
-                          <option value="4">40</option>
-                          <option value="5">50</option>
-                        </select>
-                        <p>bản ghi trên một trang</p>
-                    </div>
-                    <div id="PageIndexBar" className={`${style.BlockRow} ${style.indexBar}`}>
-                      <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                        <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                      </button>
-                      <span>Trang {currentPage} / {totalPages}</span>
-                      <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                        <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                      </button>
-                    </div>
+                  <div id="PageIndexBar" className={style.BlockRow} style={{marginLeft: 'auto', marginRight: '20px', marginTop: '10px'}}>
+                    <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
+                      <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
+                    </button>
+                    <span>Trang {currentPage} / {totalPages}</span>
+                    <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
+                      <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
+                    </button>
                   </div>
                 </div>
               </div>

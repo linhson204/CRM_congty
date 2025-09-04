@@ -5,9 +5,12 @@ import styles from "@/components/crm/potential/potential.module.css";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaPaperPlane, FaSearch } from 'react-icons/fa';
+import { AiFillPicture } from "react-icons/ai";
+import { BsFillPlusCircleFill, BsThreeDotsVertical } from "react-icons/bs";
+import { FaPaperPlane, FaSearch, FaSmile } from 'react-icons/fa';
 import { FaComments } from 'react-icons/fa6';
+import { IoVideocam } from "react-icons/io5";
+import { MdPhone } from "react-icons/md";
 import style from './styles.module.css';
 
 // fetch data prepare
@@ -40,16 +43,18 @@ export default function MessagingPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [convers, setConvers] = useState<Conversations[]>([]);
   const [mess, setMess] = useState <messages[]>([]);
+  const [search, setSearch] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = () => { //gui tin nhan -> them phan tra data cho tool de gui lai (api?)
     if (currentMessage.trim() === "") return;
     
     const newMessage: messages = {
       id: mess.length + 1,
-      sender: "You",
+      sender: "Tôi",
       content: currentMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      isMe: true
+      isMe: true,
     };
     
     setMess([...mess, newMessage]);
@@ -62,11 +67,18 @@ export default function MessagingPage() {
         sender: convers.find(u => u.id === activeUser)?.sender || "User",
         content: `Đây là phản hồi tự động cho: "${currentMessage}"`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isMe: false
+        isMe: false,
       };
       setMess(prev => [...prev, replyMessage]);
     }, 1000);
   };
+
+  const filteredUser = convers.filter((conver) => {
+    const nameMatch = search.trim() === '' || 
+    conver.sender.replace(/\s+/g, '').toLowerCase()
+    .includes(search.replace(/\s+/g, '').toLowerCase());
+    return nameMatch;
+  });
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -75,8 +87,10 @@ export default function MessagingPage() {
     }
   };
 
-  // const [users, setUsers] = useState<User[]>([]);
-  //massage.json
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  }
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -128,8 +142,8 @@ export default function MessagingPage() {
 
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Nhắn tin");
-    setShowBackButton(false);
-    setCurrentPath("/toolfacebook/nhan-tin");
+    setShowBackButton(true);
+    setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
   useEffect(() => {
@@ -139,8 +153,6 @@ export default function MessagingPage() {
       mainRef.current?.classList.remove("content_resize");
     }
   }, [isOpen]);
-
-  console.log(convers)
 
   return (
     <>
@@ -154,7 +166,7 @@ export default function MessagingPage() {
       <div className={styleHome.main} ref={mainRef}>
         <div className={styles.main_importfile}>
           <div className={styles.info_step}>
-            <div className={styles.main__title}>Tool Facebook - NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
+            <div className={styles.main__title}>TRANG NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
             <div className={styles.form_add_potential}>
               <div className={`${styles.main__body} ${style.messagingContainer}`}>
                 <div className={style.userList}>
@@ -162,13 +174,17 @@ export default function MessagingPage() {
                     <FaSearch className={style.searchIcon} />
                     <input 
                       type="text" 
-                      placeholder="Tìm kiếm tin nhắn..."
+                      placeholder="Tìm kiếm tài khoản..."
                       className={style.searchInput}
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                      }}
                     />
                   </div>
                   
                   {/* sidebar list tai khoan */}
-                  {convers.map(user => (
+                  {filteredUser.map(user => (
                     <div 
                       key={user.id}
                       className={`${style.userItem} ${activeUser === user.id ? style.activeUser : ''}`}
@@ -227,9 +243,17 @@ export default function MessagingPage() {
                             {convers.find(u => u.id === activeUser)?.Active ? 'Online' : 'Offline'}
                           </p>
                         </div>
-                        <button className={style.chatOptions}>
-                          <BsThreeDotsVertical size={20} />
-                        </button>
+                        <div className={style.BlockRow} style={{gap: '10px'}}>
+                          <button>
+                            <MdPhone size={20}></MdPhone>
+                          </button>
+                          <button>
+                            <IoVideocam size={20}></IoVideocam>
+                          </button>
+                          <button className={style.chatOptions}>
+                            <BsThreeDotsVertical size={20} />
+                          </button>
+                        </div>
                       </div>
                       
                       {/* Messages area */}
@@ -238,11 +262,11 @@ export default function MessagingPage() {
                           <div 
                             key={message.id}
                             className={`${style.messageWrapper} ${
-                              message.isMe ? style.sentMessage : style.receivedMessage
+                              message.sender === 'Tôi' ? style.sentMessage : style.receivedMessage
                             }`}
                           >
                             <div className={`${style.messageBubble} ${
-                              message.isMe ? style.sent : style.received
+                              message.sender === 'Tôi' ? style.sent : style.received
                             }`}>
                               {message.content}
                             </div>
@@ -259,14 +283,31 @@ export default function MessagingPage() {
                         <button className={style.attachButton}>
                           {/* <MdOutlineAttachFile size={24} /> */}
                         </button>
-                        <textarea
-                          value={currentMessage}
-                          onChange={(e) => setCurrentMessage(e.target.value)}
-                          onKeyPress={handleKeyPress}
-                          placeholder="Nhập tin nhắn..."
-                          className={style.messageInput}
-                          rows={1}
+                        <input
+                            type="file"
+                            accept="image/*, video/*, .pdf, .doc, .docx"
+                            multiple
+                            style={{ display: 'none' }}
+                            ref={fileInputRef}
                         />
+                        <BsFillPlusCircleFill 
+                          size={30} 
+                          color="#1877F2" 
+                          style={{marginRight: '8px', cursor: 'pointer'}}
+                          onClick={handleIconClick}
+                        />
+                        <div className={style.messageContainer}>
+                          <textarea
+                            value={currentMessage}
+                            onChange={(e) => setCurrentMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="Aa"
+                            className={style.messageInput}
+                            rows={1}
+                          />
+                          <AiFillPicture size={26} color="#1877F2" style={{marginRight: '20px', cursor: 'pointer'}} />
+                          <FaSmile size={24} color="#1877F2" style={{marginRight: '8px', cursor: 'pointer'}}/>
+                        </div>
                         <button 
                           onClick={handleSendMessage}
                           disabled={!currentMessage.trim()}
