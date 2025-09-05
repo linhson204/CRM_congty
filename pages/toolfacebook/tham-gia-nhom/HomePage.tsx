@@ -262,7 +262,8 @@ export default function DangBai() {
                   <div className={`${style.BlockRow} ${style.bottomBarList}`}>
                     <div id="RecordCountBar" className={`${style.BlockRow} ${style.recordCountBar}`}>
                         <p>Hiển thị</p>
-                        <select name="" id="" style={{marginLeft: '10px', marginRight: '10px'}}>
+                        <select style={{marginLeft: '10px', marginRight: '10px'}}
+                        >
                           <option value="1">10</option>
                           <option value="2">20</option>
                           <option value="3">30</option>

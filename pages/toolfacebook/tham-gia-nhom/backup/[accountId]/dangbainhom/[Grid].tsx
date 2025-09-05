@@ -2,8 +2,10 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import { uploadImage } from "@/pages/api/toolFacebook/dang-bai/upload";
-import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
+import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
+import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom";
+import uploadAnh from '@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh';
+// import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -16,7 +18,6 @@ import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
-import createPostGroup from "../../../../api/toolFacebook/dang-bai-nhom/dangbainhom";
 import CommentPostPopup from "../../popup/CommentPost";
 import style from './post.module.css';
 
@@ -56,6 +57,10 @@ interface Comment {
     likes?: number;
 }
 export default function Detail() {
+    const handleCancelVideo = (index: number) => {
+        setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
+        setVideoFiles((prev) => prev.filter((_, idx) => idx !== index));
+    }
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
@@ -75,43 +80,31 @@ export default function Detail() {
     const [test, setTest] = useState<any>([]);
     const [newPostContent, setNewPostContent] = useState('');
     const [newPostImages, setNewPostImages] = useState<any[]>([]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const videoInputRef = useRef<HTMLInputElement>(null);
     const ui = "gianvu17607@gmail.com";
+    const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
+    const [videoFiles, setVideoFiles] = useState<File[]>([]);
 
-    // const websocket = useWebSocket();
+    const websocket = useWebSocket();
     const [groupData, setGroupData] = useState<any[]>([]);
-
+    const [Sendposts, setSendPosts] = useState<Post[]>([]);
+    const [uploadImg, setUploadImg] = useState<any[]>([]);
     // popup comment
     const [showComment, setShowComment] = useState(false);
 
-    useEffect(() => {
-    async function fetchData() {
-        const res = await getGroupData("", "15", "", "123");
-        setGroupData(res); // lưu vào state
+    let crmID = Cookies.get("userID");
+    if (!crmID) {
+        console.warn('CRM userID cookie is missing!');
+        crmID = "defaultID"; // fallback value, replace with your logic
     }
-    fetchData();
-    }, []);
-
-    //  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
-    //   const data = mapdata.map((item, index) => ({
-    //     ...item,
-    //     Active: true,
-    //     Mess: 1,
-    //     STT: index + 1,
-    //   }))
-
-    //   console.log(data)
-    // lay data cho page
     // useEffect(() => {
-    //     if (!accountId) return;
-    //     const timer = setTimeout(() => {
-    //         //test voi data mock, neu server kha nang user va group se tach rieng
-    //         const foundAccount = data.find(acc => acc.id === Number(accountId));
-    //         setAccount(foundAccount || null);
-    //         setGroups(foundAccount.groups.find(gr => gr.id === Number(Grid)))
-    //     }, 100);
-    //     return () => clearTimeout(timer);
-    // }, [Grid, accountId]);
+    // async function fetchData() {
+    //     const res = await getGroupData("", "15", "", "123");
+    //     setGroupData(res); // lưu vào state
+    // }
+    // fetchData();
+    // }, []);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
@@ -135,25 +128,6 @@ export default function Detail() {
         }
     }, [account]);
 
-    // const filteredGroups = useMemo(() => {
-    //     return groups.filter(group => {
-    //         const nameMatch = group.GroupName.toLowerCase().includes(search.toLowerCase());
-    //         if (!nameMatch) return false;
-
-    //         const statusMatch = 
-    //             (!filterPublic && !filterPrivate) ||
-    //             (filterPublic && group.GroupState === 'Public') || 
-    //             (filterPrivate && group.GroupState === 'Private');
-
-    //         const joinMatch = 
-    //             (!filterJoined && !filterNotJoin) ||
-    //             (filterJoined && group.isJoin === 1) ||
-    //             (filterNotJoin && group.isJoin === 2);
-            
-    //         return nameMatch && statusMatch && joinMatch;
-    //     });
-    // }, [groups, filterPublic, filterPrivate, filterJoined, filterNotJoin, search]);
-
     // phan trang
     const totalPages = Math.ceil(posts?.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
@@ -164,7 +138,7 @@ export default function Detail() {
         currentPage * itemsPerPage
     );
 
-    // Gọi API
+    // Gọi API lấy danh sách bài đăng cũ
     useEffect(() => {
         fetch('http://localhost:3003/api/posts')
         .then(response => response.json())
@@ -183,130 +157,111 @@ export default function Detail() {
     }, [test]); // ✅ Chạy khi test thay đổi
 
     const handleViewPosts = () => {
-        // Mock data cho bài đăng
-        // setPosts([
-        //     {
-        //         id: 1,
-        //         userName: 'Nguyễn Văn A',
-        //         time: '2 giờ trước',
-        //         content: 'Đây là bài đăng mẫu trong nhóm.',
-        //         likes: 10,
-        //         comments: 2,
-        //         shares: 1
-        //     },
-        //     {
-        //         id: 2,
-        //         userName: 'Trần Thị B',
-        //         time: '5 giờ trước',
-        //         content: 'Chào mừng mọi người đến với nhóm!',
-        //         likes: 25,
-        //         comments: 5,
-        //         shares: 3
-        //     }
-        // ]);
     };
 
     const handlePostSubmit = async () => {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
+        
+        // Save current values before clearing
+        const currentContent = newPostContent;
+        const currentImages = [...newPostImages];
+        const currentVideos = [...videoPreviews];
+        const currentUploadImg = [...uploadImg];
+        const currentVideoFiles = [...videoFiles];
+        
+        // Clear UI immediately
+        setNewPostContent('');
+        setNewPostImages([]);
+        setVideoPreviews([]);
+        setUploadImg([]);
+        setVideoFiles([]);
+        if (imageInputRef.current) imageInputRef.current.value = '';
+        if (videoInputRef.current) videoInputRef.current.value = '';
+        
         const newPost: Post = {
             id: 123,
             userId: "gianvu17607@gmail.com",
             userName: uname,
             groupId: groups?.id,
             time: `Vừa xong`,
-            content: newPostContent,
-            imageUrls: newPostImages.length > 0 ? newPostImages : undefined,
+            content: currentContent,
+            imageUrls: currentImages.length > 0 ? currentImages : undefined,
             likes: 0,
             // comments: 0,
             shares: 0
         };
 
-        setPosts([newPost, ...posts]);
-        setNewPostContent('');
-        setNewPostImages([]);
-        const crmID = Cookies.get("userID");
+        // api upload anh
+        const testUpload = await uploadAnh(currentUploadImg);
+        const fileMap = testUpload.map(img => img.savedName)
 
-        const image = uploadImage(newPostImages);
-        console.log(image, crmID, newPostImages);
-        // if (websocket && websocket.readyState === WebSocket.OPEN) {
-        // const postData = {
-        //     type: "post_to_group",
-        //     postId: newPost.id.toString(),
-        //     content: newPostContent,
-        //     //   authorName: userName,
-        //     //   authorId: userID,
-        //     to: "B22623688",
-        //     attachments: [], // Đưa images vào attachments thay vì images
-        // };
+        // send
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
+            const postData = {
+                type: "post_to_group",
+                user_id: "test1",
+                postId: newPost.id.toString(),
+                crm_id: crmID,
+                params: params,
+                to: "B22623688",
+                attachments: fileMap, // Đưa images vào attachments thay vì images
+            };
+            websocket.send(JSON.stringify(postData));
+        }
 
-        // websocket.send(JSON.stringify(postData));
-        // }
-        const params = `{"group_link": "groups/${Grid}", "content": "${newPostContent}", "files": ["test_1755742088.png"]}`;
+        const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
         await createPostGroup(
-        "post_to_group",
-        "gianvu17607@gmail.com",
-        params,
-        crmID
+            "post_to_group",
+            "test1",
+            params,
+            crmID
         );
     };
 
     const handleImageIconClick = () => {
-        fileInputRef.current?.click();
+        imageInputRef.current?.click();
     };
 
-    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const files = e.target.files;
-    //     if (files && files.length > 0) {
-    //         const readers: Promise<string>[] = [];
-    //         for (let i = 0; i < files.length; i++) {
-    //             const file = files[i];
-    //             readers.push(new Promise((resolve) => {
-    //                 const reader = new FileReader();
-    //                 reader.onloadend = () => {
-    //                     resolve(reader.result as string);
-    //                 };
-    //                 reader.readAsDataURL(file);
-    //             }));
-    //         }
-    //         Promise.all(readers).then((images) => {
-    //             setNewPostImages(images);
-    //         });
-    //     }
-    // };
+    const handleVideoIconClick = () => {
+        videoInputRef.current?.click();
+    };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
-            const imageFiles: string[] = [];
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Tạo URL blob thay vì base64
-                const objectUrl = URL.createObjectURL(file);
-
-                // Nếu muốn đảm bảo ảnh chỉ ở dạng JPG thì có thể filter:
-                if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
-                    imageFiles.push(objectUrl);
-                }
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files);
+        setUploadImg((prev) => [...prev, ...files]);
+        const previews: any[] = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const objectUrl = URL.createObjectURL(file);
+            if (file.type.startsWith('image/')) {
+                previews.push({ type: 'image', url: objectUrl });
+            } else if (file.type.startsWith('video/')) {
+                previews.push({ type: 'video', url: objectUrl });
+            } else if (file.type === 'application/pdf') {
+                previews.push({ type: 'pdf', url: objectUrl });
+            } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                previews.push({ type: 'doc', name: file.name, url: objectUrl });
             }
-
-            setNewPostImages((prev) => [...prev, ...imageFiles]);
         }
+        setNewPostImages((prevImgs) => [...prevImgs, ...previews]);
     };
 
     const [videoPreview, setVideoPreview] = useState<string | null>(null);
-    const [videoFile, setVideoFile] = useState<File | null>(null);
 
     const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]; // lấy 1 file đầu tiên
-        if (file) {
-        setVideoFile(file);
-
-        // tạo preview
-        const objectUrl = URL.createObjectURL(file);
-        setVideoPreview(objectUrl);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        const previews: string[] = [];
+        const fileArr: File[] = [];
+        for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        fileArr.push(file);
+        previews.push(URL.createObjectURL(file));
         }
+        setVideoFiles(fileArr);
+        setVideoPreviews(previews);
+    }
     };
 
     const hardReload = () => {
@@ -316,6 +271,7 @@ export default function Detail() {
 
     const handleCancelUpload = (index: number) => {
         setNewPostImages((prev) => prev.filter((_, idx) => idx !== index));
+        setUploadImg((prev) => prev.filter((_, idx) => idx !== index));
     }
 
     const showLoadingDialog = () => {
@@ -374,79 +330,6 @@ export default function Detail() {
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
                             <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                {/* <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}>
-                                    <div id="commentContainer">
-                                        <div id="headBar" className={`${style.headBarComment} ${style.BlockRow}`}>
-                                            <p>Bài viết của bạn</p>
-                                            <button
-                                                id="closeButton"
-                                                className={style.closeButtonComment}
-                                                onClick={() => {setShowComment(false)}}
-                                            >
-                                            </button>
-                                        </div>
-                                        <div id="body" className={style.commentBoxBody}>
-                                            <div id="Name-..." className={style.BlockRow}>
-                                                <div id="user" className={`${style.BlockRow} ${style.userCommentBox}`}>
-                                                    <div id="avatar" className={style.userAvatarCommentBox}></div>
-                                                    <div>
-                                                        <p>Username</p>
-                                                        <div className={`${style.userCommentBoxTime} ${style.BlockRow}`}>
-                                                            <p>3 giờ trước</p>
-                                                            <div><MdPublic></MdPublic></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <BsThreeDots size={24}></BsThreeDots>
-                                            </div>
-                                            <div id="content">
-                                            </div>
-                                            <div id="reactBar" className={style.postStats}>
-                                                <div style={{position: 'relative'}} className={style.BlockRow}>
-                                                    <div id="like" className={style.likeIcon}></div>
-                                                    <div id="like" className={style.favorIcon}></div>
-                                                    <span>10</span>
-                                                </div>
-                                                <div className={style.BlockRow}>
-                                                    <p>11</p>
-                                                    <FaComment size={18}></FaComment>
-                                                </div>
-                                                <div className={style.BlockRow} style={{marginLeft: '10px'}}>
-                                                    <p>100</p>
-                                                    <IoIosShareAlt size={18}></IoIosShareAlt>
-                                                </div>
-                                            </div>
-                                            <div className={style.postActions}>
-                                                <button className={style.postActionButton}>
-                                                    <BiLike style={{marginRight: '5px'}}></BiLike>
-                                                    Thích
-                                                </button>
-                                                <button className={style.postActionButton} onClick={() => setShowComment(true)}>
-                                                    <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
-                                                    Bình luận
-                                                </button>
-                                                <button className={style.postActionButton} style={{display: 'none'}}>
-                                                    <BiShare style={{marginRight: '5px'}}></BiShare>
-                                                    Chia sẻ
-                                                </button>
-                                            </div>
-                                            <div id="comment">
-                                                <div>
-                                                    <div id="avatar"></div>
-                                                    <div id="content"></div>
-                                                    <div id="time-react"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="commentInput">
-                                            <div id="avatar"></div>
-                                            <div>
-                                                <input placeholder="Viết bình luận.." type="text"/>
-                                                <div id="icon"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CommentPostPopup> */}
                                 <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}></CommentPostPopup>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
@@ -459,10 +342,10 @@ export default function Detail() {
                                             <div className={`${style.BlockRow}`}>
                                                 <div><FaUserCircle className={style.userAvatar} /></div>
                                                 <div className={`${style.BlockColumn}`}>
-                                                    <div className={style.postGrName}>{account?.name || 'Chưa có data'}</div>
+                                                    <div className={style.postGrName}>{account?.name || 'NGUYEN VAN A'}</div>
                                                     <div className={`${style.BlockRow} ${style.postGrState}`}>
                                                         <div className={style.postGrStateIc}><FaLock style={{color: 'rgb(0, 0, 0, 0.6)'}}></FaLock></div>
-                                                        <p>{groups?.GroupState || 'Chưa có data'}</p>
+                                                        <p>{groups?.GroupState || 'Riêng tư'}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -472,29 +355,80 @@ export default function Detail() {
                                                 value={newPostContent}
                                                 onChange={(e) => setNewPostContent(e.target.value)}
                                             />
-                                            <input 
-                                                type="file" 
-                                                accept="video/*" 
-                                                multiple
-                                                style={{ display: 'none' }}
-                                                ref={fileInputRef}
-                                                onChange={handleVideoChange}/>
                                             <input
                                                 type="file"
-                                                accept="image/*"
+                                                accept="video/*"
                                                 multiple
                                                 style={{ display: 'none' }}
-                                                ref={fileInputRef}
+                                                ref={videoInputRef}
+                                                onChange={handleVideoChange}
+                                            />
+                                            {videoPreviews.length > 0 && (
+                                            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                {videoPreviews.map((vid, idx) => (
+                                                    <div key={idx} style={{position: 'relative', display: 'inline-block'}}>
+                                                        <MdCancel style={{position: 'absolute', top: 8, right: 8, color: '#f00', cursor: 'pointer', zIndex: 2}} onClick={() => handleCancelVideo(idx)} />
+                                                        <video src={vid} controls width={400} style={{borderRadius: '8px'}} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                            <input
+                                                type="file"
+                                                accept="image/*,application/pdf,.doc,.docx"
+                                                multiple
+                                                style={{ display: 'none' }}
+                                                ref={imageInputRef}
                                                 onChange={handleImageChange}
                                             />
                                             {newPostImages.length > 0 && (
                                                 <div className={style.postImagePreview}>
-                                                    {newPostImages.map((img, idx) => (
-                                                        <div key={idx} style={{padding: '10px', position: 'relative', display: 'inline-block'}}>
+                                                    {newPostImages.map((file, idx) => (
+                                                        <div key={idx} style={{
+                                                            position: 'relative',
+                                                            display: 'inline-block',
+                                                            background: '#f5f6fa',
+                                                            borderRadius: 10,
+                                                            boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
+                                                            padding: '14px 16px 14px 54px',
+                                                            margin: '0 10px 10px 0',
+                                                            minWidth: 260,
+                                                            maxWidth: 350
+                                                        }}>
                                                             <MdCancel className={style.cancelImage}
+                                                                style={{position: 'absolute', top: 10, right: 10, color: '#f00', cursor: 'pointer', zIndex: 2}}
                                                                 onClick={() => handleCancelUpload(idx)} />
-                                                            <img src={img} alt={`Preview ${idx+1}`}
-                                                                style={{maxWidth: '350px', maxHeight: '350px', borderRadius: '8px'}} />
+                                                            {file.type === 'image' && (
+                                                                <img src={file.url} alt={`Preview ${idx+1}`}
+                                                                    style={{maxWidth: '270px', maxHeight: '270px', borderRadius: '8px'}} />
+                                                            )}
+                                                            {file.type === 'video' && (
+                                                                <video src={file.url} controls width={270} style={{borderRadius: '8px'}} />
+                                                            )}
+                                                            {file.type === 'pdf' && (
+                                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                                    <span style={{position: 'absolute', left: 16}}>
+                                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#e74c3c"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 7V3.5L18.5 9H13z"/></svg>
+                                                                    </span>
+                                                                    <div style={{flex: 1}}>
+                                                                        <div style={{fontWeight: 500, fontSize: 15, color: '#222'}}>{file.name}</div>
+                                                                        <div style={{fontSize: 12, color: '#888'}}>PDF Document</div>
+                                                                        <a href={file.url} target="_blank" rel="noopener noreferrer" style={{fontSize: 12, color: '#1877f2', textDecoration: 'underline'}}>Xem trước</a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {(file.type === 'doc' || file.type === 'docx') && (
+                                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                                    <span style={{position: 'absolute', left: 16}}>
+                                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#2a5caa"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 7V3.5L18.5 9H13z"/></svg>
+                                                                    </span>
+                                                                    <div style={{flex: 1}}>
+                                                                        <div style={{fontWeight: 500, fontSize: 15, color: '#222'}}>{file.name}</div>
+                                                                        <div style={{fontSize: 12, color: '#888'}}>Word Document</div>
+                                                                        <a href={file.url} target="_blank" rel="noopener noreferrer" style={{fontSize: 12, color: '#1877f2', textDecoration: 'underline'}}>Tải xuống</a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -506,7 +440,7 @@ export default function Detail() {
                                                 <p>Thêm vào bài viết của bạn</p>
                                                 <div className={`${style.BlockRow} ${style.postInputIcContainer}`}> 
                                                     <IoImages style={{color: 'green'}} className={style.postInputIc} onClick={handleImageIconClick} />
-                                                    <FaVideo style={{color: 'orange'}} className={style.postInputIc} onClick={handleImageIconClick}/>
+                                                    <FaVideo style={{color: 'orange'}} className={style.postInputIc} onClick={handleVideoIconClick}/>
                                                     <FaUserTag style={{color: 'blue'}} className={style.postInputIc}></FaUserTag>
                                                     <FaLocationDot style={{color: 'red'}} className={style.postInputIc}></FaLocationDot>
                                                     <TfiFaceSmile style={{color: 'yellow'}} className={style.postInputIc}></TfiFaceSmile>
@@ -518,7 +452,7 @@ export default function Detail() {
                                             <button 
                                                 className={style.postButton}
                                                 onClick={handlePostSubmit}
-                                                disabled={!newPostContent.trim() && newPostImages.length === 0}
+                                                disabled={!newPostContent.trim() && newPostImages.length === 0 && videoPreviews.length === 0}
                                             >
                                                 Đăng
                                             </button>
@@ -541,21 +475,20 @@ export default function Detail() {
                                                 <div className={style.postHeader}>
                                                     <FaUserCircle className={style.postAvatar} />
                                                     <div>
-                                                        <div className={style.postUserName}>User</div>
+                                                        <div className={style.postUserName}>Nguyen Van A</div>
                                                         <div className={style.postTime}>{post.time}</div>
                                                     </div>
                                                 </div>
                                                 <div className={style.postContent}>{post.content}</div>
                                                 {post.imageUrls && post.imageUrls.length > 0 && (
                                                     <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                                        {post.imageUrls.map((img, idx) => (
+                                                        {/* {post.imageUrls.map((img, idx) => (
                                                             <img key={idx} src={img} alt={`Post ${idx+1}`} 
                                                                 className={style.postImage} 
                                                                 style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
-                                                        ))}
+                                                        ))} */}
                                                     </div>
                                                 )}
-                                                
                                                 <div className={style.postStats}>
                                                     <div style={{position: 'relative'}} className={style.BlockRow}>
                                                         <div id="like" className={style.likeIcon}></div>
@@ -564,17 +497,28 @@ export default function Detail() {
                                                     </div>
                                                     <div className={style.BlockRow}>
                                                         <p>{post.comments.length}</p>
-                                                        <FaComment size={18}></FaComment>
+                                                        <FaComment size={20}></FaComment>
                                                     </div>
                                                     <div className={style.BlockRow} style={{marginLeft: '10px'}}>
                                                         <p>100</p>
-                                                        <IoIosShareAlt size={18}></IoIosShareAlt>
+                                                        <IoIosShareAlt size={20}></IoIosShareAlt>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    {post.comments.map((comment) => (
-                                                        <div>{comment.content}</div>
+                                                {post.comments.map((comment) => (
+                                                    <div>{comment.content}</div>
                                                 ))}
+                                                </div>
+                                                <div>
+                                                    {/* {post.imageUrls && post.imageUrls.length > 0 && (
+                                                        <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                            {post.imageUrls.map((img, idx) => (
+                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} 
+                                                                className={style.postImage} 
+                                                                style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                            ))}
+                                                        </div>
+                                                    )} */}
                                                 </div>
                                                 <div className={style.postActions}>
                                                     <button className={style.postActionButton}>

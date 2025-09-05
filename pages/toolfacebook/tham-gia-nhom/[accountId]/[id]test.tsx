@@ -17,10 +17,10 @@ import { PiWarningCircleLight } from "react-icons/pi";
 import data from "../../../../public/data/account.json";
 import Filter from "../popup/Filter";
 import OutGrFs from "../popup/OutGrFS";
-import stylepu from "../popup/popup.module.css";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
 import { Question } from "../popup/PrivateGrQues/types";
+import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
 
 interface Group {
@@ -201,19 +201,6 @@ export default function Detail() {
         }
     }, [account]);
 
-    // useEffect(() => {
-    //     const isReload =
-    //     performance.navigation?.type === 1 || // type 1 = reload (legacy API)
-    //     (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming)?.type === "reload";
-
-    //     const cameFromOutside =
-    //     !document.referrer.includes(window.location.origin); // Không phải điều hướng nội bộ
-
-    //     // Chỉ redirect nếu reload và đến từ cùng origin (nghĩa là user bấm F5)
-    //     if (isReload && !cameFromOutside) {
-    //     router.replace("/toolfacebook/tham-gia-nhom/HomePage");
-    //     }
-    // }, []);
     let crmID = Cookies.get("userID");
     if (!crmID) {
         console.warn('CRM userID cookie is missing!');
@@ -249,7 +236,7 @@ export default function Detail() {
 
             return nameMatch && statusMatch && joinMatch;
         });
-    }, [groups, grState, joinState, search]);
+    }, [groupData, grState, joinState, search]);
 
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
@@ -680,7 +667,7 @@ export default function Detail() {
                                                         {if (group.Status !== "Hoạt động") {
                                                             setPrivateGrSelected(group.id);
                                                             setShowPrivateGrQues(true);
-                                                            setpopupHeader([group.GroupName, group.GroupState, group.Member]);
+                                                            setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
                                                         } else {UpdateGrState(group.Link)}
                                                         }}}>
                                                     <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>

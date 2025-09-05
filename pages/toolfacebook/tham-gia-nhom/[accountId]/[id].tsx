@@ -14,10 +14,10 @@ import { PiWarningCircleLight } from "react-icons/pi";
 import data from "../../../../public/data/account.json";
 import Filter from "../popup/Filter";
 import OutGrFs from "../popup/OutGrFS";
-import stylepu from "../popup/popup.module.css";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
 import { Question } from "../popup/PrivateGrQues/types";
+import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
 
 interface Group {

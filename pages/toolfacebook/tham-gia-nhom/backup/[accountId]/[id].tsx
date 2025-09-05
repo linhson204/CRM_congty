@@ -11,11 +11,13 @@ import { HiMiniQueueList } from "react-icons/hi2";
 import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
+import data from "../../../../public/data/account.json";
 import Filter from "../popup/Filter";
 import OutGrFs from "../popup/OutGrFS";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
 import { Question } from "../popup/PrivateGrQues/types";
+import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
 
 interface Group {
@@ -42,23 +44,18 @@ export default function Detail() {
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
-    // router
     const router = useRouter();
-    const { id } = router.query;
-    // Phân trang
+    const itemsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4;
-    // Bộ lọc
-    const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
-    const [search, setSearch] = useState('');
-    const [filterPublic, setFilterPublic] = useState(false);
-    const [filterPrivate, setFilterPrivate] = useState(false);
-    const [filterJoined, setFilterJoined] = useState(false);
-    const [filterNotJoin, setFilterNotJoin] = useState(false);
-    const [Sent, setSent] = useState(false);
+    const [accountFind, setAccountFind] = useState<Account | null>(null);
     const [showFilter, setshowFilterPopup] = useState(false);
+    const [selectedGrOut, setSelectedGrOut] = useState<string>('');
+    // Phân trang
+    const [search, setSearch] = useState('');
+    const [Sent, setSent] = useState(false);
+    const { accountId } = router.query;
     // Lấy thông tin tài khoản
-    const [account, setAccount] = useState<Account | null>(null); //data tong dau vao
+    const [account, setAccount] = useState<Account[] | null>(data); //data tong dau vao
     const [groups, setGroups] = useState<Group[]>([]);
     //loading ten
     const [uname, setUname] = useState('');
@@ -76,44 +73,23 @@ export default function Detail() {
     //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
     const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
-    const [LinkGrSelected, SetlinkGrSelected] = useState<string | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
 
     const [grStateTemp, setGrStateTemp] = useState('all');
     const [joinTemp, setJoinTemp] = useState('all');
     const [grState, setGrState] = useState('all');
     const [joinState, setJoinState] = useState('all');
-    // console.log(groups)
 
-    // useEffect(() => {
-    //     if (!id) return;
-    //     const fetchData = async () => {
-    //         const response = await fetch(`../../../pages/api/account/${id}`);
-    //         const data: Account = await response.json();
-    //         setAccount(data); // Set data cho 1 account
-    //     };
-    //     fetchData();
-    // }, [id]);
-    // const [groups, setGroups] = useState<Groups[]>([]);
-    // useEffect(() => {
-    //     fetch('../../api/UserDataTest')
-    //     .then(res => res.json())
-    //     .then(data => setGroups(data));
-    // }, []);
-    //
-
-    const [groupData, setGroupData] = useState(Object);
+    const [groupData, setGroupData] = useState<any[]>([]);
 
     useEffect(() => {
     async function fetchData() {
-        const res = await getGroupData("", "15", "", id);
-        setGroupData(res); // lưu vào state
+        const res = await getGroupData("", "a", "", "", "");
+        setGroupData(res.results); // lưu vào state
     }
     fetchData();
     }, []);
 
-    // const filterNameGr = changeDT[2].find((item: any) => item.data.Name === "Hội");
-    // const test = groupData.data.filter((item) => item.user_status == "Đã tham gia")
     console.log(groupData)
 
     // Danh sách câu hỏi mẫu
@@ -149,15 +125,14 @@ export default function Detail() {
     ];
     //
     
-    // useEffect(() => { //xu li su kien moi khi tim dung account
-    //     if (!id) return;
-    //     const timer = setTimeout(() => {
-    //     const foundAccount = data.find(acc => acc.id === Number(id));
-    //     setAccount(foundAccount || null);
-    //     setGroups(foundAccount.groups);
-    //     }, 100);
-    //     return () => clearTimeout(timer);
-    // }, [id]);
+    useEffect(() => { //xu li su kien moi khi tim dung account
+        const timer = setTimeout(() => {
+        const foundAccount = data.find(acc => acc.id === 12);
+        setAccountFind(foundAccount);
+        setGroups(foundAccount.groups);
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [accountId]);
 
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
@@ -175,7 +150,7 @@ export default function Detail() {
 
     useEffect(() => {
         if (account) {
-            setUname(account.name);
+            setUname(accountFind?.name || '...nodata');
         } else {
             setUname('Loading...');
         }
@@ -218,7 +193,8 @@ export default function Detail() {
             let joinMatch = true;
             if (joinState !== 'all' && joinState !== '') {
                 if (joinState === 'join') joinMatch = group.isJoin === 1;
-                else if (joinState === 'not') joinMatch = group.isJoin === 2 || group.isJoin === 3;
+                else if (joinState === 'not') joinMatch = group.isJoin === 2;
+                else if (joinState === 'pending') joinMatch = group.isJoin === 3;
             }
 
             return nameMatch && statusMatch && joinMatch;
@@ -258,9 +234,8 @@ export default function Detail() {
         //call API tra id user id nhom vao day
     }
 
-    const HandlePostGroup = (linkgr: string) => {
-        linkgr = linkgr.replace("groups/", '');
-        router.push(`../${id}/dangbainhom/${linkgr}`);
+    const HandlePostGroup = (idgr: string) => {
+        router.push(`../${accountId}/dangbainhom/${idgr}`);
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
@@ -273,7 +248,7 @@ export default function Detail() {
     const UpdateGrState = (idGr: number) => {
         // Gọi API gửi request đến tool tham gia nhóm
         // API cập nhật trường isJoin
-        console.log(id, idGr);
+        console.log(accountId, idGr);
         hardReload();
     }
 
@@ -351,7 +326,6 @@ export default function Detail() {
     });
     return { isValid, errors };
     };
-
 //
 
     return (
@@ -366,8 +340,15 @@ export default function Detail() {
             <div className={styles.main_importfile}>
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
-                        <div className={styles.main__title}>DANH SÁCH NHÓM CỦA TÀI KHOẢN: {uname}</div>
+                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
                         <div style={{padding: '10px'}} className={styles.form_add_potential}>
+                            {/* Title + BackButton */}
+                            <div style={{marginTop:'10px'}} className={style.BlockRow}>
+                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}>CHI TIẾT TÀI KHOẢN</p>
+                                {/* <button className={style.buttonBack} onClick={BackPageClick}>
+                                    Quay lại
+                                </button> */}
+                            </div>
                             {/* Name + GroupIn/NotIn */}
                             <div style={{marginTop: '20px'}} className={style.BlockRow}>
                                 <div id="UserName" className={style.BlockRow}>
@@ -404,20 +385,20 @@ export default function Detail() {
                             {/* List Nhóm */}
                             <div>
                                 <OutGrFs isOpen={showPopup} onClose={() => setShowPopup(false)}>
-                                    <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
-                                    <h2 className={style.PopupOutGrHeader}> 
-                                        Bạn chắc chắn muốn rời nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                    <div className={stylepu.PopupOutGrICWrapper}><PiWarningCircleLight className={stylepu.PopupOutGrIC}/></div>
+                                    <h2 className={stylepu.PopupOutGrHeader}> 
+                                        Bạn chắc chắn muốn rời nhóm <strong>{selectedGrOut}</strong> không?
                                     </h2>
-                                    <p className={style.PopupOutGrContent}>
+                                    <p className={stylepu.PopupOutGrContent}>
                                         Hành động này sẽ không thể hoàn tác.
                                     </p>
-                                    <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
-                                        <button onClick={() => setShowPopup(false)} className={style.PopupOutGrCancelButton}>
+                                    <div className={`${style.BlockRow} ${stylepu.PopupOutGrButtonWrapper}`}>
+                                        <button onClick={() => setShowPopup(false)} className={stylepu.PopupOutGrCancelButton}>
                                             Hủy
                                         </button>
                                         <button 
                                             onClick={() => {handleLeavePopup(isOutGr)}}
-                                            className={style.PopupOutGrConfirmButton}>
+                                            className={stylepu.PopupOutGrConfirmButton}>
                                             Xác nhận
                                         </button>
                                     </div>
@@ -451,12 +432,13 @@ export default function Detail() {
                                                     <option value="all">Tất cả</option>
                                                     <option value="not">Chưa tham gia</option>
                                                     <option value="join">Đã tham gia</option>
+                                                    <option value="pending">Đang chờ duyệt</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div className={style.BlockRow}>
                                             <button 
-                                                className={style.PopupCancelFilter}
+                                                className={stylepu.PopupCancelFilter}
                                                 onClick={() => setshowFilterPopup(false)}>
                                                 huỷ
                                             </button>
@@ -465,29 +447,29 @@ export default function Detail() {
                                                     setshowFilterPopup(false);
                                                     HandleFilter();
                                                 }}
-                                                className={style.PopupConfirmFilter}>
+                                                className={stylepu.PopupConfirmFilter}>
                                                 Xác nhận
                                             </button>
                                         </div>
                                     </div>
                                 </Filter>
                                 <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
-                                    <div className={style.PopupOutGrICWrapper}><PiWarningCircleLight className={style.PopupOutGrIC}/></div>
-                                    <h2 className={style.PopupOutGrHeader}> 
-                                        Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{groups.find(item => item.id === GrOutSelected)?.GroupName}</strong> không?
+                                    <div className={stylepu.PopupOutGrICWrapper}><PiWarningCircleLight className={stylepu.PopupOutGrIC}/></div>
+                                    <h2 className={stylepu.PopupOutGrHeader}> 
+                                        Bạn chắc chắn huỷ yêu cầu tham gia nhóm <strong>{selectedGrOut}</strong> không?
                                     </h2>
-                                    <p className={style.PopupOutGrContent}>
+                                    <p className={stylepu.PopupOutGrContent}>
                                         Bạn sẽ phải trả lời lại câu hỏi nếu đây là nhóm kín
                                     </p>
-                                    <div className={`${style.BlockRow} ${style.PopupOutGrButtonWrapper}`}>
-                                        <button onClick={() => setShowCancelQueuePopUp(false)} className={style.PopupOutGrCancelButton}>
+                                    <div className={`${style.BlockRow} ${stylepu.PopupOutGrButtonWrapper}`}>
+                                        <button onClick={() => setShowCancelQueuePopUp(false)} className={stylepu.PopupOutGrCancelButton}>
                                             Hủy
                                         </button>
                                         <button 
                                             onClick={() => {
                                                 handleLeavePopup(isOutGr)
                                             }}
-                                            className={style.PopupOutGrConfirmButton}>
+                                            className={stylepu.PopupOutGrConfirmButton}>
                                             Xác nhận
                                         </button>
                                     </div>
@@ -502,7 +484,7 @@ export default function Detail() {
                                         setTimeout(() => UpdateGrState(privateGrSelected), 300);
                                         // validateRequiredFields(approvalQuestions, answers);
                                         if (privateGrSelected) {
-                                        console.log(id, privateGrSelected, answers);
+                                        console.log(accountId, privateGrSelected, answers);
                                         }
                                     }}>
                                         <div className={`${style.BlockColumn} ${style.PopupQuesHeader}`}>
@@ -523,6 +505,7 @@ export default function Detail() {
                                     <div className={style.GroupListContent}>Tên nhóm</div>
                                     <div className={style.GroupListContent}>Trạng thái nhóm</div>
                                     <div className={style.GroupListContent}>Số thành viên</div>
+                                    <div className={style.GroupListContent}>Ngành nghề</div>
                                     <div className={style.GroupListContent}>Tham gia</div>
                                 </div>
                                 <div className={`${style.BlockColumn} ${style.GroupListContainer}`}>
@@ -531,9 +514,9 @@ export default function Detail() {
                                             <div className={style.grlistName}>{group.GroupName}</div>
                                             <div id="GrState" className={style.grState}>
                                                 {group.GroupState == "Public" ? (
-                                                    <MdPublic className={style.ic}></MdPublic>
+                                                    <MdPublic className={style.ic} style={{color: 'rgb(0, 0, 0, 0.7)'}}></MdPublic>
                                                 ) : (
-                                                    <FaLock className={style.ic}></FaLock>
+                                                    <FaLock className={style.ic} style={{color: 'rgb(0, 0, 0, 0.7)'}}></FaLock>
                                                 )}
                                             </div>
                                             {/* <h2 style={{marginLeft: 'auto'}}>
@@ -543,6 +526,8 @@ export default function Detail() {
                                                 {/* <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div> */}
                                                 <p>{group.Member}</p>
                                             </div>
+                                            {/*  */}
+                                            <div className={style.grCategory}></div>
                                             {/* đã tham gia */}
                                             <div className={`${style.joinStateBlock}`}>
                                             {group.isJoin == 1 ? (
@@ -552,7 +537,7 @@ export default function Detail() {
                                                                 HandlePostGroup(group.GroupName)}}>Đăng bài</button>
                                                     <button className={style.buttonOutGr}
                                                             onClick={() => {
-                                                                SetGrOutSelected(group.id); 
+                                                                setSelectedGrOut(group.GroupName); 
                                                                 setShowPopup(true);}
                                                             }>
                                                             Rời nhóm
@@ -569,7 +554,7 @@ export default function Detail() {
                                                         } else {UpdateGrState(group.id)}
                                                         }}}>
                                                     <MdGroupAdd style={{marginRight: '7px'}} className={style.ic}/>
-                                                    <p style={{paddingTop: '2px'}}>tham gia nhóm</p>
+                                                    <p style={{paddingTop: '2px'}}>Tham gia</p>
                                                 </div>
                                             // hàng đợi
                                             ) : group.isJoin == 3 ? (
@@ -578,13 +563,13 @@ export default function Detail() {
                                                     <div className={style.BlockRow}>
                                                         <button className={style.buttonOutGr} 
                                                                 style={{marginRight: '10px'}}
-                                                                onClick={() => {setShowCancelQueuePopUp(true); SetGrOutSelected(group.id)}}>
+                                                                onClick={() => {setShowCancelQueuePopUp(true); setSelectedGrOut(group.GroupName)}}>
                                                                     Huỷ bỏ
                                                         </button>
                                                         <div className={style.BlockRow}>
                                                             <div className={`${style.BlockRow} ${style.onQueue}`}>
                                                                 <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
-                                                                <p style={{paddingTop: '2px'}}>Đang chờ duyệt</p>
+                                                                <p style={{paddingTop: '2px'}}>Chờ duyệt</p>
                                                             </div>
                                                         </div>
                                                     </div>

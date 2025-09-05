@@ -43,7 +43,6 @@
 .PopupCommentBoxContent {
   background-color: white;
   padding: 0;
-  width: 500px;
   border-radius: 20px;
 }
 
@@ -285,7 +284,8 @@
 
   /* Container chính */
 .commentContainer {
-  width: 500px;
+  width: 700px;
+  height: 600px;
   max-width: 100%;
   background: white;
   border-radius: 8px;
