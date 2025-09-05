@@ -57,6 +57,10 @@ interface Comment {
     likes?: number;
 }
 export default function Detail() {
+    const handleCancelVideo = (index: number) => {
+        setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
+        setVideoFiles((prev) => prev.filter((_, idx) => idx !== index));
+    }
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
@@ -134,7 +138,7 @@ export default function Detail() {
         currentPage * itemsPerPage
     );
 
-    // Gọi API
+    // Gọi API lấy danh sách bài đăng cũ
     useEffect(() => {
         fetch('http://localhost:3003/api/posts')
         .then(response => response.json())
@@ -184,7 +188,7 @@ export default function Detail() {
                 crm_id: crmID,
                 params: params,
                 to: "B22623688",
-                attachments: testUpload.map(img => img.savedName), // Đưa images vào attachments thay vì images
+                attachments: fileMap, // Đưa images vào attachments thay vì images
             };
             websocket.send(JSON.stringify(postData));
         }
@@ -216,20 +220,22 @@ export default function Detail() {
 
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files);
-        setUploadImg((prev) => {
-            const updated = [...prev, ...files];
-            // Also update preview images here
-            const imageFiles: string[] = [];
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const objectUrl = URL.createObjectURL(file);
-                if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
-                    imageFiles.push(objectUrl);
-                }
+        setUploadImg((prev) => [...prev, ...files]);
+        const previews: any[] = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const objectUrl = URL.createObjectURL(file);
+            if (file.type.startsWith('image/')) {
+                previews.push({ type: 'image', url: objectUrl });
+            } else if (file.type.startsWith('video/')) {
+                previews.push({ type: 'video', url: objectUrl });
+            } else if (file.type === 'application/pdf') {
+                previews.push({ type: 'pdf', url: objectUrl });
+            } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                previews.push({ type: 'doc', name: file.name, url: objectUrl });
             }
-            setNewPostImages((prevImgs) => [...prevImgs, ...imageFiles]);
-            return updated;
-        });
+        }
+        setNewPostImages((prevImgs) => [...prevImgs, ...previews]);
     };
 
     const [videoPreview, setVideoPreview] = useState<string | null>(null);
@@ -326,10 +332,10 @@ export default function Detail() {
                                             <div className={`${style.BlockRow}`}>
                                                 <div><FaUserCircle className={style.userAvatar} /></div>
                                                 <div className={`${style.BlockColumn}`}>
-                                                    <div className={style.postGrName}>{account?.name || 'Chưa có data'}</div>
+                                                    <div className={style.postGrName}>{account?.name || 'NGUYEN VAN A'}</div>
                                                     <div className={`${style.BlockRow} ${style.postGrState}`}>
                                                         <div className={style.postGrStateIc}><FaLock style={{color: 'rgb(0, 0, 0, 0.6)'}}></FaLock></div>
-                                                        <p>{groups?.GroupState || 'Chưa có data'}</p>
+                                                        <p>{groups?.GroupState || 'Riêng tư'}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -350,13 +356,16 @@ export default function Detail() {
                                             {videoPreviews.length > 0 && (
                                             <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                                                 {videoPreviews.map((vid, idx) => (
-                                                <video key={idx} src={vid} controls width={400} style={{borderRadius: '8px'}} />
+                                                    <div key={idx} style={{position: 'relative', display: 'inline-block'}}>
+                                                        <MdCancel style={{position: 'absolute', top: 8, right: 8, color: '#f00', cursor: 'pointer', zIndex: 2}} onClick={() => handleCancelVideo(idx)} />
+                                                        <video src={vid} controls width={400} style={{borderRadius: '8px'}} />
+                                                    </div>
                                                 ))}
                                             </div>
                                             )}
                                             <input
                                                 type="file"
-                                                accept="image/*"
+                                                accept="image/*,application/pdf,.doc,.docx"
                                                 multiple
                                                 style={{ display: 'none' }}
                                                 ref={imageInputRef}
@@ -364,12 +373,52 @@ export default function Detail() {
                                             />
                                             {newPostImages.length > 0 && (
                                                 <div className={style.postImagePreview}>
-                                                    {newPostImages.map((img, idx) => (
-                                                        <div key={idx} style={{padding: '10px', position: 'relative', display: 'inline-block'}}>
+                                                    {newPostImages.map((file, idx) => (
+                                                        <div key={idx} style={{
+                                                            position: 'relative',
+                                                            display: 'inline-block',
+                                                            background: '#f5f6fa',
+                                                            borderRadius: 10,
+                                                            boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
+                                                            padding: '14px 16px 14px 54px',
+                                                            margin: '0 10px 10px 0',
+                                                            minWidth: 260,
+                                                            maxWidth: 350
+                                                        }}>
                                                             <MdCancel className={style.cancelImage}
+                                                                style={{position: 'absolute', top: 10, right: 10, color: '#f00', cursor: 'pointer', zIndex: 2}}
                                                                 onClick={() => handleCancelUpload(idx)} />
-                                                            <img src={img} alt={`Preview ${idx+1}`}
-                                                                style={{maxWidth: '350px', maxHeight: '350px', borderRadius: '8px'}} />
+                                                            {file.type === 'image' && (
+                                                                <img src={file.url} alt={`Preview ${idx+1}`}
+                                                                    style={{maxWidth: '270px', maxHeight: '270px', borderRadius: '8px'}} />
+                                                            )}
+                                                            {file.type === 'video' && (
+                                                                <video src={file.url} controls width={270} style={{borderRadius: '8px'}} />
+                                                            )}
+                                                            {file.type === 'pdf' && (
+                                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                                    <span style={{position: 'absolute', left: 16}}>
+                                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#e74c3c"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 7V3.5L18.5 9H13z"/></svg>
+                                                                    </span>
+                                                                    <div style={{flex: 1}}>
+                                                                        <div style={{fontWeight: 500, fontSize: 15, color: '#222'}}>{file.name}</div>
+                                                                        <div style={{fontSize: 12, color: '#888'}}>PDF Document</div>
+                                                                        <a href={file.url} target="_blank" rel="noopener noreferrer" style={{fontSize: 12, color: '#1877f2', textDecoration: 'underline'}}>Xem trước</a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {(file.type === 'doc' || file.type === 'docx') && (
+                                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                                    <span style={{position: 'absolute', left: 16}}>
+                                                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#2a5caa"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 7V3.5L18.5 9H13z"/></svg>
+                                                                    </span>
+                                                                    <div style={{flex: 1}}>
+                                                                        <div style={{fontWeight: 500, fontSize: 15, color: '#222'}}>{file.name}</div>
+                                                                        <div style={{fontSize: 12, color: '#888'}}>Word Document</div>
+                                                                        <a href={file.url} target="_blank" rel="noopener noreferrer" style={{fontSize: 12, color: '#1877f2', textDecoration: 'underline'}}>Tải xuống</a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -393,7 +442,7 @@ export default function Detail() {
                                             <button 
                                                 className={style.postButton}
                                                 onClick={handlePostSubmit}
-                                                disabled={!newPostContent.trim() && newPostImages.length === 0}
+                                                disabled={!newPostContent.trim() && uploadImg.length === 0}
                                             >
                                                 Đăng
                                             </button>
@@ -416,7 +465,7 @@ export default function Detail() {
                                                 <div className={style.postHeader}>
                                                     <FaUserCircle className={style.postAvatar} />
                                                     <div>
-                                                        <div className={style.postUserName}>User</div>
+                                                        <div className={style.postUserName}>Nguyen Van A</div>
                                                         <div className={style.postTime}>{post.time}</div>
                                                     </div>
                                                 </div>
@@ -439,17 +488,28 @@ export default function Detail() {
                                                     </div>
                                                     <div className={style.BlockRow}>
                                                         <p>{post.comments.length}</p>
-                                                        <FaComment size={18}></FaComment>
+                                                        <FaComment size={20}></FaComment>
                                                     </div>
                                                     <div className={style.BlockRow} style={{marginLeft: '10px'}}>
                                                         <p>100</p>
-                                                        <IoIosShareAlt size={18}></IoIosShareAlt>
+                                                        <IoIosShareAlt size={20}></IoIosShareAlt>
                                                     </div>
                                                 </div>
                                                 <div>
                                                     {post.comments.map((comment) => (
                                                         <div>{comment.content}</div>
                                                 ))}
+                                                </div>
+                                                <div>
+                                                    {post.imageUrls && post.imageUrls.length > 0 && (
+                                                        <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                            {post.imageUrls.map((img, idx) => (
+                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} 
+                                                                className={style.postImage} 
+                                                                style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className={style.postActions}>
                                                     <button className={style.postActionButton}>
