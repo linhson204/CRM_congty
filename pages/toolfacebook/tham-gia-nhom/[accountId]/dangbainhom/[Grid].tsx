@@ -161,29 +161,46 @@ export default function Detail() {
 
     const handlePostSubmit = async () => {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
+        
+        // Save current values before clearing
+        const currentContent = newPostContent;
+        const currentImages = [...newPostImages];
+        const currentVideos = [...videoPreviews];
+        const currentUploadImg = [...uploadImg];
+        const currentVideoFiles = [...videoFiles];
+        
+        // Clear UI immediately
+        setNewPostContent('');
+        setNewPostImages([]);
+        setVideoPreviews([]);
+        setUploadImg([]);
+        setVideoFiles([]);
+        if (imageInputRef.current) imageInputRef.current.value = '';
+        if (videoInputRef.current) videoInputRef.current.value = '';
+        
         const newPost: Post = {
             id: 123,
             userId: "gianvu17607@gmail.com",
             userName: uname,
             groupId: groups?.id,
             time: `Vừa xong`,
-            content: newPostContent,
-            imageUrls: newPostImages.length > 0 ? newPostImages : undefined,
+            content: currentContent,
+            imageUrls: currentImages.length > 0 ? currentImages : undefined,
             likes: 0,
             // comments: 0,
             shares: 0
         };
 
         // api upload anh
-        const testUpload = await uploadAnh(uploadImg);
+        const testUpload = await uploadAnh(currentUploadImg);
         const fileMap = testUpload.map(img => img.savedName)
 
         // send
         if (websocket && websocket.readyState === WebSocket.OPEN) {
-            const params = {"group_link": `groups/${Grid}`, "content": `${newPostContent}`, "files": fileMap};
+            const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
             const postData = {
                 type: "post_to_group",
-                user_id: "gianvu17607@gmail.com",
+                user_id: "test1",
                 postId: newPost.id.toString(),
                 crm_id: crmID,
                 params: params,
@@ -193,21 +210,13 @@ export default function Detail() {
             websocket.send(JSON.stringify(postData));
         }
 
-        const params = {"group_link": `groups/${Grid}`, "content": `${newPostContent}`, "files": fileMap};
+        const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
         await createPostGroup(
             "post_to_group",
-            "gianvu17607@gmail.com",
+            "test1",
             params,
             crmID
         );
-
-        // reset
-        setNewPostContent('');
-        setNewPostImages([]);
-        setVideoPreviews([]);
-        setUploadImg([]);
-        if (imageInputRef.current) imageInputRef.current.value = '';
-        if (videoInputRef.current) videoInputRef.current.value = '';
     };
 
     const handleImageIconClick = () => {
@@ -262,6 +271,7 @@ export default function Detail() {
 
     const handleCancelUpload = (index: number) => {
         setNewPostImages((prev) => prev.filter((_, idx) => idx !== index));
+        setUploadImg((prev) => prev.filter((_, idx) => idx !== index));
     }
 
     const showLoadingDialog = () => {
@@ -442,7 +452,7 @@ export default function Detail() {
                                             <button 
                                                 className={style.postButton}
                                                 onClick={handlePostSubmit}
-                                                disabled={!newPostContent.trim() && uploadImg.length === 0}
+                                                disabled={!newPostContent.trim() && newPostImages.length === 0 && videoPreviews.length === 0}
                                             >
                                                 Đăng
                                             </button>
@@ -472,14 +482,13 @@ export default function Detail() {
                                                 <div className={style.postContent}>{post.content}</div>
                                                 {post.imageUrls && post.imageUrls.length > 0 && (
                                                     <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                                        {post.imageUrls.map((img, idx) => (
+                                                        {/* {post.imageUrls.map((img, idx) => (
                                                             <img key={idx} src={img} alt={`Post ${idx+1}`} 
                                                                 className={style.postImage} 
                                                                 style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
-                                                        ))}
+                                                        ))} */}
                                                     </div>
                                                 )}
-                                                
                                                 <div className={style.postStats}>
                                                     <div style={{position: 'relative'}} className={style.BlockRow}>
                                                         <div id="like" className={style.likeIcon}></div>
@@ -496,12 +505,12 @@ export default function Detail() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    {post.comments.map((comment) => (
-                                                        <div>{comment.content}</div>
+                                                {post.comments.map((comment) => (
+                                                    <div>{comment.content}</div>
                                                 ))}
                                                 </div>
                                                 <div>
-                                                    {post.imageUrls && post.imageUrls.length > 0 && (
+                                                    {/* {post.imageUrls && post.imageUrls.length > 0 && (
                                                         <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                                                             {post.imageUrls.map((img, idx) => (
                                                             <img key={idx} src={img} alt={`Post ${idx+1}`} 
@@ -509,7 +518,7 @@ export default function Detail() {
                                                                 style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
                                                             ))}
                                                         </div>
-                                                    )}
+                                                    )} */}
                                                 </div>
                                                 <div className={style.postActions}>
                                                     <button className={style.postActionButton}>

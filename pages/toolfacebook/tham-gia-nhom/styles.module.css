@@ -152,6 +152,13 @@
 
     /* BOTTOMBAR */
     /* THANH PHAN TRANG */
+    .indexBarContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
     .indexBar {
       margin-left: auto;
       margin-right: 10px;
@@ -225,7 +232,7 @@
   }
 
   .GroupListAttribute > div:first-child { width: 25% }
-  .GroupListAttribute > div:nth-child(2) { width: 16% }
+  .GroupListAttribute > div:nth-child(2) { width: 15% }
   .GroupListAttribute > div:nth-child(3) { width: 16% }
   .GroupListAttribute > div:nth-child(4) { width: 16% }
   .GroupListAttribute > div:last-child { flex: 1 }
@@ -237,12 +244,17 @@
       padding-bottom: 10px;
       padding-left: 10px;
       border: 1px solid rgb(214, 214, 214);
+      max-height: 700px;
+  }
+
+  .GroupListContainer > div:last-child {
+    border-bottom: none;
   }
 
   .GroupBlock > div:first-child { width: 25% }
-  .GroupBlock > div:nth-child(2) { width: 16% }
+  .GroupBlock > div:nth-child(2) { width: 15% }
   .GroupBlock > div:nth-child(3) { width: 16% }
-  .GroupBlock > div:nth-child(4) { width: 16% }
+  .GroupBlock > div:nth-child(4) { width: 17% }
   .GroupBlock > div:last-child { flex: 1 }
 
   .GroupBlock {
@@ -253,12 +265,12 @@
   }
 
   .grlistName {
-    font-size: 20px;
+    font-size: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
     word-break: break-all;
-    padding: 5px;
+    padding: 5px 15px;
   }
 
   .grState {
@@ -275,7 +287,11 @@
   }
 
   .grCategory {
-    border: 2px dashed #6ed972;
+    word-break: break-all;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* trang thai tham gia nhom */
