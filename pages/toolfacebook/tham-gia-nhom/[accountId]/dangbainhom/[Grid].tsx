@@ -11,14 +11,16 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
 import { BiLike, BiShare } from "react-icons/bi";
+import { BsThreeDots } from "react-icons/bs";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
-import { MdCancel } from "react-icons/md";
+import { MdCancel, MdPublic } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
-import CommentPostPopup from "../../popup/CommentPost";
+import CommentPostPopup from "../popup/CommentPost";
+import stylepu from '../popup/popup.module.css';
 import style from './post.module.css';
 
 interface Group {
@@ -330,7 +332,43 @@ export default function Detail() {
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
                             <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}></CommentPostPopup>
+                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}
+                                    headBar = {
+                                    <div>
+                                        <div className={`${style.BlockRow} ${stylepu.postHeader}`}>
+                                        <div className={stylepu.userInfo}>
+                                            <div className={stylepu.userAvatar}></div>
+                                            <div className={stylepu.userDetails}>
+                                            <p className={stylepu.username}>Username</p>
+                                            <div className={`${stylepu.postTime} ${stylepu.BlockRow}`}>
+                                                <p>3 giờ trước</p>
+                                                <div><MdPublic size={14} /></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <BsThreeDots size={20} className={stylepu.moreOptions} />
+                                        </div>
+                                        
+                                        <div className={stylepu.postContent}>
+                                        <div></div>
+                                        </div>
+                                        
+                                        <div className={stylepu.postStats}>
+                                        <div className={stylepu.reactionCount}>
+                                            <div className={stylepu.reactionIcons}>
+                                            <span className={stylepu.likeIcon}></span>
+                                            <span className={stylepu.favorIcon}></span>
+                                            </div>
+                                            <span>100</span>
+                                        </div>
+                                        <div className={stylepu.commentShareCount}>
+                                            <div>bình luận</div>
+                                            <div>chia sẻ</div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                }>
+                                </CommentPostPopup>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
                                         <h2 className={style.groupTitle}>

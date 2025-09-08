@@ -17,7 +17,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.763);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,12 +38,6 @@
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.PopupCommentBoxContent {
-  background-color: white;
-  padding: 0;
-  border-radius: 20px;
 }
 
 .PopupOutGrICWrapper {
@@ -158,21 +152,25 @@
   /* height: 300px; */
 }
 
-.modalBody::-webkit-scrollbar {
+.modalBody::-webkit-scrollbar,
+.commentBoxBody::-webkit-scrollbar {
   width: 10px;
 }
 
-.modalBody::-webkit-scrollbar-track {
+.modalBody::-webkit-scrollbar-track,
+.commentBoxBody::-webkit-scrollbar-track {
   background: #cdcdcd; /* Màu nền track */
   border-radius: 10px;
 }
 
-.modalBody::-webkit-scrollbar-thumb {
+.modalBody::-webkit-scrollbar-thumb,
+.commentBoxBody::-webkit-scrollbar-thumb {
   background: #888; /* Màu thumb */
   border-radius: 5px;
 }
 
-.modalBody::-webkit-scrollbar-thumb:hover {
+.modalBody::-webkit-scrollbar-thumb:hover,
+.commentBoxBody::-webkit-scrollbar-thumb:hover {
   background: #555; /* Màu thumb khi hover */
 }
 
@@ -283,16 +281,24 @@
 }
 
   /* Container chính */
+
+.PopupCommentBoxContent {
+  background-color: white;
+  padding: 0;
+  border-radius: 20px;
+  width: 850px;
+  height: 700px;
+}
+
 .commentContainer {
-  width: 700px;
-  height: 600px;
   max-width: 100%;
   background: white;
-  border-radius: 8px;
+  border-radius: 15px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
+  max-height: 100%;
 }
 
 /* Header */
@@ -332,7 +338,7 @@
 /* Bài viết gốc */
 .originalPost {
   padding-bottom: 16px;
-  border-bottom: 1px solid #e4e6eb;
+  /* border-bottom: 1px solid #e4e6eb; */
   margin-bottom: 16px;
 }
 
@@ -389,10 +395,32 @@
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid #e4e6eb;
+  /* border-bottom: 1px solid #e4e6eb; */
   margin-bottom: 8px;
   font-size: 13px;
   color: #65676b;
+}
+
+.likeIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../facebook-like.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.favorIcon {
+  margin-left: 15px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../../facebook-love.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .reactionCount {
@@ -406,18 +434,8 @@
   position: relative;
 }
 
-.likeIcon, .heartIcon {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: #1877f2;
-  display: inline-block;
-  position: relative;
-}
-
-.heartIcon {
-  background-color: #f33e58;
-  margin-left: -6px;
+.reactionCount > span {
+  font-size: 16px;
 }
 
 .postActions {
@@ -436,7 +454,7 @@
   padding: 8px 16px;
   border-radius: 4px;
   color: #65676b;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
 }

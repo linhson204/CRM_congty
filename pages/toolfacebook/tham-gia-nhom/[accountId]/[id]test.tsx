@@ -87,19 +87,9 @@ export default function Detail() {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
 
-    // useEffect(() => {
-    // async function fetchData() {
-    //     const res1 = await getGroupData("123", "a", "", "", "Đã tham gia");
-    //     const res2 = await getGroupData("123", "", "", "", "Chờ duyệt");
-    //     const res3 = await getGroupData("123", "a", "", "", "Chưa tham gia");
-    //     const res = [...res1.results, ...res2.results, ...res3.results];
-    //     setGroupData(res); // lưu vào state
-    //     console.log(res1);
-    //     console.log(res2);
-    //     console.log(res3);
-    // }
-    // fetchData();
-    // }, []);
+    const pageCountSelect = async () => {
+
+    }
 
     const websocket = useWebSocket();
     useEffect(() => {
@@ -238,6 +228,7 @@ export default function Detail() {
         });
     }, [groupData, grState, joinState, search]);
 
+    // Phân trang
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
@@ -423,7 +414,7 @@ export default function Detail() {
                                 <input
                                     style={{marginLeft: '0px'}}
                                     className={style.searchBar}
-                                    type="text" placeholder="TimKiem"
+                                    type="text" placeholder="Tìm kiếm tài khoản theo tên ..."
                                     value={search}
                                     onChange={(e) => {
                                         setSearch(e.target.value);
