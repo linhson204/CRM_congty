@@ -235,6 +235,7 @@
   .GroupListAttribute > div:nth-child(2) { width: 15% }
   .GroupListAttribute > div:nth-child(3) { width: 16% }
   .GroupListAttribute > div:nth-child(4) { width: 16% }
+  .GroupListAttribute > div:nth-child(5) { width: 16% }
   .GroupListAttribute > div:last-child { flex: 1 }
 
   /* GR LIST */
@@ -255,6 +256,7 @@
   .GroupBlock > div:nth-child(2) { width: 15% }
   .GroupBlock > div:nth-child(3) { width: 16% }
   .GroupBlock > div:nth-child(4) { width: 17% }
+  .GroupBlock > div:nth-child(5) { width: 16% }
   .GroupBlock > div:last-child { flex: 1 }
 
   .GroupBlock {
@@ -835,3 +837,64 @@
   margin: 0;
 }
 
+/* BLOCK thong ke */
+.statBlockContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.statBlock {
+  height: 100px;
+  font-size: 20px;
+  flex: 1;
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+.marqueeBlock {
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.marqueeBlock > span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 8s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* block trang thai */
+.joinedStateBlock, .notJoinedStateBlock, .queueStateBlock {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+  width: fit-content;
+}
+
+.joinedStateBlock {
+  color: #22bb33;
+  background-color: white;
+  border: 1px solid rgb(34, 187, 51, 0.3);
+}
+
+.notJoinedStateBlock {
+  color: #aaaaaa;
+  background-color: white;
+  border: 1px solid rgb(170, 170, 170, 0.3);
+}
+
+.queueStateBlock {
+  color: #f0ad4e;
+  background-color: white;
+  border: 1px solid rgb(240, 173, 78, 0.3);
+}

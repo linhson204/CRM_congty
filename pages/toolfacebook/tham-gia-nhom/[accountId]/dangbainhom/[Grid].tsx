@@ -139,6 +139,10 @@ export default function Detail() {
         currentPage * itemsPerPage
     );
 
+    // const handleNotify = () => {
+    //     FacebookToast("Thông báo mới", "Ai đó vừa bình luận vào bài viết của bạn.");
+    // };
+
     // Gọi API lấy danh sách bài đăng cũ
     useEffect(() => {
         fetch('http://localhost:3003/api/posts')
@@ -158,6 +162,7 @@ export default function Detail() {
     }, [test]); // ✅ Chạy khi test thay đổi
 
     const handleViewPosts = () => {
+        return (window.alert('reset socket'));
     };
 
     const handlePostSubmit = async () => {
@@ -194,7 +199,7 @@ export default function Detail() {
 
         // api upload anh
         const testUpload = await uploadAnh(currentUploadImg);
-        const fileMap = testUpload.map(img => img.savedName)
+        const fileMap = testUpload.map(img => img.savedName);
 
         // send
         if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -330,7 +335,7 @@ export default function Detail() {
                     <div className={styles.formInfoStep}>
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
-                            <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
+                            <div className={styles.form_add_potential}>
                                 <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)} idCmtBox={idCmtBox}>
                                 </CommentPostPopup>
                                 <div className={style.postsContainer}>
@@ -453,7 +458,7 @@ export default function Detail() {
                                         <div className={style.postActions}>
                                             <button 
                                                 className={style.postButton}
-                                                onClick={handlePostSubmit}
+                                                onClick={() => {handlePostSubmit}}
                                                 disabled={!newPostContent.trim() && newPostImages.length === 0 && videoPreviews.length === 0}
                                             >
                                                 Đăng

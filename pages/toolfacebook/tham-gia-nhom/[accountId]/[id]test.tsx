@@ -5,6 +5,7 @@ import styles from "@/components/crm/potential/potential.module.css";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
+import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -15,7 +16,7 @@ import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from "../../../../public/data/account.json";
-import Filter from "../popup/Filter";
+import StatisticBlock from "../components/statisticBlock";
 import OutGrFs from "../popup/OutGrFS";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
 import QuestionPopup from "../popup/PrivateGrQues/QuestionPopup";
@@ -247,9 +248,10 @@ export default function Detail() {
         setpendingGr(id);
     };
 
-    const HandleFilter = () => {
+    const HandleFilter = (grStateTemp: string, joinTemp: string) => {
         setGrState(grStateTemp);
         setJoinState(joinTemp);
+        setshowFilterPopup(false);
         console.log(grStateTemp, joinTemp);
     }
 
@@ -396,18 +398,18 @@ export default function Detail() {
                         <div style={{padding: '10px'}} className={styles.form_add_potential}>
                             {/* Title + BackButton */}
                             <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}>CHI TIẾT TÀI KHOẢN</p>
-                            </div>
-                            {/* Name + GroupIn/NotIn */}
-                            <div style={{marginTop: '20px'}} className={style.BlockRow}>
+                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
                                 <div id="UserName" className={style.BlockRow}>
                                     <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
                                     <p className={style.nameDetail}>{uname}</p>
                                 </div>
-                                <div style={{display: 'flex', flexDirection: 'column', marginLeft: 'auto'}}>
-                                    <div>Số nhóm đã tham gia: {groups.filter(group => group.isJoin === 1).length} </div>
-                                    <div>Số nhóm chưa tham gia: {groups.filter(group => group.isJoin === 2 || group.isJoin === 3).length}</div>
-                                </div>
+                            </div>
+                            {/* Name + GroupIn/NotIn */}
+                            <div style={{marginTop: '20px'}} className={style.statBlockContainer}>
+                                <StatisticBlock content="Nhóm nhiều bài viết nhất" count={123}/>
+                                <StatisticBlock content="abc" count={123}/>
+                                <StatisticBlock content="abc" count={123}/>
+                                <StatisticBlock content="abc" count={123}/>
                             </div>
                             {/* thanh checkbox + ten */}
                             <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
@@ -452,55 +454,10 @@ export default function Detail() {
                                         </button>
                                     </div>
                                 </OutGrFs>
-                                <Filter isOpen={showFilter} onClose={() => setshowFilterPopup(false)}>
-                                    <div className={style.filterContainer}>
-                                        <div className={style.BlockColumn}>
-                                            <div className={style.selectBlockFilter}> 
-                                                <label className={style.filterLabel}>Trạng thái nhóm</label>
-                                                <select
-                                                    className={style.filterSelect}
-                                                    onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        setGrStateTemp(value);
-                                                    }}
-                                                >
-                                                    <option value="all">Tất cả</option>
-                                                    <option value="private">Riêng tư</option>
-                                                    <option value="public">Công khai</option>
-                                                </select>
-                                            </div>
-                                            <div className={style.selectBlockFilter}> 
-                                                <label className={style.filterLabel}>Tham gia</label>
-                                                <select
-                                                    className={style.filterSelect}
-                                                    onChange={(e) => {
-                                                        const value1 = e.target.value;
-                                                        setJoinTemp(value1);
-                                                    }}
-                                                >
-                                                    <option value="all">Tất cả</option>
-                                                    <option value="not">Chưa tham gia</option>
-                                                    <option value="join">Đã tham gia</option>
-                                                    <option value="pending">Đang chờ duyệt</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className={style.BlockRow}>
-                                            <button 
-                                                className={stylepu.PopupCancelFilter}
-                                                onClick={() => setshowFilterPopup(false)}>
-                                                huỷ
-                                            </button>
-                                            <button 
-                                                onClick={() => {
-                                                    setshowFilterPopup(false);
-                                                    HandleFilter();
-                                                }}
-                                                className={stylepu.PopupConfirmFilter}>
-                                                Xác nhận
-                                            </button>
-                                        </div>
-                                    </div>
+                                <Filter 
+                                    isOpen={showFilter}
+                                    onClose={() => setshowFilterPopup(false)} 
+                                    onApply={HandleFilter}>
                                 </Filter>
                                 <CancelQueuePopup isOpen={showCancelQueuePopUp} onClose={() => setShowCancelQueuePopUp(false)}>
                                     <div className={stylepu.PopupOutGrICWrapper}><PiWarningCircleLight className={stylepu.PopupOutGrIC}/></div>

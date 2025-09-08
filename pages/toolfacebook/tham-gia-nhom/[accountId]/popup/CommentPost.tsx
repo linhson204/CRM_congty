@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BiLike } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { FaSmile } from "react-icons/fa";
@@ -11,23 +11,20 @@ import style from "./popup.module.css";
 interface FullscreenCommentProps {
     isOpen: boolean;
     onClose: () => void;
-    headBar?: React.ReactNode;
-    comment?: React.ReactNode;
     idCmtBox?: number;
 }
 
 export default function CommentPostPopup({
     isOpen,
     onClose,
-    headBar,
     idCmtBox,
     }: FullscreenCommentProps) {
     if (!isOpen) return null;
 
     // Gọi API lấy danh sách bài đăng cũ
-    const [posts, setPosts] = useState<any[]>([]); // ✅ Khởi tạo posts là mảng rỗng
-    const [comments, setComments] = useState<any[]>([]); // ✅ State để lưu comments của post cụ thể
-    const [content, setContent] = useState<string | null>(null); // ✅ State để lưu nội dung bài viết gốc
+    const [posts, setPosts] = useState<any[]>([]);
+    const [comments, setComments] = useState<any[]>([]);
+    const [content, setContent] = useState<string | null>(null);
 
     useEffect(() => {
         fetch(`http://localhost:3003/api/posts`)
