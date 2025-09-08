@@ -11,16 +11,14 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
 import { BiLike, BiShare } from "react-icons/bi";
-import { BsThreeDots } from "react-icons/bs";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
-import { MdCancel, MdPublic } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
 import CommentPostPopup from "../popup/CommentPost";
-import stylepu from '../popup/popup.module.css';
 import style from './post.module.css';
 
 interface Group {
@@ -87,6 +85,7 @@ export default function Detail() {
     const ui = "gianvu17607@gmail.com";
     const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
+    const [idCmtBox, setIdCmtBox] = useState<number | null>(null);
 
     const websocket = useWebSocket();
     const [groupData, setGroupData] = useState<any[]>([]);
@@ -332,42 +331,7 @@ export default function Detail() {
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
                             <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}
-                                    headBar = {
-                                    <div>
-                                        <div className={`${style.BlockRow} ${stylepu.postHeader}`}>
-                                        <div className={stylepu.userInfo}>
-                                            <div className={stylepu.userAvatar}></div>
-                                            <div className={stylepu.userDetails}>
-                                            <p className={stylepu.username}>Username</p>
-                                            <div className={`${stylepu.postTime} ${stylepu.BlockRow}`}>
-                                                <p>3 giờ trước</p>
-                                                <div><MdPublic size={14} /></div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <BsThreeDots size={20} className={stylepu.moreOptions} />
-                                        </div>
-                                        
-                                        <div className={stylepu.postContent}>
-                                        <div></div>
-                                        </div>
-                                        
-                                        <div className={stylepu.postStats}>
-                                        <div className={stylepu.reactionCount}>
-                                            <div className={stylepu.reactionIcons}>
-                                            <span className={stylepu.likeIcon}></span>
-                                            <span className={stylepu.favorIcon}></span>
-                                            </div>
-                                            <span>100</span>
-                                        </div>
-                                        <div className={stylepu.commentShareCount}>
-                                            <div>bình luận</div>
-                                            <div>chia sẻ</div>
-                                        </div>
-                                        </div>
-                                    </div>
-                                }>
+                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)} idCmtBox={idCmtBox}>
                                 </CommentPostPopup>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
@@ -543,9 +507,6 @@ export default function Detail() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                {post.comments.map((comment) => (
-                                                    <div>{comment.content}</div>
-                                                ))}
                                                 </div>
                                                 <div>
                                                     {/* {post.imageUrls && post.imageUrls.length > 0 && (
@@ -560,11 +521,15 @@ export default function Detail() {
                                                 </div>
                                                 <div className={style.postActions}>
                                                     <button className={style.postActionButton}>
-                                                        <BiLike style={{marginRight: '5px'}}></BiLike>
+                                                        <BiLike size={25} style={{marginRight: '5px'}}></BiLike>
                                                         Thích
                                                     </button>
-                                                    <button className={style.postActionButton} onClick={() => setShowComment(true)}>
-                                                        <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
+                                                    <button className={style.postActionButton} 
+                                                            onClick={() => {
+                                                                setShowComment(true)
+                                                                setIdCmtBox(post.id)
+                                                            }}>
+                                                        <FaRegComment size={25} style={{marginRight: '5px'}}></FaRegComment>
                                                         Bình luận
                                                     </button>
                                                     <button className={style.postActionButton} style={{display: 'none'}}>
