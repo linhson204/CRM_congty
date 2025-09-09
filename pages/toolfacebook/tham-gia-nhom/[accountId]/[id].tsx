@@ -12,19 +12,18 @@ import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { FaFilter, FaLock, FaUserCircle } from "react-icons/fa";
+import { FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoMdRefresh } from "react-icons/io";
-import { IoEnterOutline, IoExitOutline, IoPerson } from "react-icons/io5";
+import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
 import data from "../../../../public/data/account.json";
 import LoadingDialog from "../components/LoadingDialog";
+import SearchBar from "../components/SearchBar";
 import UserListIndexBar from "../components/UserListIndexBar";
 import StatisticBlock from "../components/statisticBlock";
 import { Question } from "../popup/PrivateGrQues/types";
 import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
-import stylepo from './dangbainhom/post.module.css';
 
 interface Group {
     id: number;
@@ -46,7 +45,7 @@ interface Account {
     groups: Group[];
 }
 
-export default function Detail() {
+export default function GroupList() {
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
@@ -257,6 +256,11 @@ export default function Detail() {
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     const filteredPage = filteredGroups.slice(
         (currentPage - 1) * itemsPerPage,
@@ -354,49 +358,32 @@ export default function Detail() {
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
                         <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
-                        <div style={{padding: '10px'}} className={styles.form_add_potential}>
-                            {/* Title + BackButton */}
-                            <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
-                                <div id="UserName" className={style.BlockRow}>
-                                    <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                    <p className={style.nameDetail}>{accountId}</p>
-                                </div>
-                            </div>
+                        <div style={{padding: '5px', backgroundColor: '#f9f9f9'}} className={styles.form_add_potential}>
                             {/* Name + GroupIn/NotIn */}
-                            <div style={{marginTop: '20px'}} className={style.statBlockContainer}>
+                            <div className={style.statBlockContainer}>
                                 <StatisticBlock content="Nhóm nhiều bài viết nhất" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
+                                <StatisticBlock content="Số nhóm chưa tham gia" count={123}/>
+                                <StatisticBlock content="Ngành nghề phổ biến nhất" count={123}/>
+                                <StatisticBlock content="Nhóm nhiều thành viên nhất" count={123}/>
                             </div>
                             {/* thanh checkbox + ten */}
-                            <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
-                                <input
-                                    style={{marginLeft: '0px'}}
-                                    className={style.searchBar}
-                                    type="text" placeholder="Tìm kiếm tài khoản theo tên ..."
-                                    value={search}
-                                    onChange={(e) => {
-                                        setSearch(e.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                />
-                                <button 
-                                    className={stylepo.backButton}
-                                    onClick={() => resetFilter()}
-                                >
-                                    <IoMdRefresh></IoMdRefresh>
-                                </button>
-                                <div className={`${style.filterBlock} ${style.BlockRow}`}
-                                    onClick={() => {
-                                        setshowFilterPopup(true)
-                                        setJoinTemp('all');
-                                        setGrStateTemp('all');
-                                    }}>
-                                    <FaFilter></FaFilter>
-                                    <p>Bộ lọc</p>
+                            <div className={style.grouplistHeadbar}>
+                                <div className={style.usernameHeader}>
+                                    <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
+                                    <div id="UserName" className={style.BlockRow}>
+                                        <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
+                                        <p className={style.nameDetail}>{accountId}</p>
+                                    </div>
                                 </div>
+                                <SearchBar
+                                    search={search}
+                                    setSearch={setSearch}
+                                    resetFilter={resetFilter}
+                                    setshowFilterPopup={setshowFilterPopup}
+                                    setJoinTemp={setJoinTemp}
+                                    setGrStateTemp={setGrStateTemp}
+                                    setCurrentPage={setCurrentPage}
+                                />
                             </div>
                             {/* List Nhóm */}
                             <div>
@@ -443,7 +430,8 @@ export default function Detail() {
                                             <div className={style.BlockRow}>
                                                 <div className={style.BlockRow}>
                                                     <div><FaLock className={style.ic}></FaLock></div>
-                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[1]}</p>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>
+                                                        {popupHeader[1] === "Không hoạt động" ? ("Riêng tư") : ("Công khai")}</p>
                                                 </div>
                                                 <div className={style.BlockRow}>
                                                     <div><IoPerson className={style.ic}></IoPerson></div>
@@ -453,7 +441,12 @@ export default function Detail() {
                                         </div>
                                 </QuestionPopup>
                                 <div className={style.GroupListAttribute}>
-                                    <input type="checkbox" onChange={(e) => e.target.checked}/>
+                                    <div className={style.GroupListContent}>
+                                        <input  className={style.checkboxList}
+                                                type="checkbox"
+                                                onChange={(e) => e.target.checked}
+                                        />
+                                    </div>
                                     <div className={style.GroupListContent}>Tên nhóm</div>
                                     <div className={style.GroupListContent}>Trạng thái nhóm</div>
                                     <div className={style.GroupListContent}>Số thành viên</div>
@@ -517,10 +510,10 @@ export default function Detail() {
                                             <p>Không tìm thấy nhóm phù hợp với bộ lọc hiện tại.</p>
                                         </div>
                                     ) : (
-                                        // Render groups normally
-                                        filteredPage.map(group => (
+                                    // Map nhóm
+                                    filteredPage.map(group => (
                                         <div key={group.id} className={`${style.GroupBlock} ${style.BlockRow}`}>
-                                            <input type="checkbox"></input>
+                                            <div className=""><input type="checkbox" className={style.checkboxList}></input></div>
                                             <div className={style.grlistName}>{group.Name}</div>
                                             <div id="GrState" className={style.grState}>
                                                 {group.Status === "Hoạt động" ? (
@@ -529,18 +522,12 @@ export default function Detail() {
                                                     <FaLock className={style.ic} style={{color: 'rgb(0, 0, 0, 0.7)'}}></FaLock>
                                                 )}
                                             </div>
-                                            {/* <h2 style={{marginLeft: 'auto'}}>
-                                                {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
-                                            </h2> */}
                                             <div id="member" className={style.grMember}>
-                                                {/* <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div> */}
                                                 <p>{group.Number_Of_Posts}</p>
                                             </div>
-                                            {/*  */}
                                             <div className={style.grCategory}>
                                                 <p>{group.Link}</p>
                                             </div>
-                                            {/* state */}
                                             <div className={style.grStateQueue}>
                                                 {group.user_status === 'Đã tham gia' ? (
                                                     <div className={style.joinedStateBlock}>
@@ -592,7 +579,7 @@ export default function Detail() {
                                                                 UpdateGrState(group.Link);
                                                             }
                                                             }}}>
-                                                        <IoEnterOutline size={20}/>
+                                                        <IoPersonAdd size={20}/>
                                                     </div>
                                                 // hàng đợi
                                                 ) : group.user_status === 'Chờ duyệt' ? (
@@ -608,12 +595,6 @@ export default function Detail() {
                                                                     }}>
                                                                 <MdClose size={20}/>
                                                             </button>
-                                                            {/* <div className={style.BlockRow}>
-                                                                <div className={`${style.BlockRow} ${style.onQueue}`}>
-                                                                    <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
-                                                                    <p style={{paddingTop: '2px'}}>Chờ duyệt</p>
-                                                                </div>
-                                                            </div> */}
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -621,24 +602,15 @@ export default function Detail() {
                                                 )}
                                             </div>
                                         </div>
-                                    ))
-                                    )}
+                                    )))}
                                 </div>
                                 {!isLoading && !fetchError && filteredPage.length > 0 && (
-                                // <div id="PageIndexBar" className={style.indexBarContainer}>
-                                //     <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                                //         <FaArrowLeft className={style.ic}></FaArrowLeft>
-                                //     </button>
-                                //     <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Trang {currentPage} / {totalPages}</span>
-                                //     <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                                //         <FaArrowRight className={style.ic}></FaArrowRight>
-                                //     </button>
-                                // </div>
                                 <UserListIndexBar
                                     currentPage={currentPage}
                                     totalPages={totalPages}
                                     goToPrev={goToPrev}
                                     goToNext={goToNext}
+                                    goToPage={goToPage}
                                     setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
                                 ></UserListIndexBar>
                                 )}

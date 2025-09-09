@@ -34,7 +34,6 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
         const handleSubmit = () => {
             onSubmit(answers);
             handleClose();
-
         };
 
         // Validate if at least one question is answered with meaningful content

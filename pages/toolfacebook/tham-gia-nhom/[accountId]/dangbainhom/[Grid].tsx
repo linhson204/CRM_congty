@@ -10,14 +10,16 @@ import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
-import { BiLike, BiShare } from "react-icons/bi";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { BiShare } from "react-icons/bi";
+import { FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
+import UserListIndexBar from "../../components/UserListIndexBar";
 import CommentPostPopup from "../popup/CommentPost";
 import style from './post.module.css';
 
@@ -56,7 +58,7 @@ interface Comment {
     content: string;
     likes?: number;
 }
-export default function Detail() {
+export default function PostInGroup() {
     const handleCancelVideo = (index: number) => {
         setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
         setVideoFiles((prev) => prev.filter((_, idx) => idx !== index));
@@ -65,7 +67,7 @@ export default function Detail() {
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 2;
+    // const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
     const { accountId, Grid } = router.query;
@@ -83,6 +85,7 @@ export default function Detail() {
     const imageInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const ui = "gianvu17607@gmail.com";
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
     const [idCmtBox, setIdCmtBox] = useState<number | null>(null);
@@ -136,6 +139,11 @@ export default function Detail() {
     const totalPages = Math.ceil(posts?.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     const filteredPage = posts?.slice(
         (currentPage - 1) * itemsPerPage,
@@ -155,7 +163,7 @@ export default function Detail() {
             setPosts(data.data || data); // ✅ Set posts ngay khi có data
         })
         .catch(error => console.error('Error:', error));
-    }, []); // ✅ Chỉ chạy một lần
+    }, []); //Chạy 1 lần
 
     // useEffect để theo dõi thay đổi của test
     useEffect(() => {
@@ -374,7 +382,7 @@ export default function Detail() {
                     <div className={styles.formInfoStep}>
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
-                            <div className={styles.form_add_potential}>
+                            <div className={`${styles.form_add_potential} ${style.PostWrapper}`}>
                                 <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)} idCmtBox={idCmtBox}>
                                 </CommentPostPopup>
                                 <div className={style.postsContainer}>
@@ -568,7 +576,11 @@ export default function Detail() {
                                                         className={`${style.postActionButton} ${likedPosts.has(post.id) ? style.liked : ''} ${likeAnimations.has(post.id) ? style.likeAnimation : ''}`}
                                                         onClick={() => handleLikePost(post.id)}
                                                     >
-                                                        <BiLike size={25} style={{marginRight: '5px', color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}></BiLike>
+                                                        {!likedPosts.has(post.id) ? (
+                                                            <AiOutlineLike size={25} style={{marginRight: '5px', color: '#65676b'}}></AiOutlineLike>
+                                                        ) : (
+                                                            <AiFillLike size={25} style={{marginRight: '5px', color: '#1877f2'}}></AiFillLike>
+                                                        )}
                                                         <span style={{color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}>
                                                             {likedPosts.has(post.id) ? 'Thích' : 'Thích'}
                                                         </span>
@@ -589,15 +601,14 @@ export default function Detail() {
                                             </div>
                                         ))}
                                     </div>
-                                    <div className={`${style.BlockRow} ${style.postlistPageIndex}`}>
-                                        <button onClick={goToPrev} disabled={currentPage === 1} style={{marginLeft: 'auto', marginRight: '20px'}}>
-                                            <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                                        </button>
-                                        <span>Trang {currentPage} / {totalPages}</span>
-                                        <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                                            <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                                        </button>
-                                    </div>
+                                    <UserListIndexBar
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        goToPrev={goToPrev}
+                                        goToNext={goToNext}
+                                        goToPage={goToPage}
+                                        setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                                    ></UserListIndexBar>
                                 </div>
                             </div>
                         </div>

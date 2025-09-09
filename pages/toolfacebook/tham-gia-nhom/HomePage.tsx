@@ -36,7 +36,7 @@ interface Group {
   isJoin: number;
 }
 
-export default function DangBai() {
+export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
   const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
@@ -122,6 +122,11 @@ export default function DangBai() {
   const totalPages = Math.ceil(filteredUser.length / itemsPerPage);
   const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+  const goToPage = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+          setCurrentPage(page);
+      }
+  };
 
   //Trang nhan tin
   const handleUserClick = () => {
@@ -267,6 +272,7 @@ export default function DangBai() {
                     goToPrev={goToPrev}
                     goToNext={goToNext}
                     setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                    goToPage={goToPage}
                   >
                   </UserListIndexBar>
                 </div>
