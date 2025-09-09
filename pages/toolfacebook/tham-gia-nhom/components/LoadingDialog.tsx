@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface LoadingDialogProps {
     message?: string;
     show: boolean;
+    onClose?: () => void;
 }
 
-const LoadingDialog: React.FC<LoadingDialogProps> = ({ message = "Đang gửi yêu cầu...", show }) => {
+const LoadingDialog: React.FC<LoadingDialogProps> = ({ message = "Đang gửi yêu cầu...", show, onClose }) => {
+    useEffect(() => {
+        if (show) {
+        const timer = setTimeout(() => {
+            onClose(); // sau 3s tự đóng
+        }, 3000);
+
+        return () => clearTimeout(timer); // dọn timer khi component unmount
+        }
+    }, [show, onClose]);
+
     if (!show) return null;
 
     return (
