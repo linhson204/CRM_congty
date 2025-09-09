@@ -12,16 +12,19 @@ import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaFilter, FaLock, FaUserCircle } from "react-icons/fa";
+import { FaFilter, FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { IoMdRefresh } from "react-icons/io";
 import { IoEnterOutline, IoExitOutline, IoPerson } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
 import data from "../../../../public/data/account.json";
 import LoadingDialog from "../components/LoadingDialog";
+import UserListIndexBar from "../components/UserListIndexBar";
 import StatisticBlock from "../components/statisticBlock";
 import { Question } from "../popup/PrivateGrQues/types";
 import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
+import stylepo from './dangbainhom/post.module.css';
 
 interface Group {
     id: number;
@@ -48,14 +51,15 @@ export default function Detail() {
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 10;
+    // const itemsPerPage = 10;
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [accountFind, setAccountFind] = useState<Account | null>(null);
     const [showFilter, setshowFilterPopup] = useState(false);
     const [selectedGrOut, setSelectedGrOut] = useState<string>('');
     // Phân trang
     const [search, setSearch] = useState('');
-    const [Sent, setSent] = useState(false);
+    const [Sent, setSent] = useState(false); //danh dau da gui
     const { accountId } = router.query;
     // Lấy thông tin tài khoản
     const [account, setAccount] = useState<Account[] | null>(data); //data tong dau vao
@@ -257,23 +261,21 @@ export default function Detail() {
     const filteredPage = filteredGroups.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
-    )
-
-    // DANG BAI
-    const PostClick = () => {
-        router.push('/toolfacebook/dang-bai');
-        //xu li su kien dang bai
-    };
-
-    const PendingHandle = (id: number) => {
-        setpendingGr(id);
-    };
+    );
 
     const HandleFilter = (grStateTemp: string, joinTemp: string) => {
         setGrState(grStateTemp);
         setJoinState(joinTemp);
         setshowFilterPopup(false);
         console.log(grStateTemp, joinTemp);
+    }
+
+    const resetFilter = () => {
+        setGrState('all');
+        setJoinState('all');
+        setSearch('');
+        setCurrentPage(1);
+        setItemsPerPage(10);
     }
 
     const PendingHandleData = (GrId: number) => {
@@ -290,10 +292,17 @@ export default function Detail() {
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
-    const handleLeavePopup = (id) => { 
+    const handleLeavePopup = (id: any) => {
         setShowPopup(false);
+        console.log(id, accountId);
         //request rời nhóm
     };
+
+    const handleCancelQueue = (id: any) => {
+        setShowCancelQueuePopUp(false);
+        console.log(id, accountId);
+        //request hủy bỏ tham gia nhóm
+    }
 
     //xu li request hang doi
     const UpdateGrState = async (LinkGr: string) => {
@@ -351,7 +360,7 @@ export default function Detail() {
                                 <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
                                 <div id="UserName" className={style.BlockRow}>
                                     <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                    <p className={style.nameDetail}>{uname}</p>
+                                    <p className={style.nameDetail}>{accountId}</p>
                                 </div>
                             </div>
                             {/* Name + GroupIn/NotIn */}
@@ -373,6 +382,12 @@ export default function Detail() {
                                         setCurrentPage(1);
                                     }}
                                 />
+                                <button 
+                                    className={stylepo.backButton}
+                                    onClick={() => resetFilter()}
+                                >
+                                    <IoMdRefresh></IoMdRefresh>
+                                </button>
                                 <div className={`${style.filterBlock} ${style.BlockRow}`}
                                     onClick={() => {
                                         setshowFilterPopup(true)
@@ -404,7 +419,7 @@ export default function Detail() {
                                 >
                                     <button 
                                         onClick={() => {
-                                            handleLeavePopup(isOutGr);
+                                            handleCancelQueue(isOutGr);
                                         }}
                                         className={stylepu.PopupOutGrConfirmButton}>
                                         Xác nhận
@@ -438,6 +453,7 @@ export default function Detail() {
                                         </div>
                                 </QuestionPopup>
                                 <div className={style.GroupListAttribute}>
+                                    <input type="checkbox" onChange={(e) => e.target.checked}/>
                                     <div className={style.GroupListContent}>Tên nhóm</div>
                                     <div className={style.GroupListContent}>Trạng thái nhóm</div>
                                     <div className={style.GroupListContent}>Số thành viên</div>
@@ -504,6 +520,7 @@ export default function Detail() {
                                         // Render groups normally
                                         filteredPage.map(group => (
                                         <div key={group.id} className={`${style.GroupBlock} ${style.BlockRow}`}>
+                                            <input type="checkbox"></input>
                                             <div className={style.grlistName}>{group.Name}</div>
                                             <div id="GrState" className={style.grState}>
                                                 {group.Status === "Hoạt động" ? (
@@ -556,7 +573,8 @@ export default function Detail() {
                                                         <button className={style.buttonOutGr}
                                                                 onClick={() => {
                                                                     setSelectedGrOut(group.Name); 
-                                                                    setShowPopup(true);}
+                                                                    setShowPopup(true);
+                                                                    setIsOutGr(group.Link);}
                                                                 }>
                                                                 <IoExitOutline size={20}/>
                                                         </button> {/* onclick */}
@@ -583,7 +601,11 @@ export default function Detail() {
                                                         <div className={style.BlockRow}>
                                                             <button className={style.buttonOutGr} 
                                                                     style={{marginRight: '10px'}}
-                                                                    onClick={() => {setShowCancelQueuePopUp(true); setSelectedGrOut(group.Name)}}>
+                                                                    onClick={() => {
+                                                                        setShowCancelQueuePopUp(true);
+                                                                        setSelectedGrOut(group.Name);
+                                                                        setIsOutGr(group.Link);
+                                                                    }}>
                                                                 <MdClose size={20}/>
                                                             </button>
                                                             {/* <div className={style.BlockRow}>
@@ -603,15 +625,22 @@ export default function Detail() {
                                     )}
                                 </div>
                                 {!isLoading && !fetchError && filteredPage.length > 0 && (
-                                <div id="PageIndexBar" className={style.indexBarContainer}>
-                                    <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                                        <FaArrowLeft className={style.ic}></FaArrowLeft>
-                                    </button>
-                                    <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Trang {currentPage} / {totalPages}</span>
-                                    <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                                        <FaArrowRight className={style.ic}></FaArrowRight>
-                                    </button>
-                                </div>
+                                // <div id="PageIndexBar" className={style.indexBarContainer}>
+                                //     <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
+                                //         <FaArrowLeft className={style.ic}></FaArrowLeft>
+                                //     </button>
+                                //     <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Trang {currentPage} / {totalPages}</span>
+                                //     <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
+                                //         <FaArrowRight className={style.ic}></FaArrowRight>
+                                //     </button>
+                                // </div>
+                                <UserListIndexBar
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    goToPrev={goToPrev}
+                                    goToNext={goToNext}
+                                    setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                                ></UserListIndexBar>
                                 )}
                             </div>
                         </div>

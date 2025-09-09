@@ -8,9 +8,10 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CiBoxList } from "react-icons/ci";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaSearch } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import UserListIndexBar from "./components/UserListIndexBar";
 import style from './styles.module.css';
 
 interface Users {
@@ -42,7 +43,8 @@ export default function DangBai() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  // const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
   const crmID = Cookies.get("userID");
 
@@ -259,29 +261,14 @@ export default function DangBai() {
                       </div>
                     </div>
                   </div>
-                  <div className={`${style.BlockRow} ${style.bottomBarList}`}>
-                    <div id="RecordCountBar" className={`${style.BlockRow} ${style.recordCountBar}`}>
-                        <p>Hiển thị</p>
-                        <select style={{marginLeft: '10px', marginRight: '10px'}}
-                        >
-                          <option value="1">10</option>
-                          <option value="2">20</option>
-                          <option value="3">30</option>
-                          <option value="4">40</option>
-                          <option value="5">50</option>
-                        </select>
-                        <p>bản ghi trên một trang</p>
-                    </div>
-                    <div id="PageIndexBar" className={`${style.BlockRow} ${style.indexBar}`}>
-                      <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                        <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                      </button>
-                      <span>Trang {currentPage} / {totalPages}</span>
-                      <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                        <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                      </button>
-                    </div>
-                  </div>
+                  <UserListIndexBar
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    goToPrev={goToPrev}
+                    goToNext={goToNext}
+                    setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                  >
+                  </UserListIndexBar>
                 </div>
               </div>
             </div>

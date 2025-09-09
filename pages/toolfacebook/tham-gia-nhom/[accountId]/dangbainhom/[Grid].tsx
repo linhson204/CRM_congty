@@ -86,6 +86,9 @@ export default function Detail() {
     const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
     const [idCmtBox, setIdCmtBox] = useState<number | null>(null);
+    // Like states
+    const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+    const [likeAnimations, setLikeAnimations] = useState<Set<number>>(new Set());
 
     const websocket = useWebSocket();
     const [groupData, setGroupData] = useState<any[]>([]);
@@ -110,7 +113,7 @@ export default function Detail() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
-        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/[id]test`);
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/123`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -268,6 +271,42 @@ export default function Detail() {
         setVideoFiles(fileArr);
         setVideoPreviews(previews);
     }
+    };
+
+    const handleLikePost = (postId: number) => {
+        // Toggle like status
+        const newLikedPosts = new Set(likedPosts);
+        if (likedPosts.has(postId)) {
+            newLikedPosts.delete(postId);
+        } else {
+            newLikedPosts.add(postId);
+            // Add animation
+            const newAnimations = new Set(likeAnimations);
+            newAnimations.add(postId);
+            setLikeAnimations(newAnimations);
+            
+            // Remove animation after completion
+            setTimeout(() => {
+                setLikeAnimations(prev => {
+                    const updated = new Set(prev);
+                    updated.delete(postId);
+                    return updated;
+                });
+            }, 600);
+        }
+        setLikedPosts(newLikedPosts);
+
+        // Update posts state with new like count
+        setPosts(prevPosts => 
+            prevPosts.map(post => 
+                post.id === postId 
+                    ? { ...post, likes: (post.likes || 0) + (likedPosts.has(postId) ? -1 : 1) }
+                    : post
+            )
+        );
+
+        // TODO: Call API to update like on server
+        // await updateLikeOnServer(postId, !likedPosts.has(postId));
     };
 
     const hardReload = () => {
@@ -525,9 +564,14 @@ export default function Detail() {
                                                     )} */}
                                                 </div>
                                                 <div className={style.postActions}>
-                                                    <button className={style.postActionButton}>
-                                                        <BiLike size={25} style={{marginRight: '5px'}}></BiLike>
-                                                        Thích
+                                                    <button 
+                                                        className={`${style.postActionButton} ${likedPosts.has(post.id) ? style.liked : ''} ${likeAnimations.has(post.id) ? style.likeAnimation : ''}`}
+                                                        onClick={() => handleLikePost(post.id)}
+                                                    >
+                                                        <BiLike size={25} style={{marginRight: '5px', color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}></BiLike>
+                                                        <span style={{color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}>
+                                                            {likedPosts.has(post.id) ? 'Thích' : 'Thích'}
+                                                        </span>
                                                     </button>
                                                     <button className={style.postActionButton} 
                                                             onClick={() => {

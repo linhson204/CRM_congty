@@ -296,6 +296,12 @@
     justify-content: center;
   }
 
+  .grStateQueue {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   /* trang thai tham gia nhom */
   .joinStateBlock {
     display: flex;
@@ -897,4 +903,11 @@
   color: #f0ad4e;
   background-color: white;
   border: 1px solid rgb(240, 173, 78, 0.3);
+}
+
+.iconBlock {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
 }
