@@ -1,5 +1,5 @@
+import style from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/popup.module.css";
 import React, { useState } from 'react';
-import style from "../popup.module.css";
 import QuestionRenderer from './QuesRenderer';
 import { Question } from './types'; // Định nghĩa interface Question nếu cần
 
@@ -35,9 +35,23 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
             onSubmit(answers);
             handleClose();
 
-    };
+        };
 
-    if (!isOpen) return null;
+        // Validate if at least one question is answered with meaningful content
+        const isFormValid = () => {
+            return questions.some(question => {
+                const answer = answers[question.id];
+                
+                if (question.type === 'textarea' || question.type === 'radio') {
+                    return answer && answer.toString().trim() !== '';
+                } else if (question.type === 'checkbox') {
+                    return answer && Array.isArray(answer) && answer.length > 0;
+                }
+                
+                // For other types, just check if answer exists and is not empty
+                return answer && answer.toString().trim() !== '';
+            });
+        };    if (!isOpen) return null;
 
     return (
         <div className={style.modalOverlay}>
@@ -70,7 +84,7 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({
                 <button className={style.cancelButton} onClick={handleClose}>
                     Hủy
                 </button>
-                <button className={style.submitButton} onClick={handleSubmit} disabled={Object.keys(answers).length === 0}>
+                <button className={style.submitButton} onClick={handleSubmit} disabled={!isFormValid()}>
                     Gửi
                 </button>
                 </div>

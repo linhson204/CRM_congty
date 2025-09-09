@@ -16,6 +16,7 @@ import { IoPerson } from "react-icons/io5";
 import { MdGroupAdd, MdPublic } from "react-icons/md";
 import { PiWarningCircleLight } from "react-icons/pi";
 import data from "../../../../public/data/account.json";
+import LoadingDialog from "../components/LoadingDialog";
 import StatisticBlock from "../components/statisticBlock";
 import OutGrFs from "../popup/OutGrFS";
 import CancelQueuePopup from "../popup/PrivateGrQues/CancelQueue";
@@ -87,6 +88,7 @@ export default function Detail() {
     const [groupData, setGroupData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
+    const [showLoading, setShowLoading] = useState(false);
 
     const pageCountSelect = async () => {
 
@@ -301,80 +303,9 @@ export default function Detail() {
     }
 
     const hardReload = () => {
-        showLoadingDialog();
+        setShowLoading(true);
         setTimeout(() => window.location.reload(), 1000);
     }
-
-    const showLoadingDialog = () => {
-        const loadingHTML = `
-            <div id="loading-overlay" style="
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            ">
-                <div style="
-                    background: white;
-                    padding: 30px;
-                    border-radius: 10px;
-                    text-align: center;
-                ">
-                    <div style="
-                        border: 4px solid #f3f3f3;
-                        border-top: 4px solid #3498db;
-                        border-radius: 50%;
-                        width: 40px;
-                        height: 40px;
-                        animation: spin 1s linear infinite;
-                        margin: 0 auto 20px;
-                    "></div>
-                    <p>Đang gửi yêu cầu...</p>
-                </div>
-            </div>
-            <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            </style>
-        `;
-        document.body.insertAdjacentHTML('beforeend', loadingHTML);
-    };
-
-    // Kiểm tra trường rỗng
-    const validateRequiredFields = (questions: Question[], answers: Record<number, any>): 
-                                { isValid: boolean; errors: Record<number, string> } => {
-    const errors: Record<number, string> = {};
-    let isValid = true;
-
-    questions.forEach((question) => {
-        if (question.required) {
-        const answer = answers[question.id];
-        
-        // Kiểm tra theo từng loại câu hỏi
-        if (question.type === 'textarea' || question.type === 'radio') {
-            if (!answer || answer.toString().trim() === '') {
-            errors[question.id] = 'Vui lòng điền trường này';
-            isValid = false;
-            }
-        } 
-        else if (question.type === 'checkbox') {
-            if (!answer || answer.length === 0) {
-            errors[question.id] = 'Vui lòng chọn ít nhất một lựa chọn';
-            isValid = false;
-            }
-        }
-        }
-    });
-    return { isValid, errors };
-    };
-//
 
     return (
     <>
@@ -664,6 +595,7 @@ export default function Detail() {
                 </div>
             </div>
         </div>
+        <LoadingDialog show={showLoading} message="Đang gửi yêu cầu..." />
     </>
     );
 }
