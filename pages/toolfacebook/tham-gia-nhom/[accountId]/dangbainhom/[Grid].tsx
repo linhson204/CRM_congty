@@ -6,6 +6,8 @@ import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSock
 import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom";
 import uploadAnh from '@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh';
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
+import getPostGroup from '@/pages/api/toolFacebook/dang-bai-nhom/laybaidang';
+import style1 from '@/pages/toolfacebook/tham-gia-nhom/styles.module.css';
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -127,6 +129,14 @@ export default function PostInGroup() {
     // }, []);
 
     useEffect(() => {
+    async function fetchData() {
+        const res = await getPostGroup(`groups/1569887551087354`, crmID, accountId);
+        setGroupData(res.results); // lưu vào state
+    }
+    fetchData();
+    }, []);
+
+    useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
         setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/123`);
@@ -141,7 +151,7 @@ export default function PostInGroup() {
     }, [isOpen]);
 
     // phan trang
-    const totalPages = Math.ceil(posts?.length / itemsPerPage);
+    const totalPages = Math.ceil(groupData?.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
     const goToPage = (page: number) => {
@@ -150,7 +160,7 @@ export default function PostInGroup() {
         }
     };
 
-    const filteredPage = posts?.slice(
+    const filteredPage = groupData?.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -218,26 +228,28 @@ export default function PostInGroup() {
         const fileMap = testUpload.map(img => img.savedName);
 
         // send
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-            const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
-            const postData = {
-                type: "post_to_group",
-                user_id: "test1",
-                postId: newPost.id.toString(),
-                crm_id: crmID,
-                params: params,
-                to: "B22623688",
-                attachments: fileMap, // Đưa images vào attachments thay vì images
-            };
-            websocket.send(JSON.stringify(postData));
-        }
+        // if (websocket && websocket.readyState === WebSocket.OPEN) {
+        //     const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
+        //     const postData = {
+        //         type: "post_to_group",
+        //         user_id: "test1",
+        //         postId: newPost.id.toString(),
+        //         crm_id: crmID,
+        //         params: params,
+        //         to: "B22623688",
+        //         attachments: fileMap, // Đưa images vào attachments thay vì images
+        //     };
+        //     websocket.send(JSON.stringify(postData));
+        // }
 
-        const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
+        // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
+        const params = {"group_link": `groups/1569887551087354`, "content": `${currentContent}`, "files": fileMap};
         await createPostGroup(
             "post_to_group",
-            "test1",
+            accountId,
             params,
-            crmID
+            crmID,
+            "false",
         );
     };
 
@@ -490,82 +502,96 @@ export default function PostInGroup() {
                                         </button>
                                     </div>
                                     <div className={style.postsList}>
-                                        {filteredPage?.map((post) => (
-                                            <div key={post.id} className={style.postItem}>
-                                                <div className={style.postHeader}>
-                                                    <FaUserCircle className={style.postAvatar} />
-                                                    <div>
-                                                        <div className={style.postUserName}>{savedData.account.nameFb}</div>
-                                                        <div className={style.postTime}>{post.time}</div>
+                                        {groupData?.length === 0 ? (
+                                            <div className={style.noPostMessage}>
+                                                <div className={style.icon}>📝</div>
+                                                <h3>Chưa có bài viết nào</h3>
+                                                <p>Bạn chưa đăng bài nào trong nhóm này. Hãy tạo bài viết đầu tiên</p>
+                                                <button onClick={() => document.querySelector('textarea')?.focus()}>
+                                                    Tạo bài viết đầu tiên
+                                                </button>
+                                            </div>
+                                        ) : (
+                                        <div>
+                                            {filteredPage?.map((post) => (
+                                                <div key={post.id} className={style.postItem}>
+                                                    <div className={style.BlockRow} style={{marginBottom: '15px'}}>
+                                                        <div className={style.postHeader}>
+                                                            <FaUserCircle className={style.postAvatar} />
+                                                            <div>
+                                                                <div className={style.postUserName}>{savedData.account.nameFb}</div>
+                                                                <div className={style.postTime}>{post.time}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={style.postedListStatus}>
+                                                            <div className={
+                                                                    `${post.status == "Chưa xử lý" ? style1.notJoinedStateBlock
+                                                                    : post.status == "Đang chờ duyệt" ? style1.queueStateBlock
+                                                                    : style1.joinedStateBlock}`}>
+                                                                {post.status}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className={style.postContent}>{post.content}</div>
-                                                {post.imageUrls && post.imageUrls.length > 0 && (
-                                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                                        {/* {post.imageUrls.map((img, idx) => (
-                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} 
-                                                                className={style.postImage} 
-                                                                style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
-                                                        ))} */}
-                                                    </div>
-                                                )}
-                                                <div className={style.postStats}>
-                                                    <div style={{position: 'relative'}} className={style.BlockRow}>
-                                                        <div id="like" className={style.likeIcon}></div>
-                                                        <div id="like" className={style.favorIcon}></div>
-                                                        <span>{post.likes}</span>
-                                                    </div>
-                                                    <div className={style.BlockRow}>
-                                                        <p>{post.comments.length}</p>
-                                                        <FaComment size={20}></FaComment>
-                                                    </div>
-                                                    <div className={style.BlockRow} style={{marginLeft: '10px'}}>
-                                                        <p>100</p>
-                                                        <IoIosShareAlt size={20}></IoIosShareAlt>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                </div>
-                                                <div>
-                                                    {/* {post.imageUrls && post.imageUrls.length > 0 && (
-                                                        <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                                                            {post.imageUrls.map((img, idx) => (
-                                                            <img key={idx} src={img} alt={`Post ${idx+1}`} 
-                                                                className={style.postImage} 
-                                                                style={{maxWidth: '100px', maxHeight: '100px', borderRadius: '8px'}} />
+                                                    <div className={style.postContent}>{post.content}</div>
+                                                    {post.files && post.files.length > 0 && (
+                                                        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                                            {post.files.map((img, idx) => (
+                                                                <img key={idx} 
+                                                                    src={`https://socket.hungha365.com:4000/uploads/${post.files[idx]}`}
+                                                                    alt={`Post ${idx+1}`} 
+                                                                    className={style.postImage} 
+                                                                    style={{maxWidth: '400px', maxHeight: '400px', borderRadius: '8px'}} />
                                                             ))}
                                                         </div>
-                                                    )} */}
+                                                    )}
+                                                    <div className={style.postStats}>
+                                                        <div style={{position: 'relative'}} className={style.BlockRow}>
+                                                            <div id="like" className={style.likeIcon}></div>
+                                                            <div id="like" className={style.favorIcon}></div>
+                                                            <span>{post.time}</span>
+                                                        </div>
+                                                        <div className={style.BlockRow}>
+                                                            <p>{post.time}</p>
+                                                            <FaComment size={20}></FaComment>
+                                                        </div>
+                                                        <div className={style.BlockRow} style={{marginLeft: '10px'}}>
+                                                            <p>100</p>
+                                                            <IoIosShareAlt size={20}></IoIosShareAlt>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                    </div>
+                                                    <div className={style.postActions}>
+                                                        <button 
+                                                            className={`${style.postActionButton} ${likedPosts.has(post.id) ? style.liked : ''} ${likeAnimations.has(post.id) ? style.likeAnimation : ''}`}
+                                                            onClick={() => handleLikePost(post.id)}
+                                                        >
+                                                            {!likedPosts.has(post.id) ? (
+                                                                <AiOutlineLike size={25} style={{marginRight: '5px', color: '#65676b'}}></AiOutlineLike>
+                                                            ) : (
+                                                                <AiFillLike size={25} style={{marginRight: '5px', color: '#1877f2'}}></AiFillLike>
+                                                            )}
+                                                            <span style={{color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}>
+                                                                {likedPosts.has(post.id) ? 'Thích' : 'Thích'}
+                                                            </span>
+                                                        </button>
+                                                        <button className={style.postActionButton} 
+                                                                onClick={() => {
+                                                                    setShowComment(true)
+                                                                    setIdCmtBox(post.id)
+                                                                }}>
+                                                            <FaRegComment size={25} style={{marginRight: '5px'}}></FaRegComment>
+                                                            Bình luận
+                                                        </button>
+                                                        <button className={style.postActionButton} style={{display: 'none'}}>
+                                                            <BiShare style={{marginRight: '5px'}}></BiShare>
+                                                            Chia sẻ
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div className={style.postActions}>
-                                                    <button 
-                                                        className={`${style.postActionButton} ${likedPosts.has(post.id) ? style.liked : ''} ${likeAnimations.has(post.id) ? style.likeAnimation : ''}`}
-                                                        onClick={() => handleLikePost(post.id)}
-                                                    >
-                                                        {!likedPosts.has(post.id) ? (
-                                                            <AiOutlineLike size={25} style={{marginRight: '5px', color: '#65676b'}}></AiOutlineLike>
-                                                        ) : (
-                                                            <AiFillLike size={25} style={{marginRight: '5px', color: '#1877f2'}}></AiFillLike>
-                                                        )}
-                                                        <span style={{color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}>
-                                                            {likedPosts.has(post.id) ? 'Thích' : 'Thích'}
-                                                        </span>
-                                                    </button>
-                                                    <button className={style.postActionButton} 
-                                                            onClick={() => {
-                                                                setShowComment(true)
-                                                                setIdCmtBox(post.id)
-                                                            }}>
-                                                        <FaRegComment size={25} style={{marginRight: '5px'}}></FaRegComment>
-                                                        Bình luận
-                                                    </button>
-                                                    <button className={style.postActionButton} style={{display: 'none'}}>
-                                                        <BiShare style={{marginRight: '5px'}}></BiShare>
-                                                        Chia sẻ
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                        )}
                                     </div>
                                     <UserListIndexBar
                                         currentPage={currentPage}

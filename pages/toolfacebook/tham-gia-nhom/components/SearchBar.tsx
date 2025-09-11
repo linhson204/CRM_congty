@@ -12,6 +12,7 @@ interface SearchBarProps {
     setJoinTemp: (joinTemp: string) => void;
     setGrStateTemp: (grStateTemp: string) => void;
     setCurrentPage: (page: number) => void;
+    isLoading?: boolean;
 }
 
 export default function SearchBar({
@@ -22,6 +23,7 @@ export default function SearchBar({
     setJoinTemp,
     setGrStateTemp,
     setCurrentPage,
+    isLoading = false,
 }: SearchBarProps) {
 
     return (
@@ -41,8 +43,31 @@ export default function SearchBar({
             <button 
                 className={stylepo.backButton}
                 onClick={() => resetFilter()}
+                disabled={isLoading}
+                style={{
+                    opacity: isLoading ? 0.6 : 1,
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    position: 'relative'
+                }}
             >
-                <IoMdRefresh></IoMdRefresh>
+                <IoMdRefresh 
+                    style={{
+                        animation: isLoading ? 'spin 1s linear infinite' : 'none'
+                    }}
+                />
+                {isLoading && (
+                    <span style={{
+                        position: 'absolute',
+                        right: '-25px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: '12px',
+                        color: '#007bff',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        Đang tải...
+                    </span>
+                )}
             </button>
             <div className={`${style.filterBlock} ${style.BlockRow}`}
                 onClick={() => {

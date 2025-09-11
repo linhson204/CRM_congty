@@ -79,15 +79,14 @@ export default function GroupList() {
         async function fetchData() {
             try {
             const [res1, res2, res3] = await Promise.all([
-                getGroupData("123", "a", "", "", "Đã tham gia"),
-                getGroupData("123", "", "", "", "Chờ duyệt"),
-                getGroupData("123", "a", "", "", "Chưa tham gia")
+                getGroupData(accountId, "a", "", "", "Đã tham gia"),
+                getGroupData(accountId, "", "", "", "Chờ duyệt"),
+                getGroupData(accountId, "a", "", "", "Chưa tham gia")
             ]);
 
             if (isMounted) {
                 const res = [...res1.results, ...res2.results, ...res3.results];
                 setGroupData(res);
-                console.log("Fetched data:", { res1, res2, res3 });
                 setIsLoading(false);
             }
             } catch (error) {
@@ -227,12 +226,37 @@ export default function GroupList() {
         console.log(grStateTemp, joinTemp);
     }
 
-    const resetFilter = () => {
+    const resetFilter = async () => {
+        // Set loading state and reset filters immediately for better UX
+        setIsLoading(true);
+        setFetchError(null);
         setGrState('all');
         setJoinState('all');
         setSearch('');
         setCurrentPage(1);
         setItemsPerPage(10);
+
+        try {
+            // Clear current data to show skeleton immediately
+            setGroupData([]);
+            
+            // Fetch fresh data from API
+            const [res1, res2, res3] = await Promise.all([
+                getGroupData(accountId, "a", "", "", "Đã tham gia"),
+                getGroupData(accountId, "", "", "", "Chờ duyệt"),
+                getGroupData(accountId, "a", "", "", "Chưa tham gia")
+            ]);
+
+            // Combine all results
+            const freshData = [...res1.results, ...res2.results, ...res3.results];
+            setGroupData(freshData);
+            
+        } catch (error) {
+            console.error("Error refreshing group data:", error);
+            setFetchError("Không thể tải dữ liệu nhóm. Vui lòng thử lại.");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const PendingHandleData = (GrId: number) => {
@@ -304,6 +328,16 @@ export default function GroupList() {
                     0% { transform: rotate(0deg); }
                     100% { transform: rotate(360deg); }
                 }
+                
+                @keyframes pulse {
+                    0% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                    100% { opacity: 1; }
+                }
+                
+                .skeleton-item {
+                    animation: pulse 1.5s ease-in-out infinite;
+                }
             `}</style>
         </Head>
         <div className={styleHome.main} ref={mainRef}>
@@ -335,6 +369,7 @@ export default function GroupList() {
                                     setJoinTemp={setJoinTemp}
                                     setGrStateTemp={setGrStateTemp}
                                     setCurrentPage={setCurrentPage}
+                                    isLoading={isLoading}
                                 />
                             </div>
                             {/* List Nhóm */}
@@ -423,13 +458,62 @@ export default function GroupList() {
                                                 <p>Đang tải dữ liệu nhóm...</p>
                                             </div>
                                             {/* Loading skeleton items */}
-                                            {[...Array(5)].map((_, index) => (
-                                                <div key={index} className={`${style.GroupBlock} ${style.BlockRow}`} style={{ opacity: 0.6, backgroundColor: '#f5f5f5' }}>
-                                                    <div className={style.grlistName} style={{ backgroundColor: '#ddd', height: '20px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grState} style={{ backgroundColor: '#ddd', height: '20px', width: '30px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grMember} style={{ backgroundColor: '#ddd', height: '20px', width: '50px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grCategory} style={{ backgroundColor: '#ddd', height: '20px', borderRadius: '4px' }}></div>
-                                                    <div className={style.joinStateBlock} style={{ backgroundColor: '#ddd', height: '30px', width: '80px', borderRadius: '4px' }}></div>
+                                            {[...Array(8)].map((_, index) => (
+                                                <div key={index} className={`${style.GroupBlock} ${style.BlockRow} skeleton-item`} 
+                                                     style={{ 
+                                                         backgroundColor: '#f8f9fa',
+                                                         border: '1px solid #e9ecef',
+                                                         borderRadius: '8px',
+                                                         marginBottom: '8px'
+                                                     }}>
+                                                    <div className={style.grlistName}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '18px', 
+                                                            borderRadius: '4px',
+                                                            width: `${Math.random() * 40 + 60}%`
+                                                        }}></div>
+                                                    </div>
+                                                    <div className={style.grState}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '20px', 
+                                                            width: '20px', 
+                                                            borderRadius: '50%'
+                                                        }}></div>
+                                                    </div>
+                                                    <div className={style.grMember}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '16px', 
+                                                            width: '40px',
+                                                            borderRadius: '4px'
+                                                        }}></div>
+                                                    </div>
+                                                    <div className={style.grCategory}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '16px',
+                                                            width: `${Math.random() * 30 + 50}%`,
+                                                            borderRadius: '4px'
+                                                        }}></div>
+                                                    </div>
+                                                    <div className={style.grStateQueue}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '24px', 
+                                                            width: '90px',
+                                                            borderRadius: '12px'
+                                                        }}></div>
+                                                    </div>
+                                                    <div className={style.joinStateBlock}>
+                                                        <div style={{ 
+                                                            backgroundColor: '#e9ecef', 
+                                                            height: '32px', 
+                                                            width: '100px',
+                                                            borderRadius: '6px'
+                                                        }}></div>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
