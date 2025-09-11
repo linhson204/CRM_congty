@@ -84,7 +84,7 @@ export default function PostInGroup() {
     const [newPostImages, setNewPostImages] = useState<any[]>([]);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
-    const ui = "gianvu17607@gmail.com";
+    const [name, setName] = useState('');
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
@@ -99,6 +99,7 @@ export default function PostInGroup() {
     const [uploadImg, setUploadImg] = useState<any[]>([]);
     // popup comment
     const [showComment, setShowComment] = useState(false);
+    const savedData = JSON.parse(localStorage.getItem('userProfile'));
 
     let crmID = Cookies.get("userID");
     if (!crmID) {
@@ -111,6 +112,16 @@ export default function PostInGroup() {
     //     setGroupData(res); // lưu vào state
     // }
     // fetchData();
+    // }, []);
+
+    // useEffect(() => {
+    //     const test = async () => {
+    //     const a = await getFbAccountsData(crmID, '20', '', accountId)
+    //     console.log(a)
+    //     setName(a.results[0].nameFb)
+    //     };
+
+    //     test();
     // }, []);
 
     useEffect(() => {
@@ -126,14 +137,6 @@ export default function PostInGroup() {
             mainRef.current?.classList.remove("content_resize");
         }
     }, [isOpen]);
-
-    useEffect(() => {
-        if (account) {
-            setUname(account.name);
-        } else {
-            setUname('Loading...');
-        }
-    }, [account]);
 
     // phan trang
     const totalPages = Math.ceil(posts?.length / itemsPerPage);
@@ -178,7 +181,7 @@ export default function PostInGroup() {
 
     const handlePostSubmit = async () => {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
-        
+
         // Save current values before clearing
         const currentContent = newPostContent;
         const currentImages = [...newPostImages];
@@ -396,7 +399,7 @@ export default function PostInGroup() {
                                             <div className={`${style.BlockRow}`}>
                                                 <div><FaUserCircle className={style.userAvatar} /></div>
                                                 <div className={`${style.BlockColumn}`}>
-                                                    <div className={style.postGrName}>{account?.name || 'NGUYEN VAN A'}</div>
+                                                    <div className={style.postGrName}>{savedData.account.nameFb}</div>
                                                     <div className={`${style.BlockRow} ${style.postGrState}`}>
                                                         <div className={style.postGrStateIc}><FaLock style={{color: 'rgb(0, 0, 0, 0.6)'}}></FaLock></div>
                                                         <p>{groups?.GroupState || 'Riêng tư'}</p>
@@ -529,7 +532,7 @@ export default function PostInGroup() {
                                                 <div className={style.postHeader}>
                                                     <FaUserCircle className={style.postAvatar} />
                                                     <div>
-                                                        <div className={style.postUserName}>Nguyen Van A</div>
+                                                        <div className={style.postUserName}>{savedData.account.nameFb}</div>
                                                         <div className={style.postTime}>{post.time}</div>
                                                     </div>
                                                 </div>

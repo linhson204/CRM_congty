@@ -3,7 +3,6 @@ import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
-import getFilteredGroups from '@/pages/api/toolFacebook/danhsachnhom/test';
 import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
 import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import OutGrFs from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/OutGrFS";
@@ -13,56 +12,32 @@ import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaFilter, FaLock, FaUserCircle } from "react-icons/fa";
+import { FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoEnterOutline, IoExitOutline, IoPerson } from "react-icons/io5";
+import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
-import data from "../../../../public/data/account.json";
 import LoadingDialog from "../components/LoadingDialog";
+import SearchBar from "../components/SearchBar";
+import UserListIndexBar from "../components/UserListIndexBar";
 import StatisticBlock from "../components/statisticBlock";
-import { Question } from "../popup/PrivateGrQues/types";
 import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
+import { Question } from "./popup/PrivateGrQues/types";
 
-interface Group {
-    id: number;
-    GroupName: string;
-    GroupState: string;
-    Member: number;
-    isJoin: number;
-}
-
-interface Account {
-    id: number;
-    name: string;
-    friend: number;
-    GrIn: number;
-    GrOut: number;
-    Post: number;
-    Comment: number;
-    Mess?: number;
-    groups: Group[];
-}
-
-export default function Detail() {
+export default function GroupList() {
     const mainRef = useRef<HTMLDivElement>(null);
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 10;
+    // const itemsPerPage = 10;
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [accountFind, setAccountFind] = useState<Account | null>(null);
     const [showFilter, setshowFilterPopup] = useState(false);
     const [selectedGrOut, setSelectedGrOut] = useState<string>('');
     // Phân trang
     const [search, setSearch] = useState('');
-    const [Sent, setSent] = useState(false);
+    const [Sent, setSent] = useState(false); //danh dau da gui
     const { accountId } = router.query;
-    // Lấy thông tin tài khoản
-    const [account, setAccount] = useState<Account[] | null>(data); //data tong dau vao
-    const [groups, setGroups] = useState<Group[]>([]);
-    //loading ten
-    const [uname, setUname] = useState('');
 
     //tham gia nhóm
     const [pendingGr, setpendingGr] = useState<number | null>(null);
@@ -76,7 +51,6 @@ export default function Detail() {
 
     //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
-    const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
 
     const [grStateTemp, setGrStateTemp] = useState('all');
@@ -89,6 +63,7 @@ export default function Detail() {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [showLoading, setShowLoading] = useState(false);
     const [Gr, setGr] = useState<any[]>([]); //mock data
+    const savedData = JSON.parse(localStorage.getItem('userProfile'));
 
     const pageCountSelect = async () => {
         //call API lay so luong nhom tren tung account
@@ -145,10 +120,6 @@ export default function Detail() {
         console.log("Gr thay đổi:", Gr);
     }, [Gr]);
 
-    getFilteredGroups(123).then(data => {
-        console.log("Filtered groups:", data);
-    });
-
     // Danh sách câu hỏi mẫu
     const approvalQuestions: Question[] = [
     {
@@ -181,18 +152,9 @@ export default function Detail() {
     }
     ];
     //
-    
-    useEffect(() => { //xu li su kien moi khi tim dung account
-        const timer = setTimeout(() => {
-        const foundAccount = data.find(acc => acc.id === 12);
-        setAccountFind(foundAccount);
-        setGroups(foundAccount.groups);
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [accountId]);
 
     useEffect(() => {
-        setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
+        setHeaderTitle("Tool Facebook - Danh sách nhóm");
         setShowBackButton(true);
         setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
@@ -204,14 +166,6 @@ export default function Detail() {
             mainRef.current?.classList.remove("content_resize");
         }
     }, [isOpen]);
-
-    useEffect(() => {
-        if (account) {
-            setUname(accountFind?.name || '...loading');
-        } else {
-            setUname('Loading...');
-        }
-    }, [account]);
 
     let crmID = Cookies.get("userID");
     if (!crmID) {
@@ -254,27 +208,30 @@ export default function Detail() {
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     const filteredPage = filteredGroups.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
-    )
-
-    // DANG BAI
-    const PostClick = () => {
-        router.push('/toolfacebook/dang-bai');
-        //xu li su kien dang bai
-    };
-
-    const PendingHandle = (id: number) => {
-        setpendingGr(id);
-    };
+    );
 
     const HandleFilter = (grStateTemp: string, joinTemp: string) => {
         setGrState(grStateTemp);
         setJoinState(joinTemp);
         setshowFilterPopup(false);
         console.log(grStateTemp, joinTemp);
+    }
+
+    const resetFilter = () => {
+        setGrState('all');
+        setJoinState('all');
+        setSearch('');
+        setCurrentPage(1);
+        setItemsPerPage(10);
     }
 
     const PendingHandleData = (GrId: number) => {
@@ -291,10 +248,17 @@ export default function Detail() {
     }
 
     // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
-    const handleLeavePopup = (id) => { 
+    const handleLeavePopup = (id: any) => {
         setShowPopup(false);
+        console.log(id, accountId);
         //request rời nhóm
     };
+
+    const handleCancelQueue = (id: any) => {
+        setShowCancelQueuePopUp(false);
+        console.log(id, accountId);
+        //request hủy bỏ tham gia nhóm
+    }
 
     //xu li request hang doi
     const UpdateGrState = async (LinkGr: string) => {
@@ -305,7 +269,7 @@ export default function Detail() {
             const params = {"group_link": `${LinkGr}`};
             const joinData = {
                 type: "join_group",
-                user_id: "test1",
+                user_id: accountId,
                 // postId: newPost.id.toString(),
                 crm_id: crmID,
                 params: params,
@@ -345,44 +309,32 @@ export default function Detail() {
             <div className={styles.main_importfile}>
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
-                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
-                        <div style={{padding: '10px'}} className={styles.form_add_potential}>
-                            {/* Title + BackButton */}
-                            <div style={{marginTop:'10px'}} className={style.BlockRow}>
-                                <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
-                                <div id="UserName" className={style.BlockRow}>
-                                    <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                    <p className={style.nameDetail}>{uname}</p>
-                                </div>
-                            </div>
+                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH NHÓM</div>
+                        <div style={{padding: '5px', backgroundColor: '#f9f9f9'}} className={styles.form_add_potential}>
                             {/* Name + GroupIn/NotIn */}
-                            <div style={{marginTop: '20px'}} className={style.statBlockContainer}>
+                            <div className={style.statBlockContainer}>
                                 <StatisticBlock content="Nhóm nhiều bài viết nhất" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
-                                <StatisticBlock content="abc" count={123}/>
+                                <StatisticBlock content="Số nhóm chưa tham gia" count={123}/>
+                                <StatisticBlock content="Ngành nghề phổ biến nhất" count={123}/>
+                                <StatisticBlock content="Nhóm nhiều thành viên nhất" count={123}/>
                             </div>
                             {/* thanh checkbox + ten */}
-                            <div style={{marginTop: '20px', marginBottom: '20px'}} className={style.BlockRow}>
-                                <input
-                                    style={{marginLeft: '0px'}}
-                                    className={style.searchBar}
-                                    type="text" placeholder="Tìm kiếm tài khoản theo tên ..."
-                                    value={search}
-                                    onChange={(e) => {
-                                        setSearch(e.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                />
-                                <div className={`${style.filterBlock} ${style.BlockRow}`}
-                                    onClick={() => {
-                                        setshowFilterPopup(true)
-                                        setJoinTemp('all');
-                                        setGrStateTemp('all');
-                                    }}>
-                                    <FaFilter></FaFilter>
-                                    <p>Bộ lọc</p>
+                            <div className={style.grouplistHeadbar}>
+                                <div className={style.usernameHeader}>
+                                    <div id="UserName" className={style.BlockRow}>
+                                        <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
+                                        <p className={style.nameDetail}>{savedData.account.nameFb}</p>
+                                    </div>
                                 </div>
+                                <SearchBar
+                                    search={search}
+                                    setSearch={setSearch}
+                                    resetFilter={resetFilter}
+                                    setshowFilterPopup={setshowFilterPopup}
+                                    setJoinTemp={setJoinTemp}
+                                    setGrStateTemp={setGrStateTemp}
+                                    setCurrentPage={setCurrentPage}
+                                />
                             </div>
                             {/* List Nhóm */}
                             <div>
@@ -405,7 +357,7 @@ export default function Detail() {
                                 >
                                     <button 
                                         onClick={() => {
-                                            handleLeavePopup(isOutGr);
+                                            handleCancelQueue(isOutGr);
                                         }}
                                         className={stylepu.PopupOutGrConfirmButton}>
                                         Xác nhận
@@ -429,7 +381,8 @@ export default function Detail() {
                                             <div className={style.BlockRow}>
                                                 <div className={style.BlockRow}>
                                                     <div><FaLock className={style.ic}></FaLock></div>
-                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>{popupHeader[1]}</p>
+                                                    <p style={{textAlign: 'center', marginRight: '10px', marginLeft: '5px'}}>
+                                                        {popupHeader[1] === "Không hoạt động" ? ("Riêng tư") : ("Công khai")}</p>
                                                 </div>
                                                 <div className={style.BlockRow}>
                                                     <div><IoPerson className={style.ic}></IoPerson></div>
@@ -439,6 +392,12 @@ export default function Detail() {
                                         </div>
                                 </QuestionPopup>
                                 <div className={style.GroupListAttribute}>
+                                    <div className={style.GroupListContent}>
+                                        <input  className={style.checkboxList}
+                                                type="checkbox"
+                                                onChange={(e) => e.target.checked}
+                                        />
+                                    </div>
                                     <div className={style.GroupListContent}>Tên nhóm</div>
                                     <div className={style.GroupListContent}>Trạng thái nhóm</div>
                                     <div className={style.GroupListContent}>Số thành viên</div>
@@ -502,9 +461,10 @@ export default function Detail() {
                                             <p>Không tìm thấy nhóm phù hợp với bộ lọc hiện tại.</p>
                                         </div>
                                     ) : (
-                                        // Render groups normally
-                                        filteredPage.map(group => (
+                                    // Map nhóm
+                                    filteredPage.map(group => (
                                         <div key={group.id} className={`${style.GroupBlock} ${style.BlockRow}`}>
+                                            <div className=""><input type="checkbox" className={style.checkboxList}></input></div>
                                             <div className={style.grlistName}>{group.Name}</div>
                                             <div id="GrState" className={style.grState}>
                                                 {group.Status === "Hoạt động" ? (
@@ -513,18 +473,12 @@ export default function Detail() {
                                                     <FaLock className={style.ic} style={{color: 'rgb(0, 0, 0, 0.7)'}}></FaLock>
                                                 )}
                                             </div>
-                                            {/* <h2 style={{marginLeft: 'auto'}}>
-                                                {group.isJoin == 1 ? (<p>Đã tham gia</p>) : (<p>Chưa tham gia</p>)}
-                                            </h2> */}
                                             <div id="member" className={style.grMember}>
-                                                {/* <div style={{paddingTop: '3px'}}><FaUsers className={style.ic}></FaUsers></div> */}
                                                 <p>{group.Number_Of_Posts}</p>
                                             </div>
-                                            {/*  */}
                                             <div className={style.grCategory}>
                                                 <p>{group.Link}</p>
                                             </div>
-                                            {/* state */}
                                             <div className={style.grStateQueue}>
                                                 {group.user_status === 'Đã tham gia' ? (
                                                     <div className={style.joinedStateBlock}>
@@ -557,7 +511,8 @@ export default function Detail() {
                                                         <button className={style.buttonOutGr}
                                                                 onClick={() => {
                                                                     setSelectedGrOut(group.Name); 
-                                                                    setShowPopup(true);}
+                                                                    setShowPopup(true);
+                                                                    setIsOutGr(group.Link);}
                                                                 }>
                                                                 <IoExitOutline size={20}/>
                                                         </button> {/* onclick */}
@@ -566,13 +521,19 @@ export default function Detail() {
                                                 ) : group.user_status === 'Chưa tham gia' ? (
                                                     <div className={`${style.BlockRow} ${style.joinGrButton}`}
                                                         onClick={() => {
-                                                            {if (group.Status !== "Hoạt động") {
-                                                                setPrivateGrSelected(group.id);
-                                                                setShowPrivateGrQues(true);
-                                                                setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
-                                                            } else {UpdateGrState(group.Link)}
-                                                            }}}>
-                                                        <IoEnterOutline size={20}/>
+                                                            // {if (group.Status !== "Hoạt động") {
+                                                            //     setPrivateGrSelected(group.id);
+                                                            //     setShowPrivateGrQues(true);
+                                                            //     setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
+                                                            // } else {
+                                                            //     setShowLoading(true);
+                                                            //     UpdateGrState(group.Link);
+                                                            // }
+                                                            // }
+                                                            setShowLoading(true);
+                                                            UpdateGrState(group.Link);
+                                                            }}>
+                                                        <IoPersonAdd size={20}/>
                                                     </div>
                                                 // hàng đợi
                                                 ) : group.user_status === 'Chờ duyệt' ? (
@@ -581,15 +542,13 @@ export default function Detail() {
                                                         <div className={style.BlockRow}>
                                                             <button className={style.buttonOutGr} 
                                                                     style={{marginRight: '10px'}}
-                                                                    onClick={() => {setShowCancelQueuePopUp(true); setSelectedGrOut(group.Name)}}>
+                                                                    onClick={() => {
+                                                                        setShowCancelQueuePopUp(true);
+                                                                        setSelectedGrOut(group.Name);
+                                                                        setIsOutGr(group.Link);
+                                                                    }}>
                                                                 <MdClose size={20}/>
                                                             </button>
-                                                            {/* <div className={style.BlockRow}>
-                                                                <div className={`${style.BlockRow} ${style.onQueue}`}>
-                                                                    <HiMiniQueueList style={{marginRight: '7px'}} className={style.ic}/>
-                                                                    <p style={{paddingTop: '2px'}}>Chờ duyệt</p>
-                                                                </div>
-                                                            </div> */}
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -597,19 +556,17 @@ export default function Detail() {
                                                 )}
                                             </div>
                                         </div>
-                                    ))
-                                    )}
+                                    )))}
                                 </div>
                                 {!isLoading && !fetchError && filteredPage.length > 0 && (
-                                <div id="PageIndexBar" className={style.indexBarContainer}>
-                                    <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                                        <FaArrowLeft className={style.ic}></FaArrowLeft>
-                                    </button>
-                                    <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Trang {currentPage} / {totalPages}</span>
-                                    <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                                        <FaArrowRight className={style.ic}></FaArrowRight>
-                                    </button>
-                                </div>
+                                <UserListIndexBar
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    goToPrev={goToPrev}
+                                    goToNext={goToNext}
+                                    goToPage={goToPage}
+                                    setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                                ></UserListIndexBar>
                                 )}
                             </div>
                         </div>
@@ -617,7 +574,7 @@ export default function Detail() {
                 </div>
             </div>
         </div>
-        <LoadingDialog show={showLoading} message="Đang gửi yêu cầu..." />
+        <LoadingDialog show={showLoading} message="Đang gửi yêu cầu..." onClose={() => setShowLoading(false)} />
     </>
     );
 }

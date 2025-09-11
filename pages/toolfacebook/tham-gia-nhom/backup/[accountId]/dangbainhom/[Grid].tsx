@@ -10,15 +10,17 @@ import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from 'react';
-import { BiLike, BiShare } from "react-icons/bi";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { BiShare } from "react-icons/bi";
+import { FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
-import CommentPostPopup from "../../popup/CommentPost";
+import UserListIndexBar from "../../components/UserListIndexBar";
+import CommentPostPopup from "../popup/CommentPost";
 import style from './post.module.css';
 
 interface Group {
@@ -56,7 +58,7 @@ interface Comment {
     content: string;
     likes?: number;
 }
-export default function Detail() {
+export default function PostInGroup() {
     const handleCancelVideo = (index: number) => {
         setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
         setVideoFiles((prev) => prev.filter((_, idx) => idx !== index));
@@ -65,7 +67,7 @@ export default function Detail() {
     const { isOpen } = useContext<any>(SidebarContext);
     const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
     const router = useRouter();
-    const itemsPerPage = 2;
+    // const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
     const { accountId, Grid } = router.query;
@@ -82,9 +84,14 @@ export default function Detail() {
     const [newPostImages, setNewPostImages] = useState<any[]>([]);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
-    const ui = "gianvu17607@gmail.com";
+    const [name, setName] = useState('');
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
     const [videoFiles, setVideoFiles] = useState<File[]>([]);
+    const [idCmtBox, setIdCmtBox] = useState<number | null>(null);
+    // Like states
+    const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+    const [likeAnimations, setLikeAnimations] = useState<Set<number>>(new Set());
 
     const websocket = useWebSocket();
     const [groupData, setGroupData] = useState<any[]>([]);
@@ -92,6 +99,7 @@ export default function Detail() {
     const [uploadImg, setUploadImg] = useState<any[]>([]);
     // popup comment
     const [showComment, setShowComment] = useState(false);
+    const savedData = JSON.parse(localStorage.getItem('userProfile'));
 
     let crmID = Cookies.get("userID");
     if (!crmID) {
@@ -106,10 +114,20 @@ export default function Detail() {
     // fetchData();
     // }, []);
 
+    // useEffect(() => {
+    //     const test = async () => {
+    //     const a = await getFbAccountsData(crmID, '20', '', accountId)
+    //     console.log(a)
+    //     setName(a.results[0].nameFb)
+    //     };
+
+    //     test();
+    // }, []);
+
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
-        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/[id]test`);
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/123`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -120,23 +138,24 @@ export default function Detail() {
         }
     }, [isOpen]);
 
-    useEffect(() => {
-        if (account) {
-            setUname(account.name);
-        } else {
-            setUname('Loading...');
-        }
-    }, [account]);
-
     // phan trang
     const totalPages = Math.ceil(posts?.length / itemsPerPage);
     const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
     const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     const filteredPage = posts?.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    // const handleNotify = () => {
+    //     FacebookToast("Thông báo mới", "Ai đó vừa bình luận vào bài viết của bạn.");
+    // };
 
     // Gọi API lấy danh sách bài đăng cũ
     useEffect(() => {
@@ -147,7 +166,7 @@ export default function Detail() {
             setPosts(data.data || data); // ✅ Set posts ngay khi có data
         })
         .catch(error => console.error('Error:', error));
-    }, []); // ✅ Chỉ chạy một lần
+    }, []); //Chạy 1 lần
 
     // useEffect để theo dõi thay đổi của test
     useEffect(() => {
@@ -157,11 +176,12 @@ export default function Detail() {
     }, [test]); // ✅ Chạy khi test thay đổi
 
     const handleViewPosts = () => {
+        return (window.alert('reset socket'));
     };
 
     const handlePostSubmit = async () => {
         if (!newPostContent.trim() && newPostImages.length === 0) return;
-        
+
         // Save current values before clearing
         const currentContent = newPostContent;
         const currentImages = [...newPostImages];
@@ -193,7 +213,7 @@ export default function Detail() {
 
         // api upload anh
         const testUpload = await uploadAnh(currentUploadImg);
-        const fileMap = testUpload.map(img => img.savedName)
+        const fileMap = testUpload.map(img => img.savedName);
 
         // send
         if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -264,6 +284,42 @@ export default function Detail() {
     }
     };
 
+    const handleLikePost = (postId: number) => {
+        // Toggle like status
+        const newLikedPosts = new Set(likedPosts);
+        if (likedPosts.has(postId)) {
+            newLikedPosts.delete(postId);
+        } else {
+            newLikedPosts.add(postId);
+            // Add animation
+            const newAnimations = new Set(likeAnimations);
+            newAnimations.add(postId);
+            setLikeAnimations(newAnimations);
+            
+            // Remove animation after completion
+            setTimeout(() => {
+                setLikeAnimations(prev => {
+                    const updated = new Set(prev);
+                    updated.delete(postId);
+                    return updated;
+                });
+            }, 600);
+        }
+        setLikedPosts(newLikedPosts);
+
+        // Update posts state with new like count
+        setPosts(prevPosts => 
+            prevPosts.map(post => 
+                post.id === postId 
+                    ? { ...post, likes: (post.likes || 0) + (likedPosts.has(postId) ? -1 : 1) }
+                    : post
+            )
+        );
+
+        // TODO: Call API to update like on server
+        // await updateLikeOnServer(postId, !likedPosts.has(postId));
+    };
+
     const hardReload = () => {
         showLoadingDialog();
         setTimeout(() => window.location.reload(), 1000);
@@ -329,8 +385,9 @@ export default function Detail() {
                     <div className={styles.formInfoStep}>
                         <div className={styles.info_step}>
                             <div className={styles.main__title}></div>
-                            <div style={{paddingTop: '15px'}} className={styles.form_add_potential}>
-                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)}></CommentPostPopup>
+                            <div className={`${styles.form_add_potential} ${style.PostWrapper}`}>
+                                <CommentPostPopup isOpen={showComment} onClose={() => setShowComment(false)} idCmtBox={idCmtBox}>
+                                </CommentPostPopup>
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
                                         <h2 className={style.groupTitle}>
@@ -342,7 +399,7 @@ export default function Detail() {
                                             <div className={`${style.BlockRow}`}>
                                                 <div><FaUserCircle className={style.userAvatar} /></div>
                                                 <div className={`${style.BlockColumn}`}>
-                                                    <div className={style.postGrName}>{account?.name || 'NGUYEN VAN A'}</div>
+                                                    <div className={style.postGrName}>{savedData.account.nameFb}</div>
                                                     <div className={`${style.BlockRow} ${style.postGrState}`}>
                                                         <div className={style.postGrStateIc}><FaLock style={{color: 'rgb(0, 0, 0, 0.6)'}}></FaLock></div>
                                                         <p>{groups?.GroupState || 'Riêng tư'}</p>
@@ -451,7 +508,7 @@ export default function Detail() {
                                         <div className={style.postActions}>
                                             <button 
                                                 className={style.postButton}
-                                                onClick={handlePostSubmit}
+                                                onClick={() => {handlePostSubmit}}
                                                 disabled={!newPostContent.trim() && newPostImages.length === 0 && videoPreviews.length === 0}
                                             >
                                                 Đăng
@@ -475,7 +532,7 @@ export default function Detail() {
                                                 <div className={style.postHeader}>
                                                     <FaUserCircle className={style.postAvatar} />
                                                     <div>
-                                                        <div className={style.postUserName}>Nguyen Van A</div>
+                                                        <div className={style.postUserName}>{savedData.account.nameFb}</div>
                                                         <div className={style.postTime}>{post.time}</div>
                                                     </div>
                                                 </div>
@@ -505,9 +562,6 @@ export default function Detail() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                {post.comments.map((comment) => (
-                                                    <div>{comment.content}</div>
-                                                ))}
                                                 </div>
                                                 <div>
                                                     {/* {post.imageUrls && post.imageUrls.length > 0 && (
@@ -521,12 +575,25 @@ export default function Detail() {
                                                     )} */}
                                                 </div>
                                                 <div className={style.postActions}>
-                                                    <button className={style.postActionButton}>
-                                                        <BiLike style={{marginRight: '5px'}}></BiLike>
-                                                        Thích
+                                                    <button 
+                                                        className={`${style.postActionButton} ${likedPosts.has(post.id) ? style.liked : ''} ${likeAnimations.has(post.id) ? style.likeAnimation : ''}`}
+                                                        onClick={() => handleLikePost(post.id)}
+                                                    >
+                                                        {!likedPosts.has(post.id) ? (
+                                                            <AiOutlineLike size={25} style={{marginRight: '5px', color: '#65676b'}}></AiOutlineLike>
+                                                        ) : (
+                                                            <AiFillLike size={25} style={{marginRight: '5px', color: '#1877f2'}}></AiFillLike>
+                                                        )}
+                                                        <span style={{color: likedPosts.has(post.id) ? '#1877f2' : '#65676b'}}>
+                                                            {likedPosts.has(post.id) ? 'Thích' : 'Thích'}
+                                                        </span>
                                                     </button>
-                                                    <button className={style.postActionButton} onClick={() => setShowComment(true)}>
-                                                        <FaRegComment style={{marginRight: '5px'}}></FaRegComment>
+                                                    <button className={style.postActionButton} 
+                                                            onClick={() => {
+                                                                setShowComment(true)
+                                                                setIdCmtBox(post.id)
+                                                            }}>
+                                                        <FaRegComment size={25} style={{marginRight: '5px'}}></FaRegComment>
                                                         Bình luận
                                                     </button>
                                                     <button className={style.postActionButton} style={{display: 'none'}}>
@@ -537,15 +604,14 @@ export default function Detail() {
                                             </div>
                                         ))}
                                     </div>
-                                    <div className={`${style.BlockRow} ${style.postlistPageIndex}`}>
-                                        <button onClick={goToPrev} disabled={currentPage === 1} style={{marginLeft: 'auto', marginRight: '20px'}}>
-                                            <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                                        </button>
-                                        <span>Trang {currentPage} / {totalPages}</span>
-                                        <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                                            <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                                        </button>
-                                    </div>
+                                    <UserListIndexBar
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        goToPrev={goToPrev}
+                                        goToNext={goToNext}
+                                        goToPage={goToPage}
+                                        setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                                    ></UserListIndexBar>
                                 </div>
                             </div>
                         </div>

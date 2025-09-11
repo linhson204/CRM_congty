@@ -16,34 +16,13 @@ import { FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
-import data from "../../../../public/data/account.json";
 import LoadingDialog from "../components/LoadingDialog";
 import SearchBar from "../components/SearchBar";
 import UserListIndexBar from "../components/UserListIndexBar";
 import StatisticBlock from "../components/statisticBlock";
-import { Question } from "../popup/PrivateGrQues/types";
 import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
-
-interface Group {
-    id: number;
-    GroupName: string;
-    GroupState: string;
-    Member: number;
-    isJoin: number;
-}
-
-interface Account {
-    id: number;
-    name: string;
-    friend: number;
-    GrIn: number;
-    GrOut: number;
-    Post: number;
-    Comment: number;
-    Mess?: number;
-    groups: Group[];
-}
+import { Question } from "./popup/PrivateGrQues/types";
 
 export default function GroupList() {
     const mainRef = useRef<HTMLDivElement>(null);
@@ -53,18 +32,12 @@ export default function GroupList() {
     // const itemsPerPage = 10;
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [accountFind, setAccountFind] = useState<Account | null>(null);
     const [showFilter, setshowFilterPopup] = useState(false);
     const [selectedGrOut, setSelectedGrOut] = useState<string>('');
     // Phân trang
     const [search, setSearch] = useState('');
     const [Sent, setSent] = useState(false); //danh dau da gui
     const { accountId } = router.query;
-    // Lấy thông tin tài khoản
-    const [account, setAccount] = useState<Account[] | null>(data); //data tong dau vao
-    const [groups, setGroups] = useState<Group[]>([]);
-    //loading ten
-    const [uname, setUname] = useState('');
 
     //tham gia nhóm
     const [pendingGr, setpendingGr] = useState<number | null>(null);
@@ -78,7 +51,6 @@ export default function GroupList() {
 
     //Popup rời nhóm, huỷ tham gia nhóm
     const [showPopup, setShowPopup] = useState(false);
-    const [GrOutSelected, SetGrOutSelected] = useState<number | null>(null);
     // const [groups, setGroups] = useState<Groups[]>([]);
 
     const [grStateTemp, setGrStateTemp] = useState('all');
@@ -91,6 +63,7 @@ export default function GroupList() {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [showLoading, setShowLoading] = useState(false);
     const [Gr, setGr] = useState<any[]>([]); //mock data
+    const savedData = JSON.parse(localStorage.getItem('userProfile'));
 
     const pageCountSelect = async () => {
         //call API lay so luong nhom tren tung account
@@ -147,10 +120,6 @@ export default function GroupList() {
         console.log("Gr thay đổi:", Gr);
     }, [Gr]);
 
-    // getFilteredGroups(123).then(data => {
-    //     console.log("Filtered groups:", data);
-    // });
-
     // Danh sách câu hỏi mẫu
     const approvalQuestions: Question[] = [
     {
@@ -183,18 +152,9 @@ export default function GroupList() {
     }
     ];
     //
-    
-    useEffect(() => { //xu li su kien moi khi tim dung account
-        const timer = setTimeout(() => {
-        const foundAccount = data.find(acc => acc.id === 12);
-        setAccountFind(foundAccount);
-        setGroups(foundAccount.groups);
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [accountId]);
 
     useEffect(() => {
-        setHeaderTitle("Tool Facebook - Chi Tiết Tài Khoản");
+        setHeaderTitle("Tool Facebook - Danh sách nhóm");
         setShowBackButton(true);
         setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
@@ -206,14 +166,6 @@ export default function GroupList() {
             mainRef.current?.classList.remove("content_resize");
         }
     }, [isOpen]);
-
-    useEffect(() => {
-        if (account) {
-            setUname(accountFind?.name || '...loading');
-        } else {
-            setUname('Loading...');
-        }
-    }, [account]);
 
     let crmID = Cookies.get("userID");
     if (!crmID) {
@@ -317,7 +269,7 @@ export default function GroupList() {
             const params = {"group_link": `${LinkGr}`};
             const joinData = {
                 type: "join_group",
-                user_id: "test1",
+                user_id: accountId,
                 // postId: newPost.id.toString(),
                 crm_id: crmID,
                 params: params,
@@ -357,7 +309,7 @@ export default function GroupList() {
             <div className={styles.main_importfile}>
                 <div className={styles.formInfoStep}>
                     <div className={styles.info_step}>
-                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
+                        <div className={styles.main__title}>Tool Facebook - DANH SÁCH NHÓM</div>
                         <div style={{padding: '5px', backgroundColor: '#f9f9f9'}} className={styles.form_add_potential}>
                             {/* Name + GroupIn/NotIn */}
                             <div className={style.statBlockContainer}>
@@ -369,10 +321,9 @@ export default function GroupList() {
                             {/* thanh checkbox + ten */}
                             <div className={style.grouplistHeadbar}>
                                 <div className={style.usernameHeader}>
-                                    <p style={{fontSize: '30px', float: 'left', width: 'fit-content'}}></p>
                                     <div id="UserName" className={style.BlockRow}>
                                         <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                        <p className={style.nameDetail}>{accountId}</p>
+                                        <p className={style.nameDetail}>{savedData.account.nameFb}</p>
                                     </div>
                                 </div>
                                 <SearchBar
@@ -570,15 +521,18 @@ export default function GroupList() {
                                                 ) : group.user_status === 'Chưa tham gia' ? (
                                                     <div className={`${style.BlockRow} ${style.joinGrButton}`}
                                                         onClick={() => {
-                                                            {if (group.Status !== "Hoạt động") {
-                                                                setPrivateGrSelected(group.id);
-                                                                setShowPrivateGrQues(true);
-                                                                setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
-                                                            } else {
-                                                                setShowLoading(true);
-                                                                UpdateGrState(group.Link);
-                                                            }
-                                                            }}}>
+                                                            // {if (group.Status !== "Hoạt động") {
+                                                            //     setPrivateGrSelected(group.id);
+                                                            //     setShowPrivateGrQues(true);
+                                                            //     setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
+                                                            // } else {
+                                                            //     setShowLoading(true);
+                                                            //     UpdateGrState(group.Link);
+                                                            // }
+                                                            // }
+                                                            setShowLoading(true);
+                                                            UpdateGrState(group.Link);
+                                                            }}>
                                                         <IoPersonAdd size={20}/>
                                                     </div>
                                                 // hàng đợi

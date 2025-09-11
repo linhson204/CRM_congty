@@ -2,110 +2,87 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import { getFacebookAccountsByUserID } from "@/components/toolFacebook/dangbai/constants/facebookAccountsMapping";
+import getFbAccountsData from '@/pages/api/toolFacebook/danhsachnhom/getfbaccounts';
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CiBoxList } from "react-icons/ci";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaSearch } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import UserListIndexBar from "./components/UserListIndexBar";
 import style from './styles.module.css';
 
-interface Users {
-  id: number;
-  name: string;
-  friend: number;
-  GrIn?: number;
-  GrOut?: number;
-  Post: number;
-  Comment: number;
-  isJoin: boolean;
-  Mess: number;
-  groups: Group[];
-  Active?: boolean;
-}
-
-interface Group {
-  id: number;
-  GroupName: string;
-  GroupState: string;
-  Member: number;
-  isJoin: number;
-}
-
-export default function DangBai() {
+export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
   const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  // const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
   const crmID = Cookies.get("userID");
 
-  //get tk crm dang quan li
-  const mapdata = getFacebookAccountsByUserID("22773024"); // crmId
-  const data = mapdata.map((item, index) => ({
-    ...item,
-    Mess: 1,
-    STT: index + 1,
-    Active: (index % 3 === 1) ? true : false,
-  }))
+  const [accounts, setAccounts] = useState<any[]>([])
 
-  console.log(data)
-  // Lay data
-  const [users, setUsers] = useState<Users[]>([]);
-
+  // lay data
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        // Cách 1: Nếu file JSON trong public folder
-        const response = await fetch('../../data/account.json');
-        
-        // Cách 2: Nếu import trực tiếp
-        // const data = await import('@/data/accountjson.json');
-        
-        if (!response.ok) throw new Error('Failed to fetch data');
-        const data = await response.json();
-        
-        // Kiểm tra cấu trúc dữ liệu
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid data format: Expected array');
-        }
-        
-        // Cập nhật state với dữ liệu đã kiểm tra
-        setUsers(data.map(user => ({
-          ...user,
-          Active: user.Active !== undefined ? user.Active : false, // Mặc định false
-          groups: user.groups || [] // Đảm bảo groups luôn là mảng
-        })));
-        
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        // Xử lý lỗi (hiển thị thông báo, v.v.)
-      }
+    const test = async () => {
+      const a = await getFbAccountsData(crmID, '20', '', '')
+      const data1 = a.results.map((item, index) => ({
+        ...item,
+        Mess: 1,
+        STT: index + 1,
+      }))
+      setAccounts(data1)
     };
-
-    fetchUsers();
+    test();
   }, []);
 
-  // const filteredUser = search.trim() === ''
-  // ? users
-  // : users.filter((user) => {
-  //     const normalizedSearch = search.replace(/\s+/g, '').toLowerCase();
-  //     const normalizedName = user.name.replace(/\s+/g, '').toLowerCase();
-  //     return normalizedName.includes(normalizedSearch);
-  // });
+  console.log("data1", accounts);
+
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       // Cách 1: Nếu file JSON trong public folder
+  //       const response = await fetch('../../data/account.json');
+        
+  //       // Cách 2: Nếu import trực tiếp
+  //       // const data = await import('@/data/accountjson.json');
+        
+  //       if (!response.ok) throw new Error('Failed to fetch data');
+  //       const data = await response.json();
+        
+  //       // Kiểm tra cấu trúc dữ liệu
+  //       if (!Array.isArray(data)) {
+  //         throw new Error('Invalid data format: Expected array');
+  //       }
+        
+  //       // Cập nhật state với dữ liệu đã kiểm tra
+  //       setUsers(data.map(user => ({
+  //         ...user,
+  //         Active: user.Active !== undefined ? user.Active : false, // Mặc định false
+  //         groups: user.groups || [] // Đảm bảo groups luôn là mảng
+  //       })));
+        
+  //     } catch (error) {
+  //       console.error('Error loading user data:', error);
+  //       // Xử lý lỗi (hiển thị thông báo, v.v.)
+  //     }
+  //   };
+
+  //   fetchUsers();
+  // }, []);
 
   //Search tai khoan theo ten
-  const filteredUser = data.filter((user) => {
-    const activeMatch = activeFilter === null || user.Active === activeFilter;
+  const filteredUser = accounts.filter((user) => {
+    const activeMatch = activeFilter === null || user.statusFb === activeFilter;
 
     const nameMatch = search.trim() === '' || 
-    user.userNameFb.replace(/\s+/g, '').toLowerCase()
+    user.nameFb.replace(/\s+/g, '').toLowerCase()
     .includes(search.replace(/\s+/g, '').toLowerCase());
   
     return activeMatch && nameMatch;
@@ -120,6 +97,11 @@ export default function DangBai() {
   const totalPages = Math.ceil(filteredUser.length / itemsPerPage);
   const goToPrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
   const goToNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
+  const goToPage = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+          setCurrentPage(page);
+      }
+  };
 
   //Trang nhan tin
   const handleUserClick = () => {
@@ -130,10 +112,18 @@ export default function DangBai() {
   };
 
   //handle/router dang bai ca nhan
-  const PostClick = () => {
+  const PersonalPostClick = () => {
     router.push('/toolfacebook/dang-bai');
   };
     
+  const handleGroupDetailsClick = (username: string) => {
+    const selectedData = {
+      account: accounts.find(e => e.username == username),
+    }
+    // Hoặc local storage (tồn tại lâu hơn)
+    localStorage.setItem('userProfile', JSON.stringify(selectedData))
+    router.push(`./${username}/123`);
+  }
   //
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Danh Sách Tài Khoản");
@@ -168,10 +158,10 @@ export default function DangBai() {
                 <div className={styles.main__body}>
                   <div className={style.headerList}>
                     <h2>Danh Sách Tài Khoản ToolFB đang sử dụng</h2>
-                    <span>Tổng số tài khoản: {data.length}</span>
+                    <span>Tổng số tài khoản: {accounts.length}</span>
                   </div>
                   {/* list tk */}
-                  <div style={{overflowY: 'scroll'}} className={style.BlockColumn}>
+                  <div className={style.BlockColumn}>
                     <div className={style.BlockRow} style={{marginBottom: '15px'}}>
                       <div id="searchContainer" className={`${style.BlockRow} ${style.searchContainer}`}>
                         <FaSearch className={style.searchIcon} />
@@ -204,7 +194,7 @@ export default function DangBai() {
                         </div>
                       </div>
                       <p style={{padding: '5px', marginLeft: "auto"}}>
-                        Số tài khoản tìm được: {filteredUser.length}/{data.length}
+                        Số tài khoản tìm được: {filteredUser.length}/{accounts.length}
                       </p>
                     </div>
                     {/* goi list danh sach tai khoan */}
@@ -223,14 +213,14 @@ export default function DangBai() {
                             {/* Row */}
                               <div style={{paddingLeft: "10px"}}>{item.STT}</div>
                             {/* Name */}
-                                <div id="User_Name" className={`${style.UserListName}`}>{item.userNameFb}</div>
+                                <div id="User_Name" className={`${style.UserListName}`}>{item.nameFb}</div>
                             {/* Email */}
                                 <div id="Email">{item.username}</div>
                             {/* Phone */}
                                 <div id="Phone">{item.password}</div>
                             {/* State */}
                               <div className={style.UserListBlockState}>
-                                {item.Active ? (
+                                {item.statusFb ? (
                                   <div className={`${style.BlockOnline}`}>
                                     Online
                                   </div>
@@ -246,11 +236,11 @@ export default function DangBai() {
                                   <FiMessageCircle className={style.ic}/>
                                   {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
                                 </div>
-                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic} onClick={PostClick} />
+                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic} onClick={PersonalPostClick} />
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {router.push(`./${item.username}/123`)}, 300)
+                                            setTimeout(() => {handleGroupDetailsClick(item.username)}, 300)
                                           }}>
                                 </CiBoxList>
                               </div>
@@ -259,29 +249,15 @@ export default function DangBai() {
                       </div>
                     </div>
                   </div>
-                  <div className={`${style.BlockRow} ${style.bottomBarList}`}>
-                    <div id="RecordCountBar" className={`${style.BlockRow} ${style.recordCountBar}`}>
-                        <p>Hiển thị</p>
-                        <select style={{marginLeft: '10px', marginRight: '10px'}}
-                        >
-                          <option value="1">10</option>
-                          <option value="2">20</option>
-                          <option value="3">30</option>
-                          <option value="4">40</option>
-                          <option value="5">50</option>
-                        </select>
-                        <p>bản ghi trên một trang</p>
-                    </div>
-                    <div id="PageIndexBar" className={`${style.BlockRow} ${style.indexBar}`}>
-                      <button onClick={goToPrev} disabled={currentPage === 1} style={{marginRight: '20px'}}>
-                        <FaArrowAltCircleLeft className={style.ic}></FaArrowAltCircleLeft>
-                      </button>
-                      <span>Trang {currentPage} / {totalPages}</span>
-                      <button onClick={goToNext} disabled={currentPage === totalPages} style={{marginLeft: '20px'}}>
-                        <FaArrowAltCircleRight className={style.ic}></FaArrowAltCircleRight>
-                      </button>
-                    </div>
-                  </div>
+                  <UserListIndexBar
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    goToPrev={goToPrev}
+                    goToNext={goToNext}
+                    setItemsPerPage={(itemsPerPage) => {setItemsPerPage(itemsPerPage); setCurrentPage(1);}}
+                    goToPage={goToPage}
+                  >
+                  </UserListIndexBar>
                 </div>
               </div>
             </div>
