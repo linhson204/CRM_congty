@@ -1,5 +1,5 @@
+import style from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/popup.module.css";
 import React from 'react';
-import style from '../../styles.module.css';
 import { Question } from './types';
 
 interface QuestionRendererProps {

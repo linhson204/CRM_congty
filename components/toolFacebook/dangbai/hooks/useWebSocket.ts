@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Post, Comment, Reply, WebSocketData } from "../types";
 import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
 import { USER_FACEBOOK_MAPPING } from "../constants/facebookAccountsMapping";
+import { Comment, Post, Reply, WebSocketData } from "../types";
 
 export const useWebSocket = (
   posts?: Post[],
@@ -28,7 +28,7 @@ export const useWebSocket = (
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
 
   const connectWebSocket = () => {
-    // const ws = new WebSocket("ws://123.24.206.25:4000");
+    // const ws = new WebSocket("ws://192.168.0.116:4000");
     const ws = new WebSocket("wss://socket.hungha365.com:4000");
     // const ws = new WebSocket("ws://localhost:4000");
     // const ws = new WebSocket("wss://backend-crm-skmr.onrender.com");

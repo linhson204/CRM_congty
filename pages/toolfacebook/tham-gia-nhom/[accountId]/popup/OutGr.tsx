@@ -1,6 +1,6 @@
 import React from "react";
 import { PiWarningCircleLight } from "react-icons/pi";
-import style from "../styles.module.css";
+import style from "./popup.module.css";
 
 
 interface ConfirmLeaveGroupProps {

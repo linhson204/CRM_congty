@@ -5,9 +5,12 @@ import styles from "@/components/crm/potential/potential.module.css";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaPaperPlane, FaSearch } from 'react-icons/fa';
+import { AiFillPicture } from "react-icons/ai";
+import { BsFillPlusCircleFill, BsThreeDotsVertical } from "react-icons/bs";
+import { FaPaperPlane, FaSearch, FaSmile } from 'react-icons/fa';
 import { FaComments } from 'react-icons/fa6';
+import { IoVideocam } from "react-icons/io5";
+import { MdPhone } from "react-icons/md";
 import style from './styles.module.css';
 
 // fetch data prepare
@@ -41,6 +44,7 @@ export default function MessagingPage() {
   const [convers, setConvers] = useState<Conversations[]>([]);
   const [mess, setMess] = useState <messages[]>([]);
   const [search, setSearch] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = () => { //gui tin nhan -> them phan tra data cho tool de gui lai (api?)
     if (currentMessage.trim() === "") return;
@@ -82,6 +86,10 @@ export default function MessagingPage() {
       handleSendMessage();
     }
   };
+
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  }
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -158,7 +166,7 @@ export default function MessagingPage() {
       <div className={styleHome.main} ref={mainRef}>
         <div className={styles.main_importfile}>
           <div className={styles.info_step}>
-            <div className={styles.main__title}>Tool Facebook - NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
+            <div className={styles.main__title}>TRANG NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
             <div className={styles.form_add_potential}>
               <div className={`${styles.main__body} ${style.messagingContainer}`}>
                 <div className={style.userList}>
@@ -235,9 +243,17 @@ export default function MessagingPage() {
                             {convers.find(u => u.id === activeUser)?.Active ? 'Online' : 'Offline'}
                           </p>
                         </div>
-                        <button className={style.chatOptions}>
-                          <BsThreeDotsVertical size={20} />
-                        </button>
+                        <div className={style.BlockRow} style={{gap: '10px'}}>
+                          <button>
+                            <MdPhone size={20}></MdPhone>
+                          </button>
+                          <button>
+                            <IoVideocam size={20}></IoVideocam>
+                          </button>
+                          <button className={style.chatOptions}>
+                            <BsThreeDotsVertical size={20} />
+                          </button>
+                        </div>
                       </div>
                       
                       {/* Messages area */}
@@ -267,14 +283,31 @@ export default function MessagingPage() {
                         <button className={style.attachButton}>
                           {/* <MdOutlineAttachFile size={24} /> */}
                         </button>
-                        <textarea
-                          value={currentMessage}
-                          onChange={(e) => setCurrentMessage(e.target.value)}
-                          onKeyPress={handleKeyPress}
-                          placeholder="Nhập tin nhắn..."
-                          className={style.messageInput}
-                          rows={1}
+                        <input
+                            type="file"
+                            accept="image/*, video/*, .pdf, .doc, .docx"
+                            multiple
+                            style={{ display: 'none' }}
+                            ref={fileInputRef}
                         />
+                        <BsFillPlusCircleFill 
+                          size={30} 
+                          color="#1877F2" 
+                          style={{marginRight: '8px', cursor: 'pointer'}}
+                          onClick={handleIconClick}
+                        />
+                        <div className={style.messageContainer}>
+                          <textarea
+                            value={currentMessage}
+                            onChange={(e) => setCurrentMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="Aa"
+                            className={style.messageInput}
+                            rows={1}
+                          />
+                          <AiFillPicture size={26} color="#1877F2" style={{marginRight: '20px', cursor: 'pointer'}} />
+                          <FaSmile size={24} color="#1877F2" style={{marginRight: '8px', cursor: 'pointer'}}/>
+                        </div>
                         <button 
                           onClick={handleSendMessage}
                           disabled={!currentMessage.trim()}
