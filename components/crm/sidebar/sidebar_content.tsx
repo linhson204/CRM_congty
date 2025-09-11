@@ -28,7 +28,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
   const [isAdminW247, setIsAdminW247] = useState(false);
   const [isAdminJK365, setIsAdminJK365] = useState(false);
   const [isAdminTd3s, setIsAdminTd3s] = useState(false);
-  const [isStatisticAi, setIsStatisticAi] = useState(false)
+  const [isStatisticAi, setIsStatisticAi] = useState(false);
   const [isAdminJob247, setIsAdminJob247] = useState(false);
   const [isAdminJobnew, setIsAdminJobnew] = useState(false);
   const [isAdminViec3s, setIsAdminViec3s] = useState(false);
@@ -130,23 +130,23 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
     }
 
     if (label === "Thống kê AI") {
-      setIsStatisticAi(!isStatisticAi)
+      setIsStatisticAi(!isStatisticAi);
     }
 
     if (label === "Admin Job247") {
-      setIsAdminJob247(!isAdminJob247)
+      setIsAdminJob247(!isAdminJob247);
     }
 
     if (label === "Admin Jobnew") {
-      setIsAdminJobnew(!isAdminJobnew)
+      setIsAdminJobnew(!isAdminJobnew);
     }
 
     if (label === "Admin Viec3s") {
-      setIsAdminViec3s(!isAdminViec3s)
+      setIsAdminViec3s(!isAdminViec3s);
     }
 
     if (label === "Tool facebook") {
-      setIsToolFacebookOpen(!isToolFacebookOpen)
+      setIsToolFacebookOpen(!isToolFacebookOpen);
     }
   };
 
@@ -204,19 +204,19 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
     }
 
     if (label === "Admin Job247") {
-      return isAdminJob247
+      return isAdminJob247;
     }
 
     if (label === "Admin Jobnew") {
-      return isAdminJobnew
+      return isAdminJobnew;
     }
 
     if (label === "Admin Viec3s") {
-      return isAdminViec3s
+      return isAdminViec3s;
     }
 
     if (label === "Tool facebook") {
-      return isToolFacebookOpen
+      return isToolFacebookOpen;
     }
   };
 
@@ -316,7 +316,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
           blank: "",
           label: "Tin tuyển dụng bảo lưu",
           link: "/customer/reserveNew",
-        }
+        },
       ],
       content: "Thông tin khách hàng",
     },
@@ -1058,7 +1058,6 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       content: "Phê duyệt bài viết",
     },
 
-    
     {
       img_link: "/crm/re-expen.svg",
       link: "#",
@@ -1098,27 +1097,27 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       content: "Quản lý thu chi",
     },
     {
-        img_link: "/crm/customer.svg",
-        link: `#`,
-        children: [
-          {
-            blank: "",
-            label: "Đăng bài",
-            link: "/toolfacebook/dang-bai",
-          },
-          {
-            blank: "",
-            label: "Nhắn tin",
-            link: "/toolfacebook/nhan-tin",
-          },
-          {
-            blank: "",
-            label: "Tham gia nhóm",
-            link: "/toolfacebook/tham-gia-nhom/HomePage",
-          },
-        ],
-        content: "Tool facebook",
-      },
+      img_link: "/crm/customer.svg",
+      link: `#`,
+      children: [
+        {
+          blank: "",
+          label: "Đăng bài",
+          link: "/toolfacebook/dang-bai",
+        },
+        {
+          blank: "",
+          label: "Nhắn tin",
+          link: "/toolfacebook/nhan-tin",
+        },
+        {
+          blank: "",
+          label: "Tham gia nhóm",
+          link: "/toolfacebook/tham-gia-nhom/HomePage",
+        },
+      ],
+      content: "Tool facebook",
+    },
 
     {
       img_link: "/crm/i_cds365.svg",
@@ -1127,8 +1126,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       content: "",
     },
   ];
-  
-  
+
   checkReceiver &&
     userType <= 2 &&
     sidebar_button_group_company.splice(
@@ -1150,6 +1148,49 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
           },
         ],
         content: "Từ khóa nhạy cảm",
+      },
+      {
+        img_link: "/crm/customer.svg",
+        link: `#`,
+        children: [
+          {
+            blank: "",
+            label: "Thống kê dữ liệu chia giỏ kinh doanh",
+            link: "/nha-tuyen-dung/du-lieu-chia-gio",
+          },
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng ký mới",
+            link: "/nha-tuyen-dung/dang-ky-moi",
+          },
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng tin",
+            link: "/nha-tuyen-dung/dang-tin",
+          },
+          // Thêm mới 2 tab
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng ký mới (top cv)",
+            link: "/nha-tuyen-dung/dang-ky-moi-top-cv",
+          },
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng tin (top cv)",
+            link: "/nha-tuyen-dung/dang-tin-top-cv",
+          },
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng ký mới (trang vàng)",
+            link: "/nha-tuyen-dung/dang-ky-moi-trang-vang",
+          },
+          {
+            blank: "",
+            label: "Nhà tuyển dụng đăng tin (trang vàng)",
+            link: "/nha-tuyen-dung/dang-tin-trang-vang",
+          },
+        ],
+        content: "Thống kê nhà tuyển dụng MXH",
       },
       {
         img_link: "/crm/nav_setting.svg",
@@ -1180,7 +1221,6 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       }
     );
 
-
   const [infoRole, setInfoRole] = useState([]);
 
   const handleGetThongTinQuyen = async () => {
@@ -1203,7 +1243,7 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
       if (data && data?.data) {
         setInfoRole(data?.data?.roles);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   useEffect(() => {
     handleGetThongTinQuyen();
@@ -1216,13 +1256,47 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
           : sidebar_button_group
         )?.map((items: any, i) => {
           return (
-          <>
-            {/* {items?.role === "seen" ? ( */}
-            <div className={style.item_parent} key={i}>
-              {items && items.children && items.children.length > 0 ? (
-                <>
-                  <div
-                    onClick={() => handleOpenChild(items.content)}
+            <>
+              {/* {items?.role === "seen" ? ( */}
+              <div className={style.item_parent} key={i}>
+                {items && items.children && items.children.length > 0 ? (
+                  <>
+                    <div
+                      onClick={() => handleOpenChild(items.content)}
+                      className={style.item_link}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img
+                        src={items.img_link}
+                        className={style.img_link}
+                        alt="icon"
+                      />
+                      <div
+                        className={`${style.title} ${!isOpen ? null : "none"}`}
+                      >
+                        {items.content}
+                      </div>
+                    </div>
+                    {isOpenChild(items.content) && (
+                      <ul className={style.navbar_treeview}>
+                        {items.children.length > 0 &&
+                          items?.children.map((child, index) => (
+                            <li key={index}>
+                              <Link
+                                target={child.blank}
+                                href={child.link}
+                                className={style.navbar__item_link}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={items.link}
                     className={style.item_link}
                     style={{ cursor: "pointer" }}
                   >
@@ -1236,46 +1310,15 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
                     >
                       {items.content}
                     </div>
-                  </div>
-                  {isOpenChild(items.content) && (
-                    <ul className={style.navbar_treeview}>
-                      {items.children.length > 0 &&
-                        items?.children.map((child, index) => (
-                          <li key={index}>
-                            <Link
-                              target={child.blank}
-                              href={child.link}
-                              className={style.navbar__item_link}
-                            >
-                              {child.label}
-                            </Link>
-                          </li>
-                        ))}
-                    </ul>
-                  )}
-                </>
-              ) : (
-                <Link
-                  href={items.link}
-                  className={style.item_link}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    src={items.img_link}
-                    className={style.img_link}
-                    alt="icon"
-                  />
-                  <div className={`${style.title} ${!isOpen ? null : "none"}`}>
-                    {items.content}
-                  </div>
-                </Link>
-              )}
-            </div>
-            {/* ) : ( */}
-            {/* <></> */}
-            {/* )} */}
-          </>
-        )})}
+                  </Link>
+                )}
+              </div>
+              {/* ) : ( */}
+              {/* <></> */}
+              {/* )} */}
+            </>
+          );
+        })}
       </div>
       <button
         ref={btnResize as any}

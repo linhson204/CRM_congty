@@ -126,8 +126,8 @@ export const PostModal: React.FC<PostModalProps> = ({
                 {selectedImages.map((image, index) => (
                   <div key={index} className={styles.imagePreviewItem}>
                     <img
-                      src={`https://socket.hungha365.com:4000${image}`}
-                      // src={`http://localhost:4000${image}`}
+                      // src={`https://socket.hungha365.com:4000${image}`}
+                      src={`http://localhost:4000${image}`}
                       alt={`Preview ${index + 1}`}
                       className={styles.imagePreview}
                       style={{

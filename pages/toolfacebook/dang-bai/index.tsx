@@ -573,13 +573,13 @@ function DangBaiPost() {
 
   const handleSubmit = async () => {
     // Kiểm tra trạng thái online của Facebook account
-    if (
-      !onlineStatus[selectedFacebookAccount.facebookId] ||
-      !onlineStatus[selectedFacebookAccount.facebookId].isOnline
-    ) {
-      alert("Facebook này hiện không online nên không thể đăng bài!");
-      return;
-    }
+    // if (
+    //   !onlineStatus[selectedFacebookAccount.facebookId] ||
+    //   !onlineStatus[selectedFacebookAccount.facebookId].isOnline
+    // ) {
+    //   alert("Facebook này hiện không online nên không thể đăng bài!");
+    //   return;
+    // }
 
     if (
       modalManagement.postContent.trim() &&
@@ -617,25 +617,26 @@ function DangBaiPost() {
 
       // Gửi dữ liệu qua WebSocket nếu đã kết nối
       if (websocket && websocket.readyState === WebSocket.OPEN) {
+        // const postData = {
+        //   type: "new_post",
+        //   postId: newPost.id.toString(),
+        //   content: modalManagement.postContent,
+        //   authorName: userName,
+        //   authorId: userID,
+        //   // to: selectedFacebookAccount.facebookId,
+        //   to: ["654321"],
+        //   attachments: modalManagement.uploadedImages.map((img, index) => ({
+        //     name: img.name || img.filename || `image${index}`,
+        //     url: img.link || img.url,
+        //     type: "image",
+        //   })), // Đưa images vào attachments thay vì images
+        // };
+
         const postData = {
           type: "new_post",
-          postId: newPost.id.toString(),
+          device_id: "TSPNH6GYZLPJBY6X",
           content: modalManagement.postContent,
-          authorName: userName,
-          authorId: userID,
-          to: selectedFacebookAccount.facebookId,
-          attachments: modalManagement.uploadedImages.map((img, index) => ({
-            name: img.name || img.filename || `image${index}`,
-            url: img.link || img.url,
-            type: "image",
-          })), // Đưa images vào attachments thay vì images
-          metadata: {
-            category: "job_posting",
-            source: "crm_tool",
-            platform: "facebook",
-            action: "create_post",
-            timestamp: new Date().toISOString(),
-          },
+          to: ["1498"],
         };
 
         websocket.send(JSON.stringify(postData));

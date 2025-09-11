@@ -59,8 +59,8 @@ export const PostItem: React.FC<PostItemProps> = ({
               src={
                 typeof image === "string"
                   ? image
-                  : `https://socket.hungha365.com:4000${image.url}`
-                //: `http://localhost:4000${image.url}`
+                  : // : `https://socket.hungha365.com:4000${image.url}`
+                    `http://localhost:4000${image.url}`
               }
               alt={
                 typeof image === "string"
