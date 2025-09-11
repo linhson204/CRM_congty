@@ -25,13 +25,14 @@ export default function HomePage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
   const crmID = Cookies.get("userID");
+  const [showLoading, setShowLoading] = useState(false);
 
   const [accounts, setAccounts] = useState<any[]>([])
 
   // lay data
   useEffect(() => {
     const test = async () => {
-      const a = await getFbAccountsData(crmID, '20', '', '')
+      const a = await getFbAccountsData(crmID, '100', '', '')
       const data1 = a.results.map((item, index) => ({
         ...item,
         Mess: 1,

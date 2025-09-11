@@ -17,7 +17,9 @@ export default function StatisticBlock({content, count, type}: statisticBlockPro
                     {count} {type}
                 </div>
             </div>
-            <div className={style.iconBlock}></div>
+            {/* <div className={style.iconBlock}>
+                <DashboardChart />
+            </div> */}
         </div>
     )
 }

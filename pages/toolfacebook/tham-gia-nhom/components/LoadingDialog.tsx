@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import style from '../[accountId]/popup/popup.module.css';
 
 interface LoadingDialogProps {
     message?: string;
@@ -10,8 +11,8 @@ const LoadingDialog: React.FC<LoadingDialogProps> = ({ message = "Đang gửi y�
     useEffect(() => {
         if (show) {
         const timer = setTimeout(() => {
-            onClose(); // sau 3s tự đóng
-        }, 3000);
+            onClose(); // sau 1.5s tự đóng
+        }, 1500);
 
         return () => clearTimeout(timer); // dọn timer khi component unmount
         }
@@ -20,39 +21,19 @@ const LoadingDialog: React.FC<LoadingDialogProps> = ({ message = "Đang gửi y�
     if (!show) return null;
 
     return (
-        <div
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: 'rgba(0, 0, 0, 0.8)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 9999,
-            }}
-        >
-            <div
-                style={{
-                    background: 'white',
-                    padding: '30px',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                }}
-            >
+        <div className={style.dialogContainer}>
+            <div className={style.dialogContent}>
                 <div
                     style={{
-                        border: '4px solid #f3f3f3',
-                        borderTop: '4px solid #3498db',
-                        borderRadius: '50%',
-                        width: '40px',
-                        height: '40px',
-                        animation: 'spin 1s linear infinite',
-                        margin: '0 auto 20px',
-                    }}
-                ></div>
+                    border: '4px solid #f3f3f3',
+                    borderTop: '4px solid #3498db',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    animation: 'spin 1s linear infinite',
+                    margin: '0 auto 20px',
+                    }}>
+                </div>
                 <p>{message}</p>
             </div>
             <style jsx>{`

@@ -3,6 +3,7 @@ import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
+import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
 import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import OutGrFs from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/OutGrFS";
@@ -20,9 +21,9 @@ import LoadingDialog from "../components/LoadingDialog";
 import SearchBar from "../components/SearchBar";
 import UserListIndexBar from "../components/UserListIndexBar";
 import StatisticBlock from "../components/statisticBlock";
-import stylepu from "../popup/popup.module.css";
 import style from '../styles.module.css';
 import { Question } from "./popup/PrivateGrQues/types";
+import stylepu from "./popup/popup.module.css";
 
 export default function GroupList() {
     const mainRef = useRef<HTMLDivElement>(null);
@@ -70,55 +71,55 @@ export default function GroupList() {
     }
 
     const websocket = useWebSocket();
+    useEffect(() => {
+        let isMounted = true;
+        setIsLoading(true);
+        setFetchError(null);
+
+        async function fetchData() {
+            try {
+            const [res1, res2, res3] = await Promise.all([
+                getGroupData("123", "a", "", "", "Đã tham gia"),
+                getGroupData("123", "", "", "", "Chờ duyệt"),
+                getGroupData("123", "a", "", "", "Chưa tham gia")
+            ]);
+
+            if (isMounted) {
+                const res = [...res1.results, ...res2.results, ...res3.results];
+                setGroupData(res);
+                console.log("Fetched data:", { res1, res2, res3 });
+                setIsLoading(false);
+            }
+            } catch (error) {
+            if (isMounted) {
+                console.error("Error fetching group data:", error);
+                setFetchError("Không thể tải dữ liệu nhóm. Vui lòng thử lại.");
+                setIsLoading(false);
+            }
+            }
+        }
+
+        fetchData();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
     // useEffect(() => {
-    //     let isMounted = true;
-    //     setIsLoading(true);
-    //     setFetchError(null);
+    //     fetch('http://localhost:3003/api/getgrdata')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // setTest(data);
+    //         setGr(data.data || data); // ✅ Set posts ngay khi có data
+    //         setIsLoading(false);
+    //     })
+    //     .catch(error => console.error('Error:', error));
+    // }, []); // ✅ Chỉ chạy một lần
 
-    //     async function fetchData() {
-    //         try {
-    //         const [res1, res2, res3] = await Promise.all([
-    //             getGroupData("123", "a", "", "", "Đã tham gia"),
-    //             getGroupData("123", "", "", "", "Chờ duyệt"),
-    //             getGroupData("123", "a", "", "", "Chưa tham gia")
-    //         ]);
-
-    //         if (isMounted) {
-    //             const res = [...res1.results, ...res2.results, ...res3.results];
-    //             setGroupData(res);
-    //             console.log("Fetched data:", { res1, res2, res3 });
-    //             setIsLoading(false);
-    //         }
-    //         } catch (error) {
-    //         if (isMounted) {
-    //             console.error("Error fetching group data:", error);
-    //             setFetchError("Không thể tải dữ liệu nhóm. Vui lòng thử lại.");
-    //             setIsLoading(false);
-    //         }
-    //         }
-    //     }
-
-    //     fetchData();
-
-    //     return () => {
-    //         isMounted = false;
-    //     };
-    // }, []);
-
-    useEffect(() => {
-        fetch('http://localhost:3003/api/getgrdata')
-        .then(response => response.json())
-        .then(data => {
-            // setTest(data);
-            setGr(data.data || data); // ✅ Set posts ngay khi có data
-            setIsLoading(false);
-        })
-        .catch(error => console.error('Error:', error));
-    }, []); // ✅ Chỉ chạy một lần
-
-    useEffect(() => {
-        console.log("Gr thay đổi:", Gr);
-    }, [Gr]);
+    // useEffect(() => {
+    //     console.log("Gr thay đổi:", Gr);
+    // }, [Gr]);
 
     // Danh sách câu hỏi mẫu
     const approvalQuestions: Question[] = [
@@ -180,7 +181,7 @@ export default function GroupList() {
     }, [pendingGr]);
 
     const filteredGroups = useMemo(() => {
-        return Gr.filter(group => {
+        return groupData.filter(group => {
             // 1. Lọc theo tên (luôn áp dụng)
             const nameMatch = group.Name.toLowerCase().includes(search.toLowerCase());
             if (!nameMatch) return false;
@@ -202,7 +203,7 @@ export default function GroupList() {
 
             return nameMatch && statusMatch && joinMatch;
         });
-    }, [Gr, grState, joinState, search]);
+    }, [groupData, grState, joinState, search]);
 
     // Phân trang
     const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
@@ -265,22 +266,22 @@ export default function GroupList() {
         // Gọi API gửi request đến tool tham gia nhóm
         // API cập nhật trường isJoin
         console.log(accountId, LinkGr);
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-            const params = {"group_link": `${LinkGr}`};
-            const joinData = {
-                type: "join_group",
-                user_id: accountId,
-                // postId: newPost.id.toString(),
-                crm_id: crmID,
-                params: params,
-                to: "B22623688",
-            };
-            websocket.send(JSON.stringify(joinData));
-        }
+        // if (websocket && websocket.readyState === WebSocket.OPEN) {
+        //     const params = {"group_link": `${LinkGr}`};
+        //     const joinData = {
+        //         type: "join_group",
+        //         user_id: accountId,
+        //         // postId: newPost.id.toString(),
+        //         crm_id: crmID,
+        //         params: params,
+        //         to: "1498",
+        //     };
+        //     websocket.send(JSON.stringify(joinData));
+        // }
         const params = {"group_link": `${LinkGr}`};
         await joinGroup(
             "join_group",
-            "test1", //user_id
+            savedData.account.username, //user_id
             params,
             crmID
         );
