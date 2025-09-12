@@ -332,6 +332,11 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
         },
         {
           blank: "",
+          label: "Zalo",
+          link: "/zalo",
+        },
+        {
+          blank: "",
           label: "Khảo sát",
           link: "/khao-sat",
         },
