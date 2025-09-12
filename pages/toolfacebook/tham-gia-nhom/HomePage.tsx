@@ -2,7 +2,7 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import getFbAccountsData from "@/pages/api/toolFacebook/danhsachnhom/getfbaccounts";
+import getFbAccountsData from "@/pages/api/toolFacebook/danhsachnhom/GetFbAccounts.js";
 import Cookies from "js-cookie";
 import { upperCase } from "lodash";
 import Head from "next/head";
