@@ -243,12 +243,16 @@ export default function PostInGroup() {
     //     websocket.send(JSON.stringify(postData));
     // }
 
-    // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
     const params = {
-      group_link: `groups/1569887551087354`,
+      group_link: `groups/${Grid}`,
       content: `${currentContent}`,
       files: fileMap,
     };
+    // const params = {
+    //   group_link: `groups/1569887551087354`,
+    //   content: `${currentContent}`,
+    //   files: fileMap,
+    // };
     await createPostGroup("post_to_group", accountId, params, crmID, "false");
   };
 
