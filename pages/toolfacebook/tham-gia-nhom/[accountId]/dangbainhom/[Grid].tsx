@@ -208,23 +208,14 @@ export default function PostInGroup() {
         setVideoFiles([]);
         if (imageInputRef.current) imageInputRef.current.value = '';
         if (videoInputRef.current) videoInputRef.current.value = '';
-        
-        const newPost: Post = {
-            id: 123,
-            userId: "gianvu17607@gmail.com",
-            userName: uname,
-            groupId: groups?.id,
-            time: `Vừa xong`,
-            content: currentContent,
-            imageUrls: currentImages.length > 0 ? currentImages : undefined,
-            likes: 0,
-            // comments: 0,
-            shares: 0
-        };
 
         // api upload anh
-        const testUpload = await uploadAnh(currentUploadImg);
-        const fileMap = testUpload.map(img => img.savedName);
+        const MediaUpload = [];
+        if(currentUploadImg.length > 0) {
+            const CallUploadAPI = await uploadAnh(currentUploadImg);
+            const fileMap = CallUploadAPI.map(img => img.savedName);
+            MediaUpload.push(fileMap);
+        }
 
         // send
         // if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -242,7 +233,7 @@ export default function PostInGroup() {
         // }
 
         // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
-        const params = {"group_link": `groups/1569887551087354`, "content": `${currentContent}`, "files": fileMap};
+        const params = {"group_link": `groups/1569887551087354`, "content": `${currentContent}`, "files": MediaUpload};
         await createPostGroup(
             "post_to_group",
             accountId,
