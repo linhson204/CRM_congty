@@ -308,7 +308,7 @@ export default function GroupList() {
         const params = {"group_link": `${LinkGr}`};
         await joinGroup(
             "join_group",
-            savedData.account.username, //user_id
+            savedData.account.account, //user_id
             params,
             crmID
         );
