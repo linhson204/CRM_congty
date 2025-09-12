@@ -3,10 +3,10 @@ import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
-import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom";
-import uploadAnh from '@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh';
+import createPostPersonal from "@/pages/api/toolFacebook/dang-bai/dang-bai";
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import getPostGroup from '@/pages/api/toolFacebook/dang-bai-nhom/laybaidang';
+import uploadAnh from "@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh";
 import CommentPostPopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/CommentPost";
 import style1 from '@/pages/toolfacebook/tham-gia-nhom/styles.module.css';
 import Cookies from "js-cookie";
@@ -169,22 +169,22 @@ export default function PostPersonal() {
     // };
 
     // Gọi API lấy danh sách bài đăng cũ
-    useEffect(() => {
-        fetch('http://localhost:3003/api/posts')
-        .then(response => response.json())
-        .then(data => {
-            setTest(data);
-            setPosts(data.data || data); // ✅ Set posts ngay khi có data
-        })
-        .catch(error => console.error('Error:', error));
-    }, []); //Chạy 1 lần
+    // useEffect(() => {
+    //     fetch('http://localhost:3003/api/posts')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         setTest(data);
+    //         setPosts(data.data || data); // ✅ Set posts ngay khi có data
+    //     })
+    //     .catch(error => console.error('Error:', error));
+    // }, []); //Chạy 1 lần
 
-    // useEffect để theo dõi thay đổi của test
-    useEffect(() => {
-        if (test && test.data) {
-        setPosts(test.data);
-        }
-    }, [test]); // ✅ Chạy khi test thay đổi
+    // // useEffect để theo dõi thay đổi của test
+    // useEffect(() => {
+    //     if (test && test.data) {
+    //     setPosts(test.data);
+    //     }
+    // }, [test]); // ✅ Chạy khi test thay đổi
 
     const handleViewPosts = () => {
         return (window.alert('reset socket'));
@@ -208,23 +208,14 @@ export default function PostPersonal() {
         setVideoFiles([]);
         if (imageInputRef.current) imageInputRef.current.value = '';
         if (videoInputRef.current) videoInputRef.current.value = '';
-        
-        const newPost: Post = {
-            id: 123,
-            userId: "gianvu17607@gmail.com",
-            userName: uname,
-            groupId: groups?.id,
-            time: `Vừa xong`,
-            content: currentContent,
-            imageUrls: currentImages.length > 0 ? currentImages : undefined,
-            likes: 0,
-            // comments: 0,
-            shares: 0
-        };
 
         // api upload anh
-        const testUpload = await uploadAnh(currentUploadImg);
-        const fileMap = testUpload.map(img => img.savedName);
+        const MediaUpload = [];
+        if(currentUploadImg.length > 0 || currentVideoFiles.length > 0) {
+            const CallUploadAPI = await uploadAnh(currentUploadImg);
+            const fileMap = CallUploadAPI.map(img => img.savedName);
+            MediaUpload.push(fileMap);
+        }
 
         // send
         // if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -242,14 +233,17 @@ export default function PostPersonal() {
         // }
 
         // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
-        const params = {"group_link": `groups/1569887551087354`, "content": `${currentContent}`, "files": fileMap};
-        await createPostGroup(
-            "post_to_group",
+        const params = {"content": `${currentContent}`, "files": MediaUpload}
+        try {
+            await createPostPersonal(
+            "post_to_wall",
             pId,
             params,
-            crmID,
-            "false",
-        );
+            crmID
+            );
+        } catch (error) {
+            console.error("Error creating post:", error);
+        }
     };
 
     const handleImageIconClick = () => {

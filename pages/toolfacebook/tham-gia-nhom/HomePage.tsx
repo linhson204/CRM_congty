@@ -4,11 +4,12 @@ import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import getFbAccountsData from '@/pages/api/toolFacebook/danhsachnhom/getfbaccounts';
 import Cookies from "js-cookie";
+import { upperCase } from "lodash";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CiBoxList } from "react-icons/ci";
-import { FaSearch } from 'react-icons/fa';
+import { FaFacebook, FaSearch } from 'react-icons/fa';
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import UserListIndexBar from "./components/UserListIndexBar";
@@ -84,7 +85,7 @@ export default function HomePage() {
 
   //Search tai khoan theo ten
   const filteredUser = accounts.filter((user) => {
-    const activeMatch = activeFilter === null || user.statusFb === activeFilter;
+    const activeMatch = activeFilter === null || user.status === activeFilter;
 
     const nameMatch = search.trim() === '' || 
     user.name.replace(/\s+/g, '').toLowerCase()
@@ -141,7 +142,7 @@ export default function HomePage() {
   }
   //
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Danh Sách Tài Khoản");
+    setHeaderTitle(upperCase("Tool Facebook"));
     setShowBackButton(false);
     setCurrentPath("/toolfacebook/tham-gia-nhom/HomePage");
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
@@ -162,12 +163,16 @@ export default function HomePage() {
         <title>Tool Facebook - HomePage</title>
         <meta name="description" content="Quản lý và đăng bài lên Facebook" />
       </Head>
-      
       <div className={styleHome.main} ref={mainRef}>
         <div className={styles.main_importfile}>
           <div className={styles.formInfoStep}>
             <div className={styles.info_step}>
-              <div className={styles.main__title}>Tool Facebook - DANH SÁCH TÀI KHOẢN</div>
+              <div className={styles.main__title}>
+                <div className={style.BlockRow}>
+                  <FaFacebook size={25} />
+                  <p>HOMEPAGE</p>
+                </div>
+              </div>
               <div className={styles.form_add_potential}>
                 {/* Header danh sách */}
                 <div className={styles.main__body}>
@@ -225,42 +230,35 @@ export default function HomePage() {
                       <div className={`${style.UserListContent} ${style.BlockColumn}`}>
                         {filteredPage.map(item => (
                           <div className={`${style.UserListBlock} ${style.BlockRow}`}>
-                            {/* Row */}
-                              <div style={{paddingLeft: "10px"}}>{item.STT}</div>
-                            {/* Name */}
-                                <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
-                            {/* Email */}
-                                <div id="Email">{item.account}</div>
-                            {/* Phone */}
-                                <div id="Phone">{item.password}</div>
-                            {/* State */}
-                              <div className={style.UserListBlockState}>
-                                {item.status ? (
-                                  <div className={`${style.BlockOnline}`}>
-                                    Online
-                                  </div>
-                                ) : (
-                                  <div className={`${style.BlockOffline}`}>
-                                    Offline
-                                  </div>
-                                )}
-                              </div>
-                            {/* Edit */}
-                              <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`}>
-                                <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
-                                  <FiMessageCircle className={style.ic}/>
-                                  {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
-                                </div>
-                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic}
-                                                      onClick={() => PersonalPostClick(item.account)} />
-                                <CiBoxList className={style.ic} 
-                                          style={{cursor: 'pointer'}}
-                                          onClick={() => {
-                                            setTimeout(() => {handleGroupDetailsClick(item.account)}, 300)
-                                          }}>
-                                </CiBoxList>
-                              </div>
+                            <div style={{paddingLeft: "10px"}}>{item.STT}</div>
+                            <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
+                            <div id="Email">{item.account}</div>
+                            <div id="Phone">{item.password}</div>
+                            <div className={style.UserListBlockState}>
+                              {item.status ? (
+                                <div className={`${style.BlockOnline}`}>Online</div>
+                              ) : (
+                                <div className={`${style.BlockOffline}`}>Offline</div>
+                              )}
                             </div>
+                            <div id="edit" className={`${style.BlockRow} ${style.UserListEditBlock}`}>
+                              <div id="haveMessBlock" onClick={handleUserClick} className={style.Message}>
+                                <FiMessageCircle className={style.ic}/>
+                                {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
+                              </div>
+                              <HiOutlinePencilSquare 
+                                style={{cursor: 'pointer'}}
+                                className={style.ic}
+                                onClick={() => PersonalPostClick(item.account)} />
+                              <CiBoxList 
+                                className={style.ic} 
+                                style={{cursor: 'pointer'}}
+                                onClick={() => {
+                                  setTimeout(() => {handleGroupDetailsClick(item.account)}, 300)
+                                }}>
+                              </CiBoxList>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
