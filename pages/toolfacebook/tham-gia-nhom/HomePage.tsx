@@ -15,6 +15,16 @@ import UserListIndexBar from "./components/UserListIndexBar";
 import style from "./styles.module.css";
 
 export default function HomePage() {
+  const mainRef = useRef<HTMLDivElement>(null);
+  const { isOpen } = useContext<any>(SidebarContext);
+  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =
+    useHeader();
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
     "22614471",
@@ -27,16 +37,6 @@ export default function HomePage() {
   const [hasPermission, setHasPermission] = useState(false);
   const [isCheckingPermission, setIsCheckingPermission] = useState(true);
   const [currentUserID, setCurrentUserID] = useState<string | null>(null);
-
-  const mainRef = useRef<HTMLDivElement>(null);
-  const { isOpen } = useContext<any>(SidebarContext);
-  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =
-    useHeader();
-  const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // const itemsPerPage = 10;
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -238,7 +238,6 @@ export default function HomePage() {
     );
   }
 
-  //
   return (
     <>
       <Head>
@@ -367,7 +366,9 @@ export default function HomePage() {
                                   Online
                                 </div>
                               ) : (
-                                <div />
+                                <div className={`${style.BlockOffline}`}>
+                                  Offline
+                                </div>
                               )}
                             </div>
                             {/* Edit */}
