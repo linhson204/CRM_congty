@@ -2,7 +2,6 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 import createPostPersonal from "@/pages/api/toolFacebook/dang-bai/dang-bai";
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import getPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/laybaidang";
@@ -103,7 +102,6 @@ export default function PostPersonal() {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeAnimations, setLikeAnimations] = useState<Set<number>>(new Set());
 
-  const websocket = useWebSocket();
   const [groupData, setGroupData] = useState<any[]>([]);
   const [Sendposts, setSendPosts] = useState<Post[]>([]);
   const [uploadImg, setUploadImg] = useState<any[]>([]);
@@ -223,21 +221,6 @@ export default function PostPersonal() {
       MediaUpload = await uploadAnh(currentUploadImg);
     }
     const fileMap = MediaUpload.map((img) => img.savedName);
-
-    // send
-    // if (websocket && websocket.readyState === WebSocket.OPEN) {
-    //     const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
-    //     const postData = {
-    //         type: "post_to_group",
-    //         user_id: "test1",
-    //         postId: newPost.id.toString(),
-    //         crm_id: crmID,
-    //         params: params,
-    //         to: "B22623688",
-    //         attachments: fileMap, // Đưa images vào attachments thay vì images
-    //     };
-    //     websocket.send(JSON.stringify(postData));
-    // }
 
     // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
     const params = { content: `${currentContent}`, files: fileMap };

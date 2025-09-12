@@ -2,7 +2,6 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-import { useWebSocket } from "@/components/toolFacebook/dangbai/hooks/useWebSocket";
 import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
 import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
@@ -73,7 +72,6 @@ export default function GroupList() {
     //call API lay so luong nhom tren tung account
   };
 
-  const websocket = useWebSocket();
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -297,18 +295,7 @@ export default function GroupList() {
     // Gọi API gửi request đến tool tham gia nhóm
     // API cập nhật trường isJoin
     console.log(accountId, LinkGr);
-    // if (websocket && websocket.readyState === WebSocket.OPEN) {
-    //     const params = {"group_link": `${LinkGr}`};
-    //     const joinData = {
-    //         type: "join_group",
-    //         user_id: accountId,
-    //         // postId: newPost.id.toString(),
-    //         crm_id: crmID,
-    //         params: params,
-    //         to: "1498",
-    //     };
-    //     websocket.send(JSON.stringify(joinData));
-    // }
+
     const params = { group_link: `${LinkGr}` };
     await joinGroup(
       "join_group",
