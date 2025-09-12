@@ -21,6 +21,10 @@ export default function HomePage() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+
   // const itemsPerPage = 10;
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null)
@@ -32,7 +36,7 @@ export default function HomePage() {
   // lay data
   useEffect(() => {
     const test = async () => {
-      const a = await getFbAccountsData(crmID, '100', '', '')
+      const a = await getFbAccountsData(crmID, '', '')
       const data1 = a.results.map((item, index) => ({
         ...item,
         Mess: 1,
@@ -83,8 +87,9 @@ export default function HomePage() {
     const activeMatch = activeFilter === null || user.statusFb === activeFilter;
 
     const nameMatch = search.trim() === '' || 
-    user.nameFb.replace(/\s+/g, '').toLowerCase()
-    .includes(search.replace(/\s+/g, '').toLowerCase());
+    user.name.replace(/\s+/g, '').toLowerCase()
+    .includes(search.replace(/\s+/g, '').toLowerCase()) ||
+    user.account.includes(search);
   
     return activeMatch && nameMatch;
   });
@@ -113,13 +118,22 @@ export default function HomePage() {
   };
 
   //handle/router dang bai ca nhan
-  const PersonalPostClick = () => {
-    router.push('/toolfacebook/dang-bai');
+  const PersonalPostClick = (username: string) => {
+    try {
+      const selectedData = {
+        account: accounts.find(e => e.account == username),
+      }
+      // Hoặc local storage (tồn tại lâu hơn)
+      localStorage.setItem('userProfile', JSON.stringify(selectedData))
+      router.push(`/toolfacebook/tham-gia-nhom/dbtrangcanhan/${username}`)
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
   };
     
   const handleGroupDetailsClick = (username: string) => {
     const selectedData = {
-      account: accounts.find(e => e.username == username),
+      account: accounts.find(e => e.account == username),
     }
     // Hoặc local storage (tồn tại lâu hơn)
     localStorage.setItem('userProfile', JSON.stringify(selectedData))
@@ -166,7 +180,7 @@ export default function HomePage() {
                     <div className={style.BlockRow} style={{marginBottom: '15px'}}>
                       <div id="searchContainer" className={`${style.BlockRow} ${style.searchContainer}`}>
                         <FaSearch className={style.searchIcon} />
-                        <input type="text" placeholder='Tìm kiếm tên tài khoản' className={style.searchInput}
+                        <input type="text" placeholder='Tên TK, SDT, Email...' className={style.searchInput}
                           value={search}
                           onChange={(e) => {
                             setSearch(e.target.value);
@@ -214,14 +228,14 @@ export default function HomePage() {
                             {/* Row */}
                               <div style={{paddingLeft: "10px"}}>{item.STT}</div>
                             {/* Name */}
-                                <div id="User_Name" className={`${style.UserListName}`}>{item.nameFb}</div>
+                                <div id="User_Name" className={`${style.UserListName}`}>{item.name}</div>
                             {/* Email */}
-                                <div id="Email">{item.username}</div>
+                                <div id="Email">{item.account}</div>
                             {/* Phone */}
                                 <div id="Phone">{item.password}</div>
                             {/* State */}
                               <div className={style.UserListBlockState}>
-                                {item.statusFb ? (
+                                {item.status ? (
                                   <div className={`${style.BlockOnline}`}>
                                     Online
                                   </div>
@@ -237,11 +251,12 @@ export default function HomePage() {
                                   <FiMessageCircle className={style.ic}/>
                                   {item.Mess > 0 ? (<div id="redDot" className={style.dot}></div>) : (<div/>)}
                                 </div>
-                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic} onClick={PersonalPostClick} />
+                                <HiOutlinePencilSquare style={{cursor: 'pointer'}} className={style.ic}
+                                                      onClick={() => PersonalPostClick(item.account)} />
                                 <CiBoxList className={style.ic} 
                                           style={{cursor: 'pointer'}}
                                           onClick={() => {
-                                            setTimeout(() => {handleGroupDetailsClick(item.username)}, 300)
+                                            setTimeout(() => {handleGroupDetailsClick(item.account)}, 300)
                                           }}>
                                 </CiBoxList>
                               </div>

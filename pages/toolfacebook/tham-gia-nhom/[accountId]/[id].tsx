@@ -18,8 +18,10 @@ import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
 import LoadingDialog from "../components/LoadingDialog";
+import LoadingSkeleton from '../components/LoadingSkeleton';
 import SearchBar from "../components/SearchBar";
 import UserListIndexBar from "../components/UserListIndexBar";
+import FetchError from "../components/fetchError";
 import StatisticBlock from "../components/statisticBlock";
 import style from '../styles.module.css';
 import { Question } from "./popup/PrivateGrQues/types";
@@ -65,7 +67,7 @@ export default function GroupList() {
     const [showLoading, setShowLoading] = useState(false);
     const [Gr, setGr] = useState<any[]>([]); //mock data
     const savedData = JSON.parse(localStorage.getItem('userProfile'));
-
+    console.log(savedData)
     const pageCountSelect = async () => {
         //call API lay so luong nhom tren tung account
     }
@@ -173,6 +175,7 @@ export default function GroupList() {
         crmID = "defaultID"; // fallback value, replace with your logic
     }
 
+    console.log(groupData);
     useEffect(() => {
         if(pendingGr) {
             PendingHandleData(pendingGr);
@@ -358,7 +361,7 @@ export default function GroupList() {
                                 <div className={style.usernameHeader}>
                                     <div id="UserName" className={style.BlockRow}>
                                         <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                        <p className={style.nameDetail}>{savedData.account.nameFb}</p>
+                                        <p className={style.nameDetail}>{savedData.account.name}</p>
                                     </div>
                                 </div>
                                 <SearchBar
@@ -443,101 +446,9 @@ export default function GroupList() {
                                 </div>
                                 <div className={`${style.BlockColumn} ${style.GroupListContainer}`}>
                                     {isLoading ? (
-                                        // Loading skeleton
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '20px' }}>
-                                            <div style={{ textAlign: 'center', color: '#666' }}>
-                                                <div style={{ 
-                                                    width: '40px', 
-                                                    height: '40px', 
-                                                    border: '3px solid #f3f3f3', 
-                                                    borderTop: '3px solid #3498db', 
-                                                    borderRadius: '50%', 
-                                                    animation: 'spin 1s linear infinite',
-                                                    margin: '0 auto 10px'
-                                                }}></div>
-                                                <p>Đang tải dữ liệu nhóm...</p>
-                                            </div>
-                                            {/* Loading skeleton items */}
-                                            {[...Array(8)].map((_, index) => (
-                                                <div key={index} className={`${style.GroupBlock} ${style.BlockRow} skeleton-item`} 
-                                                     style={{ 
-                                                         backgroundColor: '#f8f9fa',
-                                                         border: '1px solid #e9ecef',
-                                                         borderRadius: '8px',
-                                                         marginBottom: '8px'
-                                                     }}>
-                                                    <div className={style.grlistName}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '18px', 
-                                                            borderRadius: '4px',
-                                                            width: `${Math.random() * 40 + 60}%`
-                                                        }}></div>
-                                                    </div>
-                                                    <div className={style.grState}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '20px', 
-                                                            width: '20px', 
-                                                            borderRadius: '50%'
-                                                        }}></div>
-                                                    </div>
-                                                    <div className={style.grMember}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '16px', 
-                                                            width: '40px',
-                                                            borderRadius: '4px'
-                                                        }}></div>
-                                                    </div>
-                                                    <div className={style.grCategory}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '16px',
-                                                            width: `${Math.random() * 30 + 50}%`,
-                                                            borderRadius: '4px'
-                                                        }}></div>
-                                                    </div>
-                                                    <div className={style.grStateQueue}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '24px', 
-                                                            width: '90px',
-                                                            borderRadius: '12px'
-                                                        }}></div>
-                                                    </div>
-                                                    <div className={style.joinStateBlock}>
-                                                        <div style={{ 
-                                                            backgroundColor: '#e9ecef', 
-                                                            height: '32px', 
-                                                            width: '100px',
-                                                            borderRadius: '6px'
-                                                        }}></div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                        <LoadingSkeleton style={style} />
                                     ) : fetchError ? (
-                                        // Error state
-                                        <div style={{ textAlign: 'center', padding: '40px', color: '#e74c3c' }}>
-                                            <div style={{ fontSize: '48px', marginBottom: '10px' }}>⚠️</div>
-                                            <h3>Lỗi tải dữ liệu</h3>
-                                            <p>{fetchError}</p>
-                                            <button 
-                                                onClick={() => window.location.reload()} 
-                                                style={{ 
-                                                    padding: '10px 20px', 
-                                                    backgroundColor: '#3498db', 
-                                                    color: 'white', 
-                                                    border: 'none', 
-                                                    borderRadius: '5px', 
-                                                    cursor: 'pointer',
-                                                    marginTop: '10px'
-                                                }}
-                                            >
-                                                Thử lại
-                                            </button>
-                                        </div>
+                                        <FetchError fetchError={fetchError}/>
                                     ) : filteredPage.length === 0 ? (
                                         // No data state  
                                         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>

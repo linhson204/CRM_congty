@@ -7,6 +7,7 @@ import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom"
 import uploadAnh from '@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh';
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import getPostGroup from '@/pages/api/toolFacebook/dang-bai-nhom/laybaidang';
+import CommentPostPopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/CommentPost";
 import style1 from '@/pages/toolfacebook/tham-gia-nhom/styles.module.css';
 import Cookies from "js-cookie";
 import Head from "next/head";
@@ -21,10 +22,9 @@ import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
 import { IoImages } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { TfiFaceSmile } from "react-icons/tfi";
-import LoadingDialog from "../../components/LoadingDialog";
-import UserListIndexBar from "../../components/UserListIndexBar";
-import CommentPostPopup from "../popup/CommentPost";
-import style from './post.module.css';
+import style from '../[accountId]/dangbainhom/post.module.css';
+import LoadingDialog from "../components/LoadingDialog";
+import UserListIndexBar from "../components/UserListIndexBar";
 
 interface Group {
     id: number;
@@ -61,7 +61,7 @@ interface Comment {
     content: string;
     likes?: number;
 }
-export default function PostInGroup() {
+export default function PostPersonal() {
     const handleCancelVideo = (index: number) => {
         setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
         setVideoFiles((prev) => prev.filter((_, idx) => idx !== index));
@@ -73,7 +73,7 @@ export default function PostInGroup() {
     // const itemsPerPage = 2;
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
-    const { accountId, Grid } = router.query;
+    const { pId } = router.query;
     const [account, setAccount] = useState<Account | null>(null);
     const [groups, setGroups] = useState<Group>();
     const [uname, setUname] = useState('');
@@ -129,7 +129,7 @@ export default function PostInGroup() {
 
     useEffect(() => {
     async function fetchData() {
-        const res = await getPostGroup(`groups/1569887551087354`, crmID, accountId);
+        const res = await getPostGroup(`groups/1569887551087354`, crmID);
         setGroupData(res.results); // lưu vào state
     }
     fetchData();
@@ -138,7 +138,7 @@ export default function PostInGroup() {
     useEffect(() => {
         setHeaderTitle("Tool Facebook - Đăng bài nhóm");
         setShowBackButton(true);
-        setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/123`);
+        setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
     }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
     useEffect(() => {
@@ -245,7 +245,7 @@ export default function PostInGroup() {
         const params = {"group_link": `groups/1569887551087354`, "content": `${currentContent}`, "files": fileMap};
         await createPostGroup(
             "post_to_group",
-            accountId,
+            pId,
             params,
             crmID,
             "false",
@@ -362,7 +362,7 @@ export default function PostInGroup() {
                                 <div className={style.postsContainer}>
                                     <div className={style.postsHeader}>
                                         <h2 className={style.groupTitle}>
-                                            Đăng bài trong nhóm {Grid}
+                                            Đăng bài {pId}
                                         </h2>
                                     </div>
                                     <div className={style.createPostContainer}>
