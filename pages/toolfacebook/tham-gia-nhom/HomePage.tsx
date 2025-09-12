@@ -132,7 +132,7 @@ export default function HomePage() {
 
   //Search tai khoan theo ten
   const filteredUser = accounts.filter((user) => {
-    const activeMatch = activeFilter === null || user.statusFb === activeFilter;
+    const activeMatch = activeFilter === null || user.status === activeFilter;
 
     const nameMatch =
       search.trim() === "" ||
