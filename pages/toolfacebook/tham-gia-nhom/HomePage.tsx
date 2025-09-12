@@ -35,6 +35,9 @@ export default function HomePage() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   // const itemsPerPage = 10;
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
@@ -81,7 +84,7 @@ export default function HomePage() {
   // lay data
   useEffect(() => {
     const test = async () => {
-      const a = await getFbAccountsData(crmID, "100", "", "");
+      const a = await getFbAccountsData(crmID, "", "");
       const data1 = a.results.map((item, index) => ({
         ...item,
         Mess: 1,
@@ -133,10 +136,11 @@ export default function HomePage() {
 
     const nameMatch =
       search.trim() === "" ||
-      user.nameFb
+      user.name
         .replace(/\s+/g, "")
         .toLowerCase()
-        .includes(search.replace(/\s+/g, "").toLowerCase());
+        .includes(search.replace(/\s+/g, "").toLowerCase()) ||
+      user.account.includes(search);
 
     return activeMatch && nameMatch;
   });
@@ -165,13 +169,22 @@ export default function HomePage() {
   };
 
   //handle/router dang bai ca nhan
-  const PersonalPostClick = () => {
-    router.push("/toolfacebook/dang-bai");
+  const PersonalPostClick = (username: string) => {
+    try {
+      const selectedData = {
+        account: accounts.find((e) => e.account == username),
+      };
+      // Hoặc local storage (tồn tại lâu hơn)
+      localStorage.setItem("userProfile", JSON.stringify(selectedData));
+      router.push(`/toolfacebook/tham-gia-nhom/dbtrangcanhan/${username}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
   const handleGroupDetailsClick = (username: string) => {
     const selectedData = {
-      account: accounts.find((e) => e.username == username),
+      account: accounts.find((e) => e.account == username),
     };
     // Hoặc local storage (tồn tại lâu hơn)
     localStorage.setItem("userProfile", JSON.stringify(selectedData));
@@ -262,7 +275,7 @@ export default function HomePage() {
                         <FaSearch className={style.searchIcon} />
                         <input
                           type="text"
-                          placeholder="Tìm kiếm tên tài khoản"
+                          placeholder="Tên TK, SDT, Email..."
                           className={style.searchInput}
                           value={search}
                           onChange={(e) => {
@@ -341,22 +354,20 @@ export default function HomePage() {
                               id="User_Name"
                               className={`${style.UserListName}`}
                             >
-                              {item.nameFb}
+                              {item.name}
                             </div>
                             {/* Email */}
-                            <div id="Email">{item.username}</div>
+                            <div id="Email">{item.account}</div>
                             {/* Phone */}
                             <div id="Phone">{item.password}</div>
                             {/* State */}
                             <div className={style.UserListBlockState}>
-                              {item.statusFb ? (
+                              {item.status ? (
                                 <div className={`${style.BlockOnline}`}>
                                   Online
                                 </div>
                               ) : (
-                                <div className={`${style.BlockOffline}`}>
-                                  Offline
-                                </div>
+                                <div />
                               )}
                             </div>
                             {/* Edit */}
@@ -379,14 +390,14 @@ export default function HomePage() {
                               <HiOutlinePencilSquare
                                 style={{ cursor: "pointer" }}
                                 className={style.ic}
-                                onClick={PersonalPostClick}
+                                onClick={() => PersonalPostClick(item.account)}
                               />
                               <CiBoxList
                                 className={style.ic}
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
                                   setTimeout(() => {
-                                    handleGroupDetailsClick(item.username);
+                                    handleGroupDetailsClick(item.account);
                                   }, 300);
                                 }}
                               ></CiBoxList>

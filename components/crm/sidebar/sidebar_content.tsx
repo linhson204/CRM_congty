@@ -1098,24 +1098,24 @@ export default function SiebarContent({ isOpen, toggleModal }: any) {
     },
     {
       img_link: "/crm/customer.svg",
-      link: `#`,
-      children: [
-        {
-          blank: "",
-          label: "Đăng bài",
-          link: "/toolfacebook/dang-bai",
-        },
-        {
-          blank: "",
-          label: "Nhắn tin",
-          link: "/toolfacebook/nhan-tin",
-        },
-        {
-          blank: "",
-          label: "Tham gia nhóm",
-          link: "/toolfacebook/tham-gia-nhom/HomePage",
-        },
-      ],
+      link: `/toolfacebook/tham-gia-nhom/HomePage`,
+      // children: [
+      //   {
+      //     blank: "",
+      //     label: "Đăng bài",
+      //     link: "/toolfacebook/dang-bai",
+      //   },
+      //   {
+      //     blank: "",
+      //     label: "Nhắn tin",
+      //     link: "/toolfacebook/nhan-tin",
+      //   },
+      //   {
+      //     blank: "",
+      //     label: "Tham gia nhóm",
+      //     link: "/toolfacebook/tham-gia-nhom/HomePage",
+      //   },
+      // ],
       content: "Tool facebook",
     },
 

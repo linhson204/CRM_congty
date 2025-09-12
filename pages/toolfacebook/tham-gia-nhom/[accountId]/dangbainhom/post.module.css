@@ -217,7 +217,7 @@
 .postHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  padding-top: 5px;
 }
 
 .postAvatar {
@@ -473,3 +473,142 @@
     width: 150px;
   }
 
+.noPostsMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 20px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e4e6eb;
+}
+
+.noPostsMessage .emptyIcon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 24px;
+  opacity: 0.8;
+  background: linear-gradient(45deg, #f0f2f5, #e4e6eb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #65676b;
+}
+
+.noPostsMessage .emptyTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1e21;
+  margin-bottom: 8px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostsMessage .emptySubtitle {
+  font-size: 15px;
+  color: #65676b;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  max-width: 400px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostsMessage .emptyAction {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostsMessage .emptyAction:hover {
+  background-color: #166fe5;
+}
+
+.noPostsMessage .emptyAction:active {
+  background-color: #1464d8;
+}
+
+/* Alternative style for noPostMessage class */
+.noPostMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 20px 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e4e6eb;
+  min-height: 300px;
+}
+
+.noPostMessage .icon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 24px;
+  opacity: 0.8;
+  background: linear-gradient(45deg, #f0f2f5, #e4e6eb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #65676b;
+}
+
+.noPostMessage h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1e21;
+  margin: 0 0 8px 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostMessage p {
+  font-size: 15px;
+  color: #65676b;
+  line-height: 1.4;
+  margin: 0 0 20px 0;
+  max-width: 400px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostMessage button {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.noPostMessage button:hover {
+  background-color: #166fe5;
+}
+
+.noPostMessage button:active {
+  background-color: #1464d8;
+}
+
+.postedListStatus {
+  margin-left: auto;
+  padding-top: 5px;
+  padding-right: 10px;
+}

@@ -18,8 +18,10 @@ import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
 import LoadingDialog from "../components/LoadingDialog";
+import LoadingSkeleton from '../components/LoadingSkeleton';
 import SearchBar from "../components/SearchBar";
 import UserListIndexBar from "../components/UserListIndexBar";
+import FetchError from "../components/fetchError";
 import StatisticBlock from "../components/statisticBlock";
 import style from '../styles.module.css';
 import { Question } from "./popup/PrivateGrQues/types";
@@ -65,7 +67,7 @@ export default function GroupList() {
     const [showLoading, setShowLoading] = useState(false);
     const [Gr, setGr] = useState<any[]>([]); //mock data
     const savedData = JSON.parse(localStorage.getItem('userProfile'));
-
+    console.log(savedData)
     const pageCountSelect = async () => {
         //call API lay so luong nhom tren tung account
     }
@@ -79,15 +81,14 @@ export default function GroupList() {
         async function fetchData() {
             try {
             const [res1, res2, res3] = await Promise.all([
-                getGroupData("123", "a", "", "", "Đã tham gia"),
-                getGroupData("123", "", "", "", "Chờ duyệt"),
-                getGroupData("123", "a", "", "", "Chưa tham gia")
+                getGroupData(accountId, "a", "", "", "Đã tham gia"),
+                getGroupData(accountId, "", "", "", "Chờ duyệt"),
+                getGroupData(accountId, "a", "", "", "Chưa tham gia")
             ]);
 
             if (isMounted) {
                 const res = [...res1.results, ...res2.results, ...res3.results];
                 setGroupData(res);
-                console.log("Fetched data:", { res1, res2, res3 });
                 setIsLoading(false);
             }
             } catch (error) {
@@ -174,6 +175,7 @@ export default function GroupList() {
         crmID = "defaultID"; // fallback value, replace with your logic
     }
 
+    console.log(groupData);
     useEffect(() => {
         if(pendingGr) {
             PendingHandleData(pendingGr);
@@ -227,12 +229,37 @@ export default function GroupList() {
         console.log(grStateTemp, joinTemp);
     }
 
-    const resetFilter = () => {
+    const resetFilter = async () => {
+        // Set loading state and reset filters immediately for better UX
+        setIsLoading(true);
+        setFetchError(null);
         setGrState('all');
         setJoinState('all');
         setSearch('');
         setCurrentPage(1);
         setItemsPerPage(10);
+
+        try {
+            // Clear current data to show skeleton immediately
+            setGroupData([]);
+            
+            // Fetch fresh data from API
+            const [res1, res2, res3] = await Promise.all([
+                getGroupData(accountId, "a", "", "", "Đã tham gia"),
+                getGroupData(accountId, "", "", "", "Chờ duyệt"),
+                getGroupData(accountId, "a", "", "", "Chưa tham gia")
+            ]);
+
+            // Combine all results
+            const freshData = [...res1.results, ...res2.results, ...res3.results];
+            setGroupData(freshData);
+            
+        } catch (error) {
+            console.error("Error refreshing group data:", error);
+            setFetchError("Không thể tải dữ liệu nhóm. Vui lòng thử lại.");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const PendingHandleData = (GrId: number) => {
@@ -304,6 +331,16 @@ export default function GroupList() {
                     0% { transform: rotate(0deg); }
                     100% { transform: rotate(360deg); }
                 }
+                
+                @keyframes pulse {
+                    0% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                    100% { opacity: 1; }
+                }
+                
+                .skeleton-item {
+                    animation: pulse 1.5s ease-in-out infinite;
+                }
             `}</style>
         </Head>
         <div className={styleHome.main} ref={mainRef}>
@@ -324,7 +361,7 @@ export default function GroupList() {
                                 <div className={style.usernameHeader}>
                                     <div id="UserName" className={style.BlockRow}>
                                         <FaUserCircle style={{width: '30px', height: '30px'}}></FaUserCircle>
-                                        <p className={style.nameDetail}>{savedData.account.nameFb}</p>
+                                        <p className={style.nameDetail}>{savedData.account.name}</p>
                                     </div>
                                 </div>
                                 <SearchBar
@@ -335,6 +372,7 @@ export default function GroupList() {
                                     setJoinTemp={setJoinTemp}
                                     setGrStateTemp={setGrStateTemp}
                                     setCurrentPage={setCurrentPage}
+                                    isLoading={isLoading}
                                 />
                             </div>
                             {/* List Nhóm */}
@@ -408,52 +446,9 @@ export default function GroupList() {
                                 </div>
                                 <div className={`${style.BlockColumn} ${style.GroupListContainer}`}>
                                     {isLoading ? (
-                                        // Loading skeleton
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '20px' }}>
-                                            <div style={{ textAlign: 'center', color: '#666' }}>
-                                                <div style={{ 
-                                                    width: '40px', 
-                                                    height: '40px', 
-                                                    border: '3px solid #f3f3f3', 
-                                                    borderTop: '3px solid #3498db', 
-                                                    borderRadius: '50%', 
-                                                    animation: 'spin 1s linear infinite',
-                                                    margin: '0 auto 10px'
-                                                }}></div>
-                                                <p>Đang tải dữ liệu nhóm...</p>
-                                            </div>
-                                            {/* Loading skeleton items */}
-                                            {[...Array(5)].map((_, index) => (
-                                                <div key={index} className={`${style.GroupBlock} ${style.BlockRow}`} style={{ opacity: 0.6, backgroundColor: '#f5f5f5' }}>
-                                                    <div className={style.grlistName} style={{ backgroundColor: '#ddd', height: '20px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grState} style={{ backgroundColor: '#ddd', height: '20px', width: '30px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grMember} style={{ backgroundColor: '#ddd', height: '20px', width: '50px', borderRadius: '4px' }}></div>
-                                                    <div className={style.grCategory} style={{ backgroundColor: '#ddd', height: '20px', borderRadius: '4px' }}></div>
-                                                    <div className={style.joinStateBlock} style={{ backgroundColor: '#ddd', height: '30px', width: '80px', borderRadius: '4px' }}></div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                        <LoadingSkeleton style={style} />
                                     ) : fetchError ? (
-                                        // Error state
-                                        <div style={{ textAlign: 'center', padding: '40px', color: '#e74c3c' }}>
-                                            <div style={{ fontSize: '48px', marginBottom: '10px' }}>⚠️</div>
-                                            <h3>Lỗi tải dữ liệu</h3>
-                                            <p>{fetchError}</p>
-                                            <button 
-                                                onClick={() => window.location.reload()} 
-                                                style={{ 
-                                                    padding: '10px 20px', 
-                                                    backgroundColor: '#3498db', 
-                                                    color: 'white', 
-                                                    border: 'none', 
-                                                    borderRadius: '5px', 
-                                                    cursor: 'pointer',
-                                                    marginTop: '10px'
-                                                }}
-                                            >
-                                                Thử lại
-                                            </button>
-                                        </div>
+                                        <FetchError fetchError={fetchError}/>
                                     ) : filteredPage.length === 0 ? (
                                         // No data state  
                                         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
