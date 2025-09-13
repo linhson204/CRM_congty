@@ -7,7 +7,6 @@ import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
 import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import OutGrFs from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/OutGrFS";
 import CancelQueuePopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/PrivateGrQues/CancelQueue";
-import QuestionPopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/PrivateGrQues/QuestionPopup";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -301,7 +300,8 @@ export default function GroupList() {
       "join_group",
       savedData.account.account, //user_id
       params,
-      crmID
+      crmID,
+      "false"
     );
   };
 
@@ -419,60 +419,6 @@ export default function GroupList() {
                       Xác nhận
                     </button>
                   </CancelQueuePopup>
-                  <QuestionPopup
-                    isOpen={showPrivateGrQues}
-                    onClose={() => {
-                      setShowPrivateGrQues(false);
-                    }}
-                    questions={approvalQuestions}
-                    onSubmit={(answers) => {
-                      setSent(true);
-                      // Xử lý dữ liệu ở đây
-                      setTimeout(() => UpdateGrState(privateGrSelected), 300);
-                      // validateRequiredFields(approvalQuestions, answers);
-                      if (privateGrSelected) {
-                        console.log(accountId, privateGrSelected, answers);
-                      }
-                    }}
-                  >
-                    <div
-                      className={`${style.BlockColumn} ${style.PopupQuesHeader}`}
-                    >
-                      <div className={style.PQHGrName}>{popupHeader[0]}</div>
-                      <div className={style.BlockRow}>
-                        <div className={style.BlockRow}>
-                          <div>
-                            <FaLock className={style.ic}></FaLock>
-                          </div>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              marginRight: "10px",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            {popupHeader[1] === "Không hoạt động"
-                              ? "Riêng tư"
-                              : "Công khai"}
-                          </p>
-                        </div>
-                        <div className={style.BlockRow}>
-                          <div>
-                            <IoPerson className={style.ic}></IoPerson>
-                          </div>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              marginRight: "10px",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            {popupHeader[2]} Thành viên
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </QuestionPopup>
                   <div className={style.GroupListAttribute}>
                     <div className={style.GroupListContent}>
                       <input
