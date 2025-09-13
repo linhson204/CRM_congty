@@ -7,6 +7,13 @@ import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
 import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import OutGrFs from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/OutGrFS";
 import CancelQueuePopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/PrivateGrQues/CancelQueue";
+import FetchError from "@/pages/toolfacebook/tham-gia-nhom/components/fetchError";
+import LoadingDialog from "@/pages/toolfacebook/tham-gia-nhom/components/LoadingDialog";
+import LoadingSkeleton from "@/pages/toolfacebook/tham-gia-nhom/components/LoadingSkeleton.jsx";
+import SearchBar from "@/pages/toolfacebook/tham-gia-nhom/components/SearchBar";
+import StatisticBlock from "@/pages/toolfacebook/tham-gia-nhom/components/statisticBlock";
+import StatusActionDialog from "@/pages/toolfacebook/tham-gia-nhom/components/StatusActionDialog";
+import UserListIndexBar from "@/pages/toolfacebook/tham-gia-nhom/components/UserListIndexBar";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -15,21 +22,13 @@ import { FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoExitOutline, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
-import LoadingDialog from "../components/LoadingDialog";
-import LoadingSkeleton from "../components/LoadingSkeleton";
-import SearchBar from "../components/SearchBar";
-import SuccessDialog from "../components/SuccessDialog";
-import UserListIndexBar from "../components/UserListIndexBar";
-import FetchError from "../components/fetchError";
-import StatisticBlock from "../components/statisticBlock";
 import style from "../styles.module.css";
 import stylepu from "./popup/popup.module.css";
 
 export default function GroupList() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
-  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =
-    useHeader();
+  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =useHeader();
   const router = useRouter();
   // const itemsPerPage = 10;
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -402,7 +401,7 @@ export default function GroupList() {
                       Xác nhận
                     </button>
                   </CancelQueuePopup>
-                  <SuccessDialog 
+                  <StatusActionDialog
                     message={SuccessMess}
                     onClose={() => setisSuccess(false)}
                     show={IsSuccess}

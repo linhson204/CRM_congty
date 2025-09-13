@@ -8,7 +8,7 @@ interface LoadingDialogProps {
     status: string
 }
 
-const SuccessDialog: React.FC<LoadingDialogProps> = ({ message = "Thành công", show, onClose, status }) => {
+const StatusActionDialog: React.FC<LoadingDialogProps> = ({ message = "Thành công", show, onClose, status }) => {
     useEffect(() => {
         if (show) {
         const timer = setTimeout(() => {
@@ -31,4 +31,4 @@ const SuccessDialog: React.FC<LoadingDialogProps> = ({ message = "Thành công",
     );
 };
 
-export default SuccessDialog;
+export default StatusActionDialog;
