@@ -4,8 +4,8 @@ import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import createPostPersonal from "@/pages/api/toolFacebook/dang-bai/dang-bai";
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
-import getPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/laybaidang";
 import uploadAnh from "@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh";
+import getPostPersonal from "@/pages/api/toolFacebook/dang-bai/laybaidangcanhan";
 import CommentPostPopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/CommentPost";
 import style1 from "@/pages/toolfacebook/tham-gia-nhom/styles.module.css";
 import Cookies from "js-cookie";
@@ -135,7 +135,8 @@ export default function PostPersonal() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await getPostGroup(`groups/1569887551087354`, crmID);
+      const res = await getPostPersonal(``, crmID, pId);
+      console.log(res)
       setGroupData(res.results); // lưu vào state
     }
     fetchData();

@@ -9,8 +9,8 @@ interface SearchBarProps {
     setSearch: (search: string) => void;
     resetFilter: () => void;
     setshowFilterPopup: (isOpen: boolean) => void;
-    setJoinTemp: (joinTemp: string) => void;
-    setGrStateTemp: (grStateTemp: string) => void;
+    // setJoinTemp: (joinTemp: string) => void;
+    // setGrStateTemp: (grStateTemp: string) => void;
     setCurrentPage: (page: number) => void;
     isLoading?: boolean;
 }
@@ -20,8 +20,8 @@ export default function SearchBar({
     setSearch,
     resetFilter,
     setshowFilterPopup,
-    setJoinTemp,
-    setGrStateTemp,
+    // setJoinTemp,
+    // setGrStateTemp,
     setCurrentPage,
     isLoading = false,
 }: SearchBarProps) {
@@ -59,8 +59,8 @@ export default function SearchBar({
             <div className={`${style.filterBlock} ${style.BlockRow}`}
                 onClick={() => {
                     setshowFilterPopup(true)
-                    setJoinTemp('all');
-                    setGrStateTemp('all');
+                    // setJoinTemp('all');
+                    // setGrStateTemp('all');
                 }}>
                 <HiOutlineAdjustmentsHorizontal size={23}/>
             </div>

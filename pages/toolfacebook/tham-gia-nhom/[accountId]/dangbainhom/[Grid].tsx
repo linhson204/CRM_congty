@@ -33,20 +33,6 @@ import UserListIndexBar from "../../components/UserListIndexBar";
 import CommentPostPopup from "../popup/CommentPost";
 import style from "./post.module.css";
 
-interface Group {
-  id: number;
-  GroupName: string;
-  GroupState: string;
-  Member: number;
-  isJoin: number;
-}
-
-interface Account {
-  id: number;
-  name: string;
-  groups: Group[];
-}
-
 interface Post {
   id: number;
   userId?: string;
@@ -80,21 +66,15 @@ export default function PostInGroup() {
   const router = useRouter();
   // const itemsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
   const { accountId, Grid } = router.query;
-  const [account, setAccount] = useState<Account | null>(null);
-  const [groups, setGroups] = useState<Group>();
-  const [uname, setUname] = useState("");
 
   // State mới cho bài đăng
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [test, setTest] = useState<any>([]);
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImages, setNewPostImages] = useState<any[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
@@ -102,9 +82,9 @@ export default function PostInGroup() {
   // Like states
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [likeAnimations, setLikeAnimations] = useState<Set<number>>(new Set());
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   const [groupData, setGroupData] = useState<any[]>([]);
-  const [Sendposts, setSendPosts] = useState<Post[]>([]);
   const [uploadImg, setUploadImg] = useState<any[]>([]);
   // popup comment
   const [showComment, setShowComment] = useState(false);
@@ -268,8 +248,6 @@ export default function PostInGroup() {
     setNewPostImages((prevImgs) => [...prevImgs, ...previews]);
   };
 
-  const [videoPreview, setVideoPreview] = useState<string | null>(null);
-
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -381,7 +359,7 @@ export default function PostInGroup() {
                                 style={{ color: "rgb(0, 0, 0, 0.6)" }}
                               ></FaLock>
                             </div>
-                            <p>{groups?.GroupState || "Riêng tư"}</p>
+                            <p>{"Riêng tư"}</p>
                           </div>
                         </div>
                       </div>

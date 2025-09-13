@@ -28,45 +28,52 @@ import stylepu from "./popup/popup.module.css";
 export default function GroupList() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
-  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =useHeader();
+  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
   const router = useRouter();
+  const { accountId } = router.query;
   // const itemsPerPage = 10;
+  // Phân trang
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  // Bộ lọc
   const [showFilter, setshowFilterPopup] = useState(false);
   const [selectedGrOut, setSelectedGrOut] = useState<string>("");
-  // Phân trang
   const [search, setSearch] = useState("");
-  const [SuccessMess, setsuccessMess] = useState(''); //danh dau da gui
-  const { accountId } = router.query;
-
-  //tham gia nhóm
-  const [pendingGr, setpendingGr] = useState<number | null>(null);
-  // id gr rời nhóm
-  const [isOutGr, setIsOutGr] = useState<number | null>(null);
-  //tham gia nhóm kín
-  const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
-
-  //Popup rời nhóm, huỷ tham gia nhóm
-  const [showPopup, setShowPopup] = useState(false);
-  // const [groups, setGroups] = useState<Groups[]>([]);
-
-  const [grStateTemp, setGrStateTemp] = useState("all");
-  const [joinTemp, setJoinTemp] = useState("all");
   const [grState, setGrState] = useState("all");
   const [joinState, setJoinState] = useState("all");
-  const [Sent, setSent] = useState('')
-
+  //tham gia nhóm
+  const [SuccessMess, setsuccessMess] = useState(''); //danh dau da gui
+  const [pendingGr, setpendingGr] = useState<number | null>(null);
+  // rời nhóm, huỷ tham gia
+  const [isOutGr, setIsOutGr] = useState<number | null>(null);
+  const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  // const [grStateTemp, setGrStateTemp] = useState("all");
+  // const [joinTemp, setJoinTemp] = useState("all");
+  // popup trang thai gui command
+  const [Sent, setSent] = useState('');
+  const [IsSuccess, setisSuccess] = useState(false);
+  // Load data, skeleton
   const [groupData, setGroupData] = useState<any[]>([]); //data that
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
+  // localstorage
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
-  const [IsSuccess, setisSuccess] = useState(false);
-  const pageCountSelect = async () => {
-    //call API lay so luong nhom tren tung account
-  };
+  // lay cookie userID
+  let crmID = Cookies.get("userID");
+  if (!crmID) {
+    console.warn("CRM userID cookie is missing!");
+    crmID = "defaultID"; // fallback value, replace with your logic
+  }
 
+  useEffect(() => {
+    setHeaderTitle("Tool Facebook - Danh sách nhóm");
+    setShowBackButton(true);
+    setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
+  }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
+
+  // fetchdata
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -117,24 +124,12 @@ export default function GroupList() {
   // }, [Gr]);
 
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Danh sách nhóm");
-    setShowBackButton(true);
-    setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
-  }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
-
-  useEffect(() => {
     if (isOpen) {
       mainRef.current?.classList.add("content_resize");
     } else {
       mainRef.current?.classList.remove("content_resize");
     }
   }, [isOpen]);
-
-  let crmID = Cookies.get("userID");
-  if (!crmID) {
-    console.warn("CRM userID cookie is missing!");
-    crmID = "defaultID"; // fallback value, replace with your logic
-  }
 
   useEffect(() => {
     if (pendingGr) {
@@ -194,7 +189,6 @@ export default function GroupList() {
   };
 
   const resetFilter = async () => {
-    // Set loading state and reset filters immediately for better UX
     // setIsLoading(true);
     // setFetchError(null);
     setGrState("all");
@@ -256,7 +250,6 @@ export default function GroupList() {
   //xu li request hang doi
   const UpdateGrState = async (LinkGr: string) => {
     // Gọi API gửi request đến tool tham gia nhóm
-    // API cập nhật trường isJoin
     console.log(accountId, LinkGr);
     setShowLoading(true);
 
@@ -360,8 +353,8 @@ export default function GroupList() {
                     setSearch={setSearch}
                     resetFilter={resetFilter}
                     setshowFilterPopup={setshowFilterPopup}
-                    setJoinTemp={setJoinTemp}
-                    setGrStateTemp={setGrStateTemp}
+                    // setJoinTemp={setJoinTemp}
+                    // setGrStateTemp={setGrStateTemp}
                     setCurrentPage={setCurrentPage}
                     isLoading={isLoading}
                   />

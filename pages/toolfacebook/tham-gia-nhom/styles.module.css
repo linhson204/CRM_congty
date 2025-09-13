@@ -284,7 +284,7 @@
   /* INDEX NHOM */
   .GroupListAttribute {
     border-bottom: 1px solid rgba(145, 145, 145, 0.5);
-    padding: 10px 0px 10px 10px;
+    padding: 10px 0px 10px 0px;
     background-color: #4c5bd4;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -307,7 +307,8 @@
   .GroupListAttribute > div:first-child,
   .GroupBlock > div:first-child {
     width: fit-content;
-    padding: 10px;
+    padding-left: 15px;
+    padding-top: 10px;
     padding-right: 15px;
     display: flex;
     justify-content: center;
@@ -325,7 +326,6 @@
       overflow-y: scroll;
       padding-top: 10px;
       padding-bottom: 10px;
-      padding-left: 10px;
       border: 1px solid rgb(214, 214, 214);
       max-height: 700px;
       background-color: white;
