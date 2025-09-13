@@ -629,3 +629,23 @@
   height: 40px;
   margin: 0 auto 20px;
 }
+
+.SuccessDialogIcon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  background-image: url('../../check.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ErrorDialogIcon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  background-image: url('../../multiply.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}

@@ -55,19 +55,6 @@ export default function SearchBar({
                         animation: isLoading ? 'spin 1s linear infinite' : 'none'
                     }}
                 />
-                {isLoading && (
-                    <span style={{
-                        position: 'absolute',
-                        right: '-25px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        fontSize: '12px',
-                        color: '#007bff',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        Đang tải...
-                    </span>
-                )}
             </button>
             <div className={`${style.filterBlock} ${style.BlockRow}`}
                 onClick={() => {

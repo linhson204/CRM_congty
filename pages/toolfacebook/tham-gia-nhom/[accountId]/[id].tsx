@@ -13,16 +13,16 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FaLock, FaUserCircle } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
-import { IoExitOutline, IoPerson, IoPersonAdd } from "react-icons/io5";
+import { IoExitOutline, IoPersonAdd } from "react-icons/io5";
 import { MdClose, MdPublic } from "react-icons/md";
 import LoadingDialog from "../components/LoadingDialog";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import SearchBar from "../components/SearchBar";
+import SuccessDialog from "../components/SuccessDialog";
 import UserListIndexBar from "../components/UserListIndexBar";
 import FetchError from "../components/fetchError";
 import StatisticBlock from "../components/statisticBlock";
 import style from "../styles.module.css";
-import { Question } from "./popup/PrivateGrQues/types";
 import stylepu from "./popup/popup.module.css";
 
 export default function GroupList() {
@@ -38,7 +38,7 @@ export default function GroupList() {
   const [selectedGrOut, setSelectedGrOut] = useState<string>("");
   // Phân trang
   const [search, setSearch] = useState("");
-  const [Sent, setSent] = useState(false); //danh dau da gui
+  const [SuccessMess, setsuccessMess] = useState(''); //danh dau da gui
   const { accountId } = router.query;
 
   //tham gia nhóm
@@ -46,10 +46,7 @@ export default function GroupList() {
   // id gr rời nhóm
   const [isOutGr, setIsOutGr] = useState<number | null>(null);
   //tham gia nhóm kín
-  const [showPrivateGrQues, setShowPrivateGrQues] = useState(false);
-  const [privateGrSelected, setPrivateGrSelected] = useState<any | null>(null);
   const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
-  const [popupHeader, setpopupHeader] = useState<any[]>([]);
 
   //Popup rời nhóm, huỷ tham gia nhóm
   const [showPopup, setShowPopup] = useState(false);
@@ -59,14 +56,14 @@ export default function GroupList() {
   const [joinTemp, setJoinTemp] = useState("all");
   const [grState, setGrState] = useState("all");
   const [joinState, setJoinState] = useState("all");
+  const [Sent, setSent] = useState('')
 
   const [groupData, setGroupData] = useState<any[]>([]); //data that
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
-  const [Gr, setGr] = useState<any[]>([]); //mock data
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
-  console.log(savedData);
+  const [IsSuccess, setisSuccess] = useState(false);
   const pageCountSelect = async () => {
     //call API lay so luong nhom tren tung account
   };
@@ -120,39 +117,6 @@ export default function GroupList() {
   //     console.log("Gr thay đổi:", Gr);
   // }, [Gr]);
 
-  // Danh sách câu hỏi mẫu
-  const approvalQuestions: Question[] = [
-    {
-      id: 1,
-      type: "textarea", // Kiểu nhập text
-      question: "Giới thiệu ngắn về bản thân?",
-      required: true,
-      maxLength: 250,
-    },
-    {
-      id: 2,
-      type: "radio", // Chọn 1 lựa chọn
-      question: "Bạn có đồng ý với nội quy nhóm?",
-      options: ["Có", "Không"],
-      required: true,
-    },
-    {
-      id: 3,
-      type: "checkbox", // Chọn nhiều lựa chọn
-      question: "Bạn quan tâm đến chủ đề nào?",
-      options: ["Mua bán", "Kỹ thuật", "Du lịch"],
-      required: false,
-    },
-    {
-      id: 4,
-      type: "radio", // Chọn nhiều lựa chọn
-      question: "Con gà có mấy chân?",
-      options: ["2", "4", "6", "8", "10"],
-      required: true,
-    },
-  ];
-  //
-
   useEffect(() => {
     setHeaderTitle("Tool Facebook - Danh sách nhóm");
     setShowBackButton(true);
@@ -173,7 +137,6 @@ export default function GroupList() {
     crmID = "defaultID"; // fallback value, replace with your logic
   }
 
-  console.log(groupData);
   useEffect(() => {
     if (pendingGr) {
       PendingHandleData(pendingGr);
@@ -233,14 +196,16 @@ export default function GroupList() {
 
   const resetFilter = async () => {
     // Set loading state and reset filters immediately for better UX
-    setIsLoading(true);
-    setFetchError(null);
+    // setIsLoading(true);
+    // setFetchError(null);
     setGrState("all");
     setJoinState("all");
     setSearch("");
     setCurrentPage(1);
     setItemsPerPage(10);
+  };
 
+  async function resetUserList() {
     try {
       // Clear current data to show skeleton immediately
       setGroupData([]);
@@ -261,7 +226,7 @@ export default function GroupList() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const PendingHandleData = (GrId: number) => {
     // if (pendingGr.includes(group.id)) {
@@ -294,6 +259,7 @@ export default function GroupList() {
     // Gọi API gửi request đến tool tham gia nhóm
     // API cập nhật trường isJoin
     console.log(accountId, LinkGr);
+    setShowLoading(true);
 
     const params = { group_link: `${LinkGr}` };
     await joinGroup(
@@ -302,7 +268,24 @@ export default function GroupList() {
       params,
       crmID,
       "false"
-    );
+    )
+    .then((response) => {
+      setTimeout(() => {
+        if (response.message == 'Thêm lệnh thành công') {
+          setsuccessMess("Tham gia nhóm thành công");
+          setSent("SuccessDialogIcon")
+          setisSuccess(true);
+          resetUserList();
+        } else {
+          setSent("ErrorDialogIcon")
+          setisSuccess(true);
+          setsuccessMess("Tham gia nhóm thất bại")
+        }
+      }, 1550)
+    })
+    .catch(error => {
+      console.log(error)
+    })
   };
 
   const hardReload = () => {
@@ -419,6 +402,12 @@ export default function GroupList() {
                       Xác nhận
                     </button>
                   </CancelQueuePopup>
+                  <SuccessDialog 
+                    message={SuccessMess}
+                    onClose={() => setisSuccess(false)}
+                    show={IsSuccess}
+                    status={Sent}
+                  />
                   <div className={style.GroupListAttribute}>
                     <div className={style.GroupListContent}>
                       <input
@@ -550,7 +539,6 @@ export default function GroupList() {
                                   //     UpdateGrState(group.Link);
                                   // }
                                   // }
-                                  setShowLoading(true);
                                   UpdateGrState(group.Link);
                                 }}
                               >
