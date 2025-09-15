@@ -172,7 +172,7 @@ export default function HomePage() {
   };
 
   //Trang nhan tin
-  const handleUserClick = () => {
+  const GotoMessPage = () => {
     const timeout = 500;
     setTimeout(() => {
       router.push("/toolfacebook/tham-gia-nhom/nhantin");
@@ -193,7 +193,7 @@ export default function HomePage() {
     }
   };
 
-  const handleGroupDetailsClick = (username: string) => {
+  const GoToGroupDetail = (username: string) => {
     const selectedData = {
       account: accounts.find((e) => e.account == username),
     };
@@ -385,7 +385,7 @@ export default function HomePage() {
                             >
                               <div
                                 id="haveMessBlock"
-                                onClick={handleUserClick}
+                                onClick={GotoMessPage}
                                 className={style.Message}
                               >
                                 <FiMessageCircle className={style.ic} />
@@ -405,7 +405,7 @@ export default function HomePage() {
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
                                   setTimeout(() => {
-                                    handleGroupDetailsClick(item.account);
+                                    GoToGroupDetail(item.account);
                                   }, 300);
                                 }}
                               ></CiBoxList>

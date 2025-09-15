@@ -246,13 +246,13 @@ export default function GroupList() {
   };
 
   // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
-  const handleLeavePopup = (id: any) => {
+  const HandleLeaveGroup = (id: any) => {
     setShowPopup(false);
     console.log(id, accountId);
     //request rời nhóm
   };
 
-  const handleCancelQueue = (id: any) => {
+  const HandleCancelJoinGroup = (id: any) => {
     setShowCancelQueuePopUp(false);
     console.log(id, accountId);
     //request hủy bỏ tham gia nhóm
@@ -291,7 +291,7 @@ export default function GroupList() {
     })
   };
 
-  const hardReload = () => {
+  const HardReload = () => {
     setShowLoading(true);
     setTimeout(() => window.location.reload(), 1000);
   };
@@ -379,7 +379,7 @@ export default function GroupList() {
                   >
                     <button
                       onClick={() => {
-                        handleLeavePopup(isOutGr);
+                        HandleLeaveGroup(isOutGr);
                       }}
                       className={stylepu.PopupOutGrConfirmButton}
                     >
@@ -398,7 +398,7 @@ export default function GroupList() {
                   >
                     <button
                       onClick={() => {
-                        handleCancelQueue(isOutGr);
+                        HandleCancelJoinGroup(isOutGr);
                       }}
                       className={stylepu.PopupOutGrConfirmButton}
                     >

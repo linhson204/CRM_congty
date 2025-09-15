@@ -122,6 +122,7 @@ export default function PostInGroup() {
         accountId
       );
       setGroupData(res.results); // lưu vào state
+      console.log(res.results);
     }
     fetchData();
   }, []);
@@ -181,7 +182,7 @@ export default function PostInGroup() {
     return window.alert("reset socket");
   };
 
-  const handlePostSubmit = async () => {
+  const HandlePostSubmit = async () => {
     if (!newPostContent.trim() && newPostImages.length === 0) return;
 
     // Save current values before clearing
@@ -617,7 +618,7 @@ export default function PostInGroup() {
                       <button
                         className={style.postButton}
                         onClick={() => {
-                          handlePostSubmit();
+                          HandlePostSubmit();
                           setShowLoading(true);
                         }}
                         disabled={
