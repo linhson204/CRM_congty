@@ -237,12 +237,22 @@
 
   .namesearchContainer {
     display: flex;
+    flex-direction: row;
     align-items: center;
     border: 1px solid #828282;
     border-radius: 10px;
     padding: 7px;
     width: 250px;
     background-color: white;
+  }
+
+  .clearSearchNameBox {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
   }
 
   .searchBar {

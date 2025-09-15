@@ -1,6 +1,7 @@
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { IoMdRefresh } from 'react-icons/io';
+import { MdCancel } from 'react-icons/md';
 import stylepo from '../[accountId]/dangbainhom/post.module.css';
 import style from '../styles.module.css';
 
@@ -39,6 +40,18 @@ export default function SearchBar({
                         setCurrentPage(1);
                     }}
                 />
+                <div
+                    className={style.clearSearchNameBox}
+                    onClick={() => {
+                        setSearch('');
+                    }}
+                    >
+                        {search.length > 0 ? (
+                            <MdCancel></MdCancel>
+                        ) : (
+                            <div></div>
+                        )}
+                </div>
             </div>
             <button 
                 className={stylepo.backButton}

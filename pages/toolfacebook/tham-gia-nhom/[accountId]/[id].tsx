@@ -58,6 +58,8 @@ export default function GroupList() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
+  // checkbox
+  const [masterCheck, setMasterCheck] = useState(false)
   // localstorage
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
   // lay cookie userID
@@ -196,6 +198,7 @@ export default function GroupList() {
     setSearch("");
     setCurrentPage(1);
     setItemsPerPage(10);
+    setMasterCheck(false);
   };
 
   async function resetUserList() {
@@ -230,6 +233,14 @@ export default function GroupList() {
     //call API tra id user id nhom vao day
   };
 
+  const HandleMasterCheckbox = (check:boolean) => {
+    if (check) {
+      setMasterCheck(true);
+    } else {
+      setMasterCheck(false);
+    }
+  };
+
   const HandlePostGroup = (idgr: number) => {
     router.push(`../${accountId}/dangbainhom/${idgr}`);
   };
@@ -248,7 +259,7 @@ export default function GroupList() {
   };
 
   //xu li request hang doi
-  const UpdateGrState = async (LinkGr: string) => {
+  const HandleJoinGroup = async (LinkGr: string) => {
     // Gọi API gửi request đến tool tham gia nhóm
     console.log(accountId, LinkGr);
     setShowLoading(true);
@@ -402,10 +413,14 @@ export default function GroupList() {
                   />
                   <div className={style.GroupListAttribute}>
                     <div className={style.GroupListContent}>
+                      {/* master checkbox */}
                       <input
                         className={style.checkboxList}
                         type="checkbox"
-                        onChange={(e) => e.target.checked}
+                        checked={masterCheck}
+                        onChange={(e) => {
+                          HandleMasterCheckbox(e.target.checked)
+                        }}
                       />
                     </div>
                     <div className={style.GroupListContent}>Tên nhóm</div>
@@ -450,6 +465,7 @@ export default function GroupList() {
                             <input
                               type="checkbox"
                               className={style.checkboxList}
+                              checked={masterCheck}
                             ></input>
                           </div>
                           <div className={style.grlistName}>{group.Name}</div>
@@ -531,7 +547,7 @@ export default function GroupList() {
                                   //     UpdateGrState(group.Link);
                                   // }
                                   // }
-                                  UpdateGrState(group.Link);
+                                  HandleJoinGroup(group.Link);
                                 }}
                               >
                                 <IoPersonAdd size={20} />

@@ -45,6 +45,7 @@ export default function MessagingPage() {
   const [mess, setMess] = useState <messages[]>([]);
   const [search, setSearch] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const savedData = JSON.parse(localStorage.getItem("userProfile"));
 
   const handleSendMessage = () => { //gui tin nhan -> them phan tra data cho tool de gui lai (api?)
     if (currentMessage.trim() === "") return;
@@ -166,7 +167,7 @@ export default function MessagingPage() {
       <div className={styleHome.main} ref={mainRef}>
         <div className={styles.main_importfile}>
           <div className={styles.info_step}>
-            <div className={styles.main__title}>TRANG NHẮN TIN - Tài Khoản FB đang sử dụng: Nguyen Van A</div>
+            <div className={styles.main__title}>TRANG NHẮN TIN - Tài Khoản FB đang sử dụng: {savedData?.account.name || '...Loading'}</div>
             <div className={styles.form_add_potential}>
               <div className={`${styles.main__body} ${style.messagingContainer}`}>
                 <div className={style.userList}>
