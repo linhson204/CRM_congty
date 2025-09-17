@@ -9,22 +9,22 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { CiBoxList } from "react-icons/ci";
-import { FaFacebook, FaSearch } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import UserFilter from "./components/filter/UserFilter";
+import SearchBar from "./components/SearchBar";
 import UserListIndexBar from "./components/UserListIndexBar";
 import style from "./styles.module.css";
 
 export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
-  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any =
-    useHeader();
+  const { setHeaderTitle, setShowBackButton, setCurrentPath }: any = useHeader();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
 
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
@@ -53,7 +53,6 @@ export default function HomePage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
   const crmID = Cookies.get("userID");
-  const [showLoading, setShowLoading] = useState(false);
 
   const [accounts, setAccounts] = useState<any[]>([]);
 
@@ -106,41 +105,6 @@ export default function HomePage() {
     test();
   }, []);
 
-  console.log("data1", accounts);
-
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       // Cách 1: Nếu file JSON trong public folder
-  //       const response = await fetch('../../data/account.json');
-
-  //       // Cách 2: Nếu import trực tiếp
-  //       // const data = await import('@/data/accountjson.json');
-
-  //       if (!response.ok) throw new Error('Failed to fetch data');
-  //       const data = await response.json();
-
-  //       // Kiểm tra cấu trúc dữ liệu
-  //       if (!Array.isArray(data)) {
-  //         throw new Error('Invalid data format: Expected array');
-  //       }
-
-  //       // Cập nhật state với dữ liệu đã kiểm tra
-  //       setUsers(data.map(user => ({
-  //         ...user,
-  //         Active: user.Active !== undefined ? user.Active : false, // Mặc định false
-  //         groups: user.groups || [] // Đảm bảo groups luôn là mảng
-  //       })));
-
-  //     } catch (error) {
-  //       console.error('Error loading user data:', error);
-  //       // Xử lý lỗi (hiển thị thông báo, v.v.)
-  //     }
-  //   };
-
-  //   fetchUsers();
-  // }, []);
-
   //Search tai khoan theo ten
   const filteredUser = accounts.filter((user) => {
     const activeMatch = activeFilter === null || user.status === activeFilter;
@@ -171,6 +135,11 @@ export default function HomePage() {
     }
   };
 
+  const ResetFilter = () => {
+    setActiveFilter(null);
+    setSearch("");
+    setCurrentPage(1);
+  };
   //Trang nhan tin
   const GotoMessPage = () => {
     const timeout = 500;
@@ -262,8 +231,8 @@ export default function HomePage() {
           <div className={styles.formInfoStep}>
             <div className={styles.info_step}>
               <div className={styles.main__title}>
-                <div className={style.BlockRow}>
-                  <FaFacebook size={25} />
+                <div className={style.HomePageTitleBlock}>
+                  <FaFacebook size={30} />
                   <p>HOMEPAGE</p>
                 </div>
               </div>
@@ -271,8 +240,7 @@ export default function HomePage() {
                 {/* Header danh sách */}
                 <div className={styles.main__body}>
                   <div className={style.headerList}>
-                    <h2>Danh Sách Tài Khoản ToolFB đang sử dụng</h2>
-                    <span>Tổng số tài khoản: {accounts.length}</span>
+                    <h2>Tổng số tài khoản FB: {accounts.length} tài khoản</h2>
                   </div>
                   {/* list tk */}
                   <div className={style.BlockColumn}>
@@ -280,59 +248,27 @@ export default function HomePage() {
                       className={style.BlockRow}
                       style={{ marginBottom: "15px" }}
                     >
-                      <div
-                        id="searchContainer"
-                        className={`${style.BlockRow} ${style.searchContainer}`}
-                      >
-                        <FaSearch className={style.searchIcon} />
-                        <input
-                          type="text"
-                          placeholder="Tên TK, SDT, Email..."
-                          className={style.searchInput}
-                          value={search}
-                          onChange={(e) => {
-                            setSearch(e.target.value);
-                            setCurrentPage(1);
-                          }}
-                        />
-                      </div>
-                      <div className={style.filterContainerHP}>
-                        <div
-                          className={style.BlockRow}
-                          style={{ marginLeft: "50px", width: "300px" }}
-                        >
-                          <label className={style.filterLabel}>
-                            Lọc trạng thái:
-                          </label>
-                          <select
-                            className={style.filterSelect}
-                            value={
-                              activeFilter === null
-                                ? "all"
-                                : activeFilter.toString()
-                            }
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              setActiveFilter(
-                                value === "all"
-                                  ? null
-                                  : value === "true"
-                                  ? true
-                                  : false
-                              );
-                              setCurrentPage(1);
-                            }}
-                          >
-                            <option value="all">Tất cả</option>
-                            <option value="true">Online</option>
-                            <option value="false">Offline</option>
-                          </select>
-                        </div>
-                      </div>
                       <p style={{ padding: "5px", marginLeft: "auto" }}>
-                        Số tài khoản tìm được: {filteredUser.length}/
-                        {accounts.length}
+                        Số tài khoản tìm được: {filteredUser.length}/{accounts.length}
                       </p>
+                      <SearchBar
+                        search={search}
+                        setSearch={setSearch}
+                        setshowFilterPopup={setShowFilter}
+                        setCurrentPage={setCurrentPage}
+                        placeholder={'Tên TK hoặc SĐT...'}
+                        resetFilter={ResetFilter}
+                      />
+                      <UserFilter
+                        isOpen={showFilter}
+                        onClose={() => {setShowFilter(false)}}
+                        active={activeFilter}
+                        onApply={(UserState) => {
+                          setActiveFilter(UserState);
+                          setCurrentPage(1);
+                          setShowFilter(false);
+                        }}
+                      />
                     </div>
                     {/* goi list danh sach tai khoan */}
                     <div className={style.UserListContainer}>

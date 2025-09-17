@@ -7,6 +7,7 @@ import createPostPersonal from "@/pages/api/toolFacebook/dang-bai/dang-bai";
 import uploadAnh from "@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh";
 import getPostPersonal from "@/pages/api/toolFacebook/dang-bai/laybaidangcanhan";
 import CommentPostPopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/CommentPost";
+import EmotePicker from "@/pages/toolfacebook/tham-gia-nhom/components/EmotePicker";
 import style1 from "@/pages/toolfacebook/tham-gia-nhom/styles.module.css";
 import Cookies from "js-cookie";
 import Head from "next/head";
@@ -14,14 +15,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { BiShare } from "react-icons/bi";
-import {
-  FaComment,
-  FaLock,
-  FaRegComment,
-  FaUserCircle,
-  FaUserTag,
-  FaVideo,
-} from "react-icons/fa";
+import { FaComment, FaLock, FaRegComment, FaUserCircle, FaUserTag, FaVideo } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { IoIosShareAlt, IoMdRefresh } from "react-icons/io";
@@ -32,41 +26,6 @@ import style from "../[accountId]/dangbainhom/post.module.css";
 import LoadingDialog from "../components/LoadingDialog";
 import UserListIndexBar from "../components/UserListIndexBar";
 
-interface Group {
-  id: number;
-  GroupName: string;
-  GroupState: string;
-  Member: number;
-  isJoin: number;
-}
-
-interface Account {
-  id: number;
-  name: string;
-  groups: Group[];
-}
-
-interface Post {
-  id: number;
-  userId?: string;
-  groupId?: number;
-  userName?: string;
-  time?: string;
-  content?: string;
-  imageUrls?: string[];
-  likes?: number;
-  favorites?: number;
-  comments?: Comment[];
-  shares: number;
-}
-
-interface Comment {
-  id: number;
-  user: string;
-  time?: string;
-  content: string;
-  likes?: number;
-}
 export default function PostPersonal() {
   const handleCancelVideo = (index: number) => {
     setVideoPreviews((prev) => prev.filter((_, idx) => idx !== index));
@@ -79,21 +38,13 @@ export default function PostPersonal() {
   const router = useRouter();
   // const itemsPerPage = 2;
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
   const { pId } = router.query;
-  const [account, setAccount] = useState<Account | null>(null);
-  const [groups, setGroups] = useState<Group>();
-  const [uname, setUname] = useState("");
 
   // State mới cho bài đăng
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [test, setTest] = useState<any>([]);
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImages, setNewPostImages] = useState<any[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [videoFiles, setVideoFiles] = useState<File[]>([]);
@@ -103,12 +54,16 @@ export default function PostPersonal() {
   const [likeAnimations, setLikeAnimations] = useState<Set<number>>(new Set());
 
   const [groupData, setGroupData] = useState<any[]>([]);
-  const [Sendposts, setSendPosts] = useState<Post[]>([]);
   const [uploadImg, setUploadImg] = useState<any[]>([]);
   // popup comment
   const [showComment, setShowComment] = useState(false);
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
   const [showLoading, setShowLoading] = useState(false);
+
+  // Emote picker states
+  const [showEmotePicker, setShowEmotePicker] = useState(false);
+  const [emotePickerPosition, setEmotePickerPosition] = useState({ top: 0, left: 0 });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   let crmID = Cookies.get("userID");
   if (!crmID) {
@@ -143,7 +98,7 @@ export default function PostPersonal() {
   }, []);
 
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Đăng bài nhóm");
+    setHeaderTitle("TOOL FACEBOOK - Đăng bài trang cá nhân");
     setShowBackButton(true);
     setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
@@ -226,7 +181,7 @@ export default function PostPersonal() {
     // const params = {"group_link": `groups/${Grid}`, "content": `${currentContent}`, "files": fileMap};
     const params = { content: `${currentContent}`, files: fileMap };
     try {
-      await createPostPersonal("post_to_wall", pId, params, crmID, "false");
+      await createPostPersonal("post_to_wall", pId, params, crmID, "true");
     } catch (error) {
       console.error("Error creating post:", error);
     }
@@ -277,6 +232,60 @@ export default function PostPersonal() {
     }
   };
 
+  // Emote picker functions
+  const handleEmoteIconClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    setEmotePickerPosition({
+      top: rect.bottom + 5,
+      left: rect.left
+    });
+    setShowEmotePicker(!showEmotePicker);
+  };
+
+  const handleEmoteSelect = (emote: string) => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const cursorPosition = textarea.selectionStart;
+      const textBefore = newPostContent.substring(0, cursorPosition);
+      const textAfter = newPostContent.substring(textarea.selectionEnd);
+      const newText = textBefore + emote + textAfter;
+      
+      setNewPostContent(newText);
+      
+      // Set cursor position after the emote
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = cursorPosition + emote.length;
+        textarea.focus();
+      }, 0);
+    } else {
+      // If no textarea reference, just append to the end
+      setNewPostContent(prev => prev + emote);
+    }
+  };
+
+  const handleCloseEmotePicker = () => {
+    setShowEmotePicker(false);
+  };
+
+  // Close emote picker when clicking outside
+  const handleClickOutside = (e: MouseEvent) => {
+    const target = e.target as Element;
+    if (showEmotePicker && !target.closest('.emote-picker-container')) {
+      setShowEmotePicker(false);
+    }
+  };
+
+  // Add event listener for clicking outside
+  useEffect(() => {
+    if (showEmotePicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showEmotePicker]);
+
   const handleLikePost = (postId: number) => {
     // Toggle like status
     const newLikedPosts = new Set(likedPosts);
@@ -299,18 +308,6 @@ export default function PostPersonal() {
       }, 600);
     }
     setLikedPosts(newLikedPosts);
-
-    // Update posts state with new like count
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              likes: (post.likes || 0) + (likedPosts.has(postId) ? -1 : 1),
-            }
-          : post
-      )
-    );
 
     // TODO: Call API to update like on server
     // await updateLikeOnServer(postId, !likedPosts.has(postId));
@@ -349,7 +346,7 @@ export default function PostPersonal() {
                 ></CommentPostPopup>
                 <div className={style.postsContainer}>
                   <div className={style.postsHeader}>
-                    <h2 className={style.groupTitle}>Đăng bài {pId}</h2>
+                    <h2 className={style.groupTitle}>Đăng bài cho {savedData.account.name}</h2>
                   </div>
                   <div className={style.createPostContainer}>
                     <div
@@ -371,11 +368,12 @@ export default function PostPersonal() {
                                 style={{ color: "rgb(0, 0, 0, 0.6)" }}
                               ></FaLock>
                             </div>
-                            <p>{groups?.GroupState || "Riêng tư"}</p>
+                            <p>Riêng tư</p>
                           </div>
                         </div>
                       </div>
                       <textarea
+                        ref={textareaRef}
                         className={style.postInput}
                         placeholder="Bạn viết gì đi..."
                         value={newPostContent}
@@ -617,13 +615,23 @@ export default function PostPersonal() {
                           <TfiFaceSmile
                             style={{ color: "yellow" }}
                             className={style.postInputIc}
-                          ></TfiFaceSmile>
+                            onClick={handleEmoteIconClick}
+                          />
                           <HiDotsHorizontal
                             style={{ color: "rgb(0, 0, 0, 0.3)" }}
                             className={style.postInputIc}
                           />
                         </div>
                       </div>
+                    </div>
+                    {/* Emote Picker */}
+                    <div className={style.emotePickerContainer} style={{ position: 'relative' }}>
+                      <EmotePicker
+                        show={showEmotePicker}
+                        position={emotePickerPosition}
+                        onEmoteSelect={handleEmoteSelect}
+                        onClose={handleCloseEmotePicker}
+                      />
                     </div>
                     <div className={style.postActions}>
                       <button
@@ -642,6 +650,7 @@ export default function PostPersonal() {
                       </button>
                     </div>
                   </div>
+                  
                   <div className={`${style.postsHeader} ${style.BlockRow}`}>
                     <h2 className={style.groupTitle}>
                       DANH SÁCH CÁC BÀI ĐÃ ĐĂNG:

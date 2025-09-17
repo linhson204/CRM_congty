@@ -612,3 +612,8 @@
   padding-top: 5px;
   padding-right: 10px;
 }
+
+.emotePickerContainer {
+  width: 100%;
+  height: 100%;
+}

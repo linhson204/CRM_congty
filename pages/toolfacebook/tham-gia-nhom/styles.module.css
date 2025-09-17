@@ -21,6 +21,18 @@
 }
 
 /* Homepage */
+.HomePageTitleBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+.HomePageTitleBlock p {
+  display: flex;
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: 10px;
+  align-items: center;
+}
   /* SEARCH BAR - STATISTIC */
   .filterContainer {
     padding: 10px;
@@ -45,6 +57,10 @@
     text-align: center;
     color: rgb(0, 0, 0, 0.6);
     margin-bottom: 10px;
+  }
+
+  .filterContainerHP {
+    width: 100%;
   }
 
   /*  USERLIST */
@@ -1052,4 +1068,18 @@
 .pageCount.disabled:hover {
   background-color: transparent;
   border-color: transparent;
+}
+
+.PostMultiGroup {
+  padding: 5px;
+  color: white;
+  background-color: #4c5bd4;
+  border-radius: 10px;
+  width: 205px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 100px;
 }

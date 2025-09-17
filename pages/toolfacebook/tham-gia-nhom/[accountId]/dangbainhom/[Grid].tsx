@@ -89,6 +89,7 @@ export default function PostInGroup() {
   // popup comment
   const [showComment, setShowComment] = useState(false);
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
+  const savedGroupData = JSON.parse(localStorage.getItem("GroupProfile"));
   const [showLoading, setShowLoading] = useState(false);
 
   let crmID = Cookies.get("userID");
@@ -117,7 +118,7 @@ export default function PostInGroup() {
   useEffect(() => {
     async function fetchData() {
       const res = await getPostGroup(
-        `groups/1569887551087354`,
+        `groups/${Grid}`,
         crmID,
         accountId
       );
@@ -128,7 +129,7 @@ export default function PostInGroup() {
   }, []);
 
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Đăng bài nhóm");
+    setHeaderTitle("TOOL FACEBOOK - Đăng bài nhóm");
     setShowBackButton(true);
     setCurrentPath(`/toolfacebook/tham-gia-nhom/${accountId}/123`);
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
@@ -179,20 +180,28 @@ export default function PostInGroup() {
   }, [test]); // ✅ Chạy khi test thay đổi
 
   const handleViewPosts = () => {
-    return window.alert("reset socket");
+    async function fetchData() {
+      const res = await getPostGroup(
+        `groups/${Grid}`,
+        crmID,
+        accountId
+      );
+      setGroupData(res.results); // lưu vào state
+    }
+    fetchData();
   };
 
   const HandlePostSubmit = async () => {
     if (!newPostContent.trim() && newPostImages.length === 0) return;
 
-    // Save current values before clearing
+    // Lưu biến tạm các data để reset UI
     const currentContent = newPostContent;
     const currentImages = [...newPostImages];
     const currentVideos = [...videoPreviews];
     const currentUploadImg = [...uploadImg];
     const currentVideoFiles = [...videoFiles];
 
-    // Clear UI immediately
+    // Reset UI
     setNewPostContent("");
     setNewPostImages([]);
     setVideoPreviews([]);
@@ -201,24 +210,22 @@ export default function PostInGroup() {
     if (imageInputRef.current) imageInputRef.current.value = "";
     if (videoInputRef.current) videoInputRef.current.value = "";
 
-    // api upload anh
+    // Gọi API chuyển dạng file
     let MediaUpload = [];
     if (currentUploadImg.length > 0 || currentVideoFiles.length > 0) {
       MediaUpload = await uploadAnh(currentUploadImg);
     }
     const fileMap = MediaUpload.map((img) => img.savedName);
 
+    // Set params, grouplink test
     const params = {
       group_link: `groups/${Grid}`,
+      // group_link: `groups/1569887551087354`,
       content: `${currentContent}`,
       files: fileMap,
     };
-    // const params = {
-    //   group_link: `groups/1569887551087354`,
-    //   content: `${currentContent}`,
-    //   files: fileMap,
-    // };
-    await createPostGroup("post_to_group", accountId, params, crmID, "false");
+
+    await createPostGroup("post_to_group", accountId, params, crmID, "true");
   };
 
   const handleImageIconClick = () => {
@@ -308,7 +315,7 @@ export default function PostInGroup() {
     setTimeout(() => window.location.reload(), 1000);
   };
 
-  const handleCancelUpload = (index: number) => {
+  const HandleCancelUpload = (index: number) => {
     setNewPostImages((prev) => prev.filter((_, idx) => idx !== index));
     setUploadImg((prev) => prev.filter((_, idx) => idx !== index));
   };
@@ -337,7 +344,7 @@ export default function PostInGroup() {
                 <div className={style.postsContainer}>
                   <div className={style.postsHeader}>
                     <h2 className={style.groupTitle}>
-                      Đăng bài trong nhóm {Grid}
+                      Đăng bài trong nhóm {savedGroupData.results[0].Name}
                     </h2>
                   </div>
                   <div className={style.createPostContainer}>
@@ -450,7 +457,7 @@ export default function PostInGroup() {
                                   cursor: "pointer",
                                   zIndex: 2,
                                 }}
-                                onClick={() => handleCancelUpload(idx)}
+                                onClick={() => HandleCancelUpload(idx)}
                               />
                               {file.type === "image" && (
                                 <img
@@ -709,6 +716,7 @@ export default function PostInGroup() {
                                       maxWidth: "400px",
                                       maxHeight: "400px",
                                       borderRadius: "8px",
+                                      marginRight: "10px",
                                     }}
                                   />
                                 ))}

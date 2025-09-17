@@ -1,33 +1,41 @@
-import GroupFilter from "@/pages/toolfacebook/tham-gia-nhom/components/filter/GroupFilter";
-import stylepu from "../popup/popup.module.css";
+import style from "./popup.module.css";
 
 interface FullscreenFilterProps {
-    isOpen: boolean;
+    children?: React.ReactNode;
+    onApply?: () => void;
     onClose: () => void;
-    onApply: (grStateTemp: string, joinTemp: string) => void; // callback
 }
 
-export default function FilterPopup({
-    isOpen,
-    onClose,
+export default function Filter({
+    children,
     onApply,
+    onClose,
     }: FullscreenFilterProps) {
-    if (!isOpen) return null;
 
     return (
         <div
-        className={stylepu.fullscreenPopup}
+        className={style.fullscreenPopup}
         onClick={(e) => e.stopPropagation()}
         >
             <div
-                className={stylepu.PopupFilterContent}
+                className={style.PopupFilterContent}
                 onClick={(e) => e.stopPropagation()} // chặn click ra ngoài đóng
             >
-                <GroupFilter
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    onApply={onApply}>
-                </GroupFilter>
+                <div className={style.filterContainer}>
+                    {children}
+                <div className={style.BlockRow}>
+                    <button 
+                        className={style.PopupCancelFilter}
+                        onClick={onClose}>
+                        huỷ
+                    </button>
+                    <button 
+                        onClick={onApply}
+                        className={style.PopupConfirmFilter}>
+                        Xác nhận
+                    </button>
+                </div>
+                </div>
             </div>
         </div>
     );

@@ -8,12 +8,13 @@ import style from '../styles.module.css';
 interface SearchBarProps {
     search: string;
     setSearch: (search: string) => void;
-    resetFilter: () => void;
+    resetFilter?: () => void;
     setshowFilterPopup: (isOpen: boolean) => void;
     // setJoinTemp: (joinTemp: string) => void;
     // setGrStateTemp: (grStateTemp: string) => void;
     setCurrentPage: (page: number) => void;
     isLoading?: boolean;
+    placeholder?: string;
 }
 
 export default function SearchBar({
@@ -25,6 +26,7 @@ export default function SearchBar({
     // setGrStateTemp,
     setCurrentPage,
     isLoading = false,
+    placeholder,
 }: SearchBarProps) {
 
     return (
@@ -33,7 +35,7 @@ export default function SearchBar({
                 <FaMagnifyingGlass size={15} style={{color: 'rgb(0, 0, 0, 0.6)'}}/>
                 <input
                     className={style.searchBar}
-                    type="text" placeholder="Tên nhóm..."
+                    type="text" placeholder={placeholder || "Tìm kiếm..."}
                     value={search}
                     onChange={(e) => {
                         setSearch(e.target.value);
@@ -47,7 +49,7 @@ export default function SearchBar({
                     }}
                     >
                         {search.length > 0 ? (
-                            <MdCancel></MdCancel>
+                            <MdCancel color='rgb(0, 0, 0, 0.5)'></MdCancel>
                         ) : (
                             <div></div>
                         )}
@@ -63,11 +65,7 @@ export default function SearchBar({
                     position: 'relative'
                 }}
             >
-                <IoMdRefresh 
-                    style={{
-                        animation: isLoading ? 'spin 1s linear infinite' : 'none'
-                    }}
-                />
+                <IoMdRefresh/>
             </button>
             <div className={`${style.filterBlock} ${style.BlockRow}`}
                 onClick={() => {

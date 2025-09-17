@@ -4,10 +4,10 @@ import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
 import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
 import joinGroup from "@/pages/api/toolFacebook/danhsachnhom/thamgianhom";
-import Filter from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/Filter";
 import OutGrFs from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/OutGrFS";
 import CancelQueuePopup from "@/pages/toolfacebook/tham-gia-nhom/[accountId]/popup/PrivateGrQues/CancelQueue";
 import FetchError from "@/pages/toolfacebook/tham-gia-nhom/components/fetchError";
+import GroupFilter from "@/pages/toolfacebook/tham-gia-nhom/components/filter/GroupFilter";
 import LoadingDialog from "@/pages/toolfacebook/tham-gia-nhom/components/LoadingDialog";
 import LoadingSkeleton from "@/pages/toolfacebook/tham-gia-nhom/components/LoadingSkeleton.jsx";
 import SearchBar from "@/pages/toolfacebook/tham-gia-nhom/components/SearchBar";
@@ -43,7 +43,6 @@ export default function GroupList() {
   const [joinState, setJoinState] = useState("all");
   //tham gia nhóm
   const [SuccessMess, setsuccessMess] = useState(''); //danh dau da gui
-  const [pendingGr, setpendingGr] = useState<number | null>(null);
   // rời nhóm, huỷ tham gia
   const [isOutGr, setIsOutGr] = useState<number | null>(null);
   const [showCancelQueuePopUp, setShowCancelQueuePopUp] = useState(false);
@@ -59,9 +58,12 @@ export default function GroupList() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
   // checkbox
-  const [masterCheck, setMasterCheck] = useState(false)
+  const [masterCheck, setMasterCheck] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
   // localstorage
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
+  // trigger dang nhieu nhom
+  const [isMultiJoin, setIsMultiJoin] = useState(false);
   // lay cookie userID
   let crmID = Cookies.get("userID");
   if (!crmID) {
@@ -70,12 +72,12 @@ export default function GroupList() {
   }
 
   useEffect(() => {
-    setHeaderTitle("Tool Facebook - Danh sách nhóm");
+    setHeaderTitle("TOOL FACEBOOK - Danh sách nhóm");
     setShowBackButton(true);
     setCurrentPath(`/toolfacebook/tham-gia-nhom/HomePage`);
   }, [setHeaderTitle, setShowBackButton, setCurrentPath]);
 
-  // fetchdata
+  // Gọi API lấy danh sách nhóm
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
@@ -102,28 +104,11 @@ export default function GroupList() {
         }
       }
     }
-
     fetchData();
-
     return () => {
       isMounted = false;
     };
   }, []);
-
-  // useEffect(() => {
-  //     fetch('http://localhost:3003/api/getgrdata')
-  //     .then(response => response.json())
-  //     .then(data => {
-  //         // setTest(data);
-  //         setGr(data.data || data); // ✅ Set posts ngay khi có data
-  //         setIsLoading(false);
-  //     })
-  //     .catch(error => console.error('Error:', error));
-  // }, []); // ✅ Chỉ chạy một lần
-
-  // useEffect(() => {
-  //     console.log("Gr thay đổi:", Gr);
-  // }, [Gr]);
 
   useEffect(() => {
     if (isOpen) {
@@ -132,12 +117,6 @@ export default function GroupList() {
       mainRef.current?.classList.remove("content_resize");
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    if (pendingGr) {
-      PendingHandleData(pendingGr);
-    }
-  }, [pendingGr]);
 
   const filteredGroups = useMemo(() => {
     return groupData.filter((group) => {
@@ -183,6 +162,17 @@ export default function GroupList() {
     currentPage * itemsPerPage
   );
 
+  // Sync master checkbox with visible items
+  useEffect(() => {
+    if (filteredPage.length > 0) {
+      const allVisibleSelected = filteredPage.every(group => selectedGroups.has(group.Link));
+      setMasterCheck(allVisibleSelected);
+    } else {
+      setMasterCheck(false);
+    }
+  }, [filteredPage, selectedGroups]);
+
+  // Event apply filter
   const HandleFilter = (grStateTemp: string, joinTemp: string) => {
     setGrState(grStateTemp);
     setJoinState(joinTemp);
@@ -190,8 +180,9 @@ export default function GroupList() {
     console.log(grStateTemp, joinTemp);
   };
 
-  const resetFilter = async () => {
-    // setIsLoading(true);
+  // Event reset filter
+  const ResetFilter = async () => {
+    setIsLoading(true);
     // setFetchError(null);
     setGrState("all");
     setJoinState("all");
@@ -199,9 +190,11 @@ export default function GroupList() {
     setCurrentPage(1);
     setItemsPerPage(10);
     setMasterCheck(false);
+    setSelectedGroups(new Set());
+    ResetUserList();
   };
 
-  async function resetUserList() {
+  async function ResetUserList() {
     try {
       // Clear current data to show skeleton immediately
       setGroupData([]);
@@ -224,28 +217,30 @@ export default function GroupList() {
     }
   }
 
-  const PendingHandleData = (GrId: number) => {
-    // if (pendingGr.includes(group.id)) {
-    //     setpendingGr(pendingGr.filter(id => id !== group.id));
-    // } else {
-    //     setpendingGr([...pendingGr, group.id]);
-    // }
-    //call API tra id user id nhom vao day
-  };
-
-  const HandleMasterCheckbox = (check:boolean) => {
-    if (check) {
-      setMasterCheck(true);
+  const HandleMasterCheckbox = (checked: boolean) => {
+    setMasterCheck(checked);
+    
+    if (checked) {
+      // Select all visible groups
+      const allVisibleGroupLinks = filteredPage.map(group => group.Link);
+      const newSelectedGroups = new Set(Array.from(selectedGroups).concat(allVisibleGroupLinks));
+      setSelectedGroups(newSelectedGroups);
     } else {
-      setMasterCheck(false);
+      // Deselect all visible groups
+      const visibleGroupLinks = new Set(filteredPage.map(group => group.Link));
+      const newSelectedGroups = new Set(Array.from(selectedGroups).filter(link => !visibleGroupLinks.has(link)));
+      setSelectedGroups(newSelectedGroups);
     }
   };
 
-  const HandlePostGroup = (idgr: number) => {
+  // Router trang đăng bài nhóm
+  async function HandlePostGroup(idgr: number, name: string) {
+    const groupInfo = await getGroupData(accountId, `${name}`, "", "", "");
+    localStorage.setItem("GroupProfile", JSON.stringify(groupInfo));
+    console.log(groupInfo);
     router.push(`../${accountId}/dangbainhom/${idgr}`);
   };
 
-  // Tra id user, id nhom -> be tra cho tool -> tool chay -> tra lai state id nhom
   const HandleLeaveGroup = (id: any) => {
     setShowPopup(false);
     console.log(id, accountId);
@@ -278,7 +273,7 @@ export default function GroupList() {
           setsuccessMess("Tham gia nhóm thành công");
           setSent("SuccessDialogIcon")
           setisSuccess(true);
-          resetUserList();
+          ResetUserList();
         } else {
           setSent("ErrorDialogIcon")
           setisSuccess(true);
@@ -291,6 +286,27 @@ export default function GroupList() {
     })
   };
 
+  const BoxChosenCheck = (checked: boolean, id: string) => {
+    //logic check box
+    const newSelectedGroups = new Set(selectedGroups);
+    
+    if (checked && !selectedGroups.has(id)) {
+      newSelectedGroups.add(id);
+    } else if (!checked && selectedGroups.has(id)) {
+      newSelectedGroups.delete(id);
+    }
+    
+    setSelectedGroups(newSelectedGroups);
+    setIsMultiJoin(newSelectedGroups.size > 0 ? true : false);
+    
+    // Update master checkbox state
+    const allVisibleSelected = filteredPage.every(group => newSelectedGroups.has(group.Link));
+    setMasterCheck(allVisibleSelected && filteredPage.length > 0);
+    
+    console.log(Array.from(newSelectedGroups));
+    return Array.from(newSelectedGroups);
+  };
+
   const HardReload = () => {
     setShowLoading(true);
     setTimeout(() => window.location.reload(), 1000);
@@ -301,7 +317,7 @@ export default function GroupList() {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="noindex,nofollow" />
-        <title>Tool Facebook - Chi tiết</title>
+        <title>Tool Facebook - Danh sách nhóm</title>
         <meta name="description" content="Quản lý và đăng bài lên Facebook" />
         <style>{`
                 @keyframes spin {
@@ -324,9 +340,7 @@ export default function GroupList() {
         <div className={styles.main_importfile}>
           <div className={styles.formInfoStep}>
             <div className={styles.info_step}>
-              <div className={styles.main__title}>
-                Tool Facebook - DANH SÁCH NHÓM
-              </div>
+              <div className={styles.main__title}></div>
               <div
                 style={{ padding: "5px", backgroundColor: "#f9f9f9" }}
                 className={styles.form_add_potential}
@@ -359,15 +373,21 @@ export default function GroupList() {
                       </p>
                     </div>
                   </div>
+                  {isMultiJoin && (
+                    <div className={style.PostMultiGroup}>
+                      Đăng nhiều nhóm
+                    </div>
+                  )}
                   <SearchBar
                     search={search}
                     setSearch={setSearch}
-                    resetFilter={resetFilter}
+                    resetFilter={ResetFilter}
                     setshowFilterPopup={setshowFilterPopup}
                     // setJoinTemp={setJoinTemp}
                     // setGrStateTemp={setGrStateTemp}
                     setCurrentPage={setCurrentPage}
                     isLoading={isLoading}
+                    placeholder={'Tên nhóm hoặc SĐT....'}
                   />
                 </div>
                 {/* List Nhóm */}
@@ -386,11 +406,13 @@ export default function GroupList() {
                       Xác nhận
                     </button>
                   </OutGrFs>
-                  <Filter
+                  <GroupFilter
                     isOpen={showFilter}
                     onClose={() => setshowFilterPopup(false)}
                     onApply={HandleFilter}
-                  ></Filter>
+                    grState={grState}
+                    join={joinState}
+                  ></GroupFilter>
                   <CancelQueuePopup
                     isOpen={showCancelQueuePopUp}
                     onClose={() => setShowCancelQueuePopUp(false)}
@@ -428,7 +450,7 @@ export default function GroupList() {
                       Trạng thái nhóm
                     </div>
                     <div className={style.GroupListContent}>Số thành viên</div>
-                    <div className={style.GroupListContent}>Ngành nghề</div>
+                    <div className={style.GroupListContent}>Link nhóm</div>
                     <div className={style.GroupListContent}>Trạng thái</div>
                     <div className={style.GroupListContent}>Hành động</div>
                   </div>
@@ -465,8 +487,9 @@ export default function GroupList() {
                             <input
                               type="checkbox"
                               className={style.checkboxList}
-                              checked={masterCheck}
-                            ></input>
+                              checked={selectedGroups.has(group.Link)}
+                              onChange={(e) => BoxChosenCheck(e.target.checked, group.Link)}
+                            />
                           </div>
                           <div className={style.grlistName}>{group.Name}</div>
                           <div id="GrState" className={style.grState}>
@@ -515,7 +538,8 @@ export default function GroupList() {
                                   className={style.buttonPost}
                                   onClick={() => {
                                     HandlePostGroup(
-                                      group.Link.replace("groups/", "")
+                                      group.Link.replace("groups/", ""),
+                                      group.Name
                                     );
                                   }}
                                 >
@@ -538,15 +562,6 @@ export default function GroupList() {
                               <div
                                 className={`${style.BlockRow} ${style.joinGrButton}`}
                                 onClick={() => {
-                                  // {if (group.Status !== "Hoạt động") {
-                                  //     setPrivateGrSelected(group.id);
-                                  //     setShowPrivateGrQues(true);
-                                  //     setpopupHeader([group.Name, group.Status, group.Number_Of_Posts]);
-                                  // } else {
-                                  //     setShowLoading(true);
-                                  //     UpdateGrState(group.Link);
-                                  // }
-                                  // }
                                   HandleJoinGroup(group.Link);
                                 }}
                               >
