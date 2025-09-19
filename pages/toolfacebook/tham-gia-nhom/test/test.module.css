@@ -1,7 +1,56 @@
 .TableContainer {
-    padding: 10px;
     width: 100%;
-    height: 500px;
     border-radius: 10px;
-    background-color: aqua;
+    border: 1px solid rgba(59, 59, 59, 0.2);
 }
+
+.TableAttribute {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid gray;
+    background-color: blue;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: white;
+}
+
+.TableContent {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid rgba(59, 59, 59, 0.2);
+
+}
+
+.AttributeContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 18px;
+}
+
+.BlockContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 18px;
+    height: 50px;
+    word-break: break-all;
+}
+
+.TableWidthAdjust > div:nth-child(n+2) {
+    border-left: 1px solid rgba(59, 59, 59, 0.2);
+
+}
+.TableWidthAdjust > div:first-child { width: 3% }
+.TableWidthAdjust > div:nth-child(2) { width: 20% }
+.TableWidthAdjust > div:nth-child(3) { width: 17% }
+.TableWidthAdjust > div:nth-child(4) { width: 17% }
+.TableWidthAdjust > div:nth-child(5) { width: 12% }
+.TableWidthAdjust > div:nth-child(6) { width: 15% }
+.TableWidthAdjust > div:nth-child(7) { flex: 1 }
+
+
+
+
