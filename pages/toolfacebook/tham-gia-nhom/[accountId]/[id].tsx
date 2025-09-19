@@ -25,6 +25,11 @@ import { MdClose, MdPublic } from "react-icons/md";
 import style from "../styles.module.css";
 import stylepu from "./popup/popup.module.css";
 
+interface GroupsListProps {
+  name?: string;
+  link: string;
+}
+
 export default function GroupList() {
   const mainRef = useRef<HTMLDivElement>(null);
   const { isOpen } = useContext<any>(SidebarContext);
@@ -60,6 +65,7 @@ export default function GroupList() {
   // checkbox
   const [masterCheck, setMasterCheck] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
+  const [groupsSelected, setGroupsSelected] = useState<any>([]);
   // localstorage
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
   // trigger dang nhieu nhom
@@ -194,6 +200,12 @@ export default function GroupList() {
     ResetUserList();
   };
 
+  const HandleMultiPostClick = () => {
+    router.push(`../${accountId}/dangbainhom/MultiPost`);
+    localStorage.setItem("GroupsMultiPost", JSON.stringify(groupsSelected));
+    console.log(groupsSelected);
+  };
+
   async function ResetUserList() {
     try {
       // Clear current data to show skeleton immediately
@@ -286,7 +298,7 @@ export default function GroupList() {
     })
   };
 
-  const BoxChosenCheck = (checked: boolean, id: string) => {
+  const BoxChosenCheck = (checked: boolean, id: string, name: string) => {
     //logic check box
     const newSelectedGroups = new Set(selectedGroups);
     
@@ -303,8 +315,19 @@ export default function GroupList() {
     const allVisibleSelected = filteredPage.every(group => newSelectedGroups.has(group.Link));
     setMasterCheck(allVisibleSelected && filteredPage.length > 0);
     
-    console.log(Array.from(newSelectedGroups));
-    return Array.from(newSelectedGroups);
+    // Create array of objects with name and link pairs
+    const selectedGroupObjects = Array.from(newSelectedGroups).map(link => {
+      // Find the corresponding group from filtered data to get the name
+      const group = filteredPage.find(g => g.Link === link) || groupData.find(g => g.Link === link);
+      return {
+        name: group?.Name || '',
+        link: link
+      };
+    });
+    
+    console.log(selectedGroupObjects);
+    setGroupsSelected(selectedGroupObjects);
+    return selectedGroupObjects;
   };
 
   const HardReload = () => {
@@ -374,7 +397,10 @@ export default function GroupList() {
                     </div>
                   </div>
                   {isMultiJoin && (
-                    <div className={style.PostMultiGroup}>
+                    <div 
+                      className={style.PostMultiGroup}
+                      onClick={HandleMultiPostClick}
+                    >
                       Đăng nhiều nhóm
                     </div>
                   )}
@@ -488,7 +514,7 @@ export default function GroupList() {
                               type="checkbox"
                               className={style.checkboxList}
                               checked={selectedGroups.has(group.Link)}
-                              onChange={(e) => BoxChosenCheck(e.target.checked, group.Link)}
+                              onChange={(e) => BoxChosenCheck(e.target.checked, group.Link, group.Name)}
                             />
                           </div>
                           <div className={style.grlistName}>{group.Name}</div>

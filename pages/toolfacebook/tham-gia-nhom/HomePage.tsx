@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { CiBoxList } from "react-icons/ci";
 import { FaFacebook } from "react-icons/fa";
-import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { LiaFacebookMessenger } from "react-icons/lia";
 import UserFilter from "./components/filter/UserFilter";
 import SearchBar from "./components/SearchBar";
 import UserListIndexBar from "./components/UserListIndexBar";
@@ -25,6 +25,7 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [devices, setDevices] = useState<string[]>([])
 
   // Danh sách ID được phép truy cập trang Tool Facebook
   const ALLOWED_USER_IDS = [
@@ -51,7 +52,8 @@ export default function HomePage() {
 
   // const itemsPerPage = 10;
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>('all');
+  const [deviceFilter, setDeviceFilter] = useState<string | null>('all');
   const crmID = Cookies.get("userID");
 
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -101,14 +103,15 @@ export default function HomePage() {
         STT: index + 1,
       }));
       setAccounts(data1);
+      setDevices(Array.from(new Set(a.results.map(user => user.device_name))));
     };
     test();
   }, []);
 
   //Search tai khoan theo ten
   const filteredUser = accounts.filter((user) => {
-    const activeMatch = activeFilter === null || user.status === activeFilter;
-
+    const activeMatch = activeFilter == 'all' || user.status === activeFilter;
+    const deviceMatch = deviceFilter == 'all' || user.device_name === deviceFilter;
     const nameMatch =
       search.trim() === "" ||
       user.name
@@ -117,7 +120,7 @@ export default function HomePage() {
         .includes(search.replace(/\s+/g, "").toLowerCase()) ||
       user.account.includes(search);
 
-    return activeMatch && nameMatch;
+    return activeMatch && nameMatch && deviceMatch;
   });
 
   //Phan Lai trang
@@ -136,7 +139,8 @@ export default function HomePage() {
   };
 
   const ResetFilter = () => {
-    setActiveFilter(null);
+    setActiveFilter('all');
+    setDeviceFilter('all');
     setSearch("");
     setCurrentPage(1);
   };
@@ -262,12 +266,13 @@ export default function HomePage() {
                       <UserFilter
                         isOpen={showFilter}
                         onClose={() => {setShowFilter(false)}}
-                        active={activeFilter}
-                        onApply={(UserState) => {
+                        onApply={(UserState, device) => {
                           setActiveFilter(UserState);
+                          setDeviceFilter(device);
                           setCurrentPage(1);
                           setShowFilter(false);
                         }}
+                        devices={devices}
                       />
                     </div>
                     {/* goi list danh sach tai khoan */}
@@ -285,6 +290,7 @@ export default function HomePage() {
                         <div className={style.AttributeContent}>Mật khẩu</div>
                         <div className={style.AttributeContent}>Trạng thái</div>
                         <div className={style.AttributeContent}>Hành động</div>
+                        <div className={style.AttributeContent}>Thiết bị quản lí</div>
                       </div>
                       <div
                         className={`${style.UserListContent} ${style.BlockColumn}`}
@@ -305,15 +311,19 @@ export default function HomePage() {
                             <div id="Email">{item.account}</div>
                             <div id="Phone">{item.password}</div>
                             <div className={style.UserListBlockState}>
-                              {item.status ? (
+                              {item.status == 'Online' ? (
                                 <div className={`${style.BlockOnline}`}>
                                   Online
                                 </div>
-                              ) : (
+                              ) : item.status == 'Offline' ? (
                                 <div className={`${style.BlockOffline}`}>
                                   Offline
                                 </div>
-                              )}
+                              ) : item.status == 'Not available' ? (
+                                <div style={{color: 'gray'}}>
+                                  Not available
+                                </div>
+                              ) : (<div>error</div>)}
                             </div>
                             <div
                               id="edit"
@@ -324,7 +334,7 @@ export default function HomePage() {
                                 onClick={GotoMessPage}
                                 className={style.Message}
                               >
-                                <FiMessageCircle className={style.ic} />
+                                <LiaFacebookMessenger size={27} />
                                 {item.Mess > 0 ? (
                                   <div id="redDot" className={style.dot}></div>
                                 ) : (
@@ -346,6 +356,7 @@ export default function HomePage() {
                                 }}
                               ></CiBoxList>
                             </div>
+                            <div>{item.device_name}</div>
                           </div>
                         ))}
                       </div>

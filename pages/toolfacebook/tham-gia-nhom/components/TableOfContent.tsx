@@ -1,5 +1,4 @@
-
-import style from "../styles.module.css";
+import style from "../test/test.module.css";
 import FilterNothing from "./FilterNothing";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FetchError from "./fetchError";
@@ -18,26 +17,24 @@ export default function TableOfContent({ attributes, isLoading, fetchError, chil
   return (
     <>
         {/* goi list danh sach tai khoan */}
-        <div className={style.UserListContainer}>
-            <div className={`${style.UserListAttribute} ${style.BlockRow}`}>
+        <div className={style.TableContainer}>
+            <div className={`${style.TableAttribute}`}>
                 {attributes && attributes.map((attribute, index) => (
                     <div key={index} className={style.AttributeContent}>{attribute}</div>
                 ))}
             </div>
-            <div
-            className={`${style.UserListContent} ${style.BlockColumn}`}
-            >
-            {isLoading ? (
-            <LoadingSkeleton style={style} />
-            ) : fetchError ? (
-            <FetchError fetchError={fetchError} />
-            ) : attributes.length === 0 ? (
-            // No data state
-            <FilterNothing />
-            ) : (
-            // Vùng hiển thị Data map
-                children
-            )}
+            <div className={`${style.TableContentContainer}`}>
+                {isLoading ? (
+                <LoadingSkeleton style={style} />
+                ) : fetchError ? (
+                <FetchError fetchError={fetchError} />
+                ) : attributes.length === 0 ? (
+                // No data state
+                <FilterNothing />
+                ) : (
+                // Vùng hiển thị Data map
+                    children
+                )}
             </div>
         </div>
     </>

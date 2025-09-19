@@ -2,20 +2,18 @@ import { SidebarContext } from "@/components/crm/context/resizeContext";
 import styleHome from "@/components/crm/home/home.module.css";
 import { useHeader } from "@/components/crm/hooks/useHeader";
 import styles from "@/components/crm/potential/potential.module.css";
-
 import createPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/dangbainhom";
 import uploadAnh from "@/pages/api/toolFacebook/dang-bai-nhom/uploadAnh";
 // import getGroupData from "@/pages/api/toolFacebook/danhsachnhom/laydatagr";
-import getPostGroup from "@/pages/api/toolFacebook/dang-bai-nhom/laybaidang";
 import Cookies from "js-cookie";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import {
-    FaLock,
-    FaUserCircle,
-    FaUserTag,
-    FaVideo
+  FaLock,
+  FaUserCircle,
+  FaUserTag,
+  FaVideo
 } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -64,6 +62,7 @@ export default function PostInGroup() {
 
   // State mới cho bài đăng
   const [posts, setPosts] = useState<Post[]>([]);
+  const [groupsLink, setGroupsLink] = useState<string[]>([])
   const [test, setTest] = useState<any>([]);
   const [newPostContent, setNewPostContent] = useState("");
   const [newPostImages, setNewPostImages] = useState<any[]>([]);
@@ -83,46 +82,18 @@ export default function PostInGroup() {
   // popup comment
   const [showComment, setShowComment] = useState(false);
   const savedData = JSON.parse(localStorage.getItem("userProfile"));
-  const savedGroupData = JSON.parse(localStorage.getItem("GroupToPost"));
+  const savedGroupData = JSON.parse(localStorage.getItem("GroupsMultiPost"));
   const [showLoading, setShowLoading] = useState(false);
-
-  console.log(savedGroupData)
 
   let crmID = Cookies.get("userID");
   if (!crmID) {
     console.warn("CRM userID cookie is missing!");
     crmID = "defaultID"; // fallback value, replace with your logic
   }
-  // useEffect(() => {
-  // async function fetchData() {
-  //     const res = await getGroupData("", "15", "", "123");
-  //     setGroupData(res); // lưu vào state
-  // }
-  // fetchData();
-  // }, []);
 
-  // useEffect(() => {
-  //     const test = async () => {
-  //     const a = await getFbAccountsData(crmID, '20', '', accountId)
-  //     console.log(a)
-  //     setName(a.results[0].nameFb)
-  //     };
-
-  //     test();
-  // }, []);
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       const res = await getPostGroup(
-//         `groups/${Grid}`,
-//         crmID,
-//         accountId
-//       );
-//       setGroupData(res.results); // lưu vào state
-//       console.log(res.results);
-//     }
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    setGroupsLink(savedGroupData.map(group => group.link))
+  }, []);
 
   useEffect(() => {
     setHeaderTitle("TOOL FACEBOOK - Đăng bài nhóm");
@@ -146,45 +117,6 @@ export default function PostInGroup() {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
-  };
-
-  const filteredPage = groupData?.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // const handleNotify = () => {
-  //     FacebookToast("Thông báo mới", "Ai đó vừa bình luận vào bài viết của bạn.");
-  // };
-
-  // Gọi API lấy danh sách bài đăng cũ
-  useEffect(() => {
-    fetch("http://localhost:3003/api/posts")
-      .then((response) => response.json())
-      .then((data) => {
-        setTest(data);
-        setPosts(data.data || data); // ✅ Set posts ngay khi có data
-      })
-      .catch((error) => console.error("Error:", error));
-  }, []); //Chạy 1 lần
-
-  // useEffect để theo dõi thay đổi của test
-  useEffect(() => {
-    if (test && test.data) {
-      setPosts(test.data);
-    }
-  }, [test]); // ✅ Chạy khi test thay đổi
-
-  const handleViewPosts = () => {
-    async function fetchData() {
-      const res = await getPostGroup(
-        `groups/${Grid}`,
-        crmID,
-        accountId
-      );
-      setGroupData(res.results); // lưu vào state
-    }
-    fetchData();
   };
 
   const HandlePostSubmit = async () => {
@@ -215,7 +147,7 @@ export default function PostInGroup() {
 
     // Set params, grouplink test
     const params = {
-      group_link: `${savedGroupData}`,
+      group_link: groupsLink,
       // group_link: `groups/1569887551087354`,
       content: `${currentContent}`,
       files: fileMap,
@@ -267,44 +199,6 @@ export default function PostInGroup() {
     }
   };
 
-  const handleLikePost = (postId: number) => {
-    // Toggle like status
-    const newLikedPosts = new Set(likedPosts);
-    if (likedPosts.has(postId)) {
-      newLikedPosts.delete(postId);
-    } else {
-      newLikedPosts.add(postId);
-      // Add animation
-      const newAnimations = new Set(likeAnimations);
-      newAnimations.add(postId);
-      setLikeAnimations(newAnimations);
-
-      // Remove animation after completion
-      setTimeout(() => {
-        setLikeAnimations((prev) => {
-          const updated = new Set(prev);
-          updated.delete(postId);
-          return updated;
-        });
-      }, 600);
-    }
-    setLikedPosts(newLikedPosts);
-
-    // Update posts state with new like count
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              likes: (post.likes || 0) + (likedPosts.has(postId) ? -1 : 1),
-            }
-          : post
-      )
-    );
-
-    // TODO: Call API to update like on server
-    // await updateLikeOnServer(postId, !likedPosts.has(postId));
-  };
 
   const hardReload = () => {
     setShowLoading(true);
@@ -640,7 +534,11 @@ export default function PostInGroup() {
                     </h2>
                   </div>
                   <div className={style.postsList}>
-                        {savedGroupData[0]}
+                    {savedGroupData.map((group) => (
+                      <div className={style.GroupsPostedContainer}>
+                        {group.name}
+                      </div>
+                    ))}
                   </div>
                   <UserListIndexBar
                     currentPage={currentPage}
